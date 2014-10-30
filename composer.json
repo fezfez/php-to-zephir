@@ -1,0 +1,12 @@
+{
+    "require": {
+        "nikic/PHP-Parser": "1.0.*",
+        "phpdocumentor/reflection-docblock": "dev-master",
+        "symfony/event-dispatcher": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "PhpToZephir": "src/"
+        }
+    }
+}
