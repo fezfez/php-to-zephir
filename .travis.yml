@@ -10,7 +10,6 @@ before_install:
 
 # TODO: fix the Zephir version via Composer
 install:
-  - php test.php
   - cd /tmp
   - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
   - unzip -q json-c
@@ -27,8 +26,10 @@ install:
   - phpize -v
 
 before_script:
-  - cd $TRAVIS_BUILD_DIR && zephir build
   - composer selfupdate
   - composer install
+  - cd $TRAVIS_BUILD_DIR
+  - php test.php
+  - zephir build
 
 script: php -dextension=Symfony.so ./vendor/bin/phpunit
