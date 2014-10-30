@@ -30,4 +30,4 @@ before_script:
   - composer selfupdate
   - composer install
 
-script: php -dextension=symfony.so ./vendor/bin/phpunit
+script: php -dextension=Symfony.so ./vendor/bin/phpunit
