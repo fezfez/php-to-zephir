@@ -22,7 +22,8 @@ class TypeFinder
      */
     public function getTypes(ClassMethod $node, $actualClass, $definition = array())
     {
-        $docBlock = $node->getAttributes()['comments'][0]->getText();
+        $attribute = $node->getAttributes();
+        $docBlock = $attribute['comments'][0]->getText();
         $phpdoc = new DocBlock($docBlock);
 
         return $this->parseTags($phpdoc->getTags(), $actualClass, $definition, $node);
@@ -37,7 +38,7 @@ class TypeFinder
         foreach ($tags as $tag) {
             if ($tag instanceof SeeTag) {
                 $definition = $this->parseSeeTag($tag, $actualClass, $definition, $node);
-                break;
+                continue;
             } elseif ($tag instanceof ParamTag) {
                 if (isset($definition['params']) === false) {
                     $definition['params'] = array();
@@ -71,11 +72,9 @@ class TypeFinder
                     'type'    => $this->findType($tag, $actualClass),
                     'default' => $default
                 );
-            } elseif ($tag instanceof ReturnTag && ($tag instanceof ThrowsTag) === false) {
+            } elseif ($this->isReturnTag($tag) === true) {
                 if (isset($definition['return']) === true) {
-                    throw new \Exception(
-                        sprintf('2 return  on "%s" method and "%s" class', $tag->getName(), $actualClass)
-                    );
+                    continue;
                 }
 
                 $definition['return'] = array(
@@ -87,6 +86,19 @@ class TypeFinder
         }
 
         return $definition;
+    }
+
+    /**
+     * @param Tag $tag
+     * @return boolean
+     */
+    private function isReturnTag(Tag $tag)
+    {
+        if ($tag instanceof ReturnTag && ($tag instanceof ThrowsTag) === false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -155,7 +167,7 @@ class TypeFinder
      * @param Tag $tag
      * @throws \Exception
      */
-    private function parseSeeTag(Tag $tag, $actualClass, $definition, $node)
+    private function parseSeeTag(SeeTag $tag, $actualClass, $definition, $node)
     {
         $classReference = strstr($tag->getReference(), '::', true);
         $methodRefrence = str_replace('::', '', strstr($tag->getReference(), '::'));
@@ -166,9 +178,24 @@ class TypeFinder
             throw new \Exception('Method does not exist');
         }
 
+        $forceReturnType = false;
+        foreach ($tag->getDocBlock()->getTags() as $childTag) {
+            if ($this->isReturnTag($childTag) === true) {
+                $forceReturnType = $childTag;
+            }
+        }
+
         $phpdoc = new DocBlock($rc->getMethod($methodRefrence));
 
-        return $this->parseTags($phpdoc->getTags(), $fullClass, $definition, $node);
+        $definition = $this->parseTags($phpdoc->getTags(), $fullClass, $definition, $node);
+
+        if ($forceReturnType !== false) {
+            $definition['return'] = array(
+                'type' => $this->findType($forceReturnType, $actualClass)
+            );
+        }
+
+        return $definition;
     }
 
     /**
