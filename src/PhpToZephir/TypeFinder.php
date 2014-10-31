@@ -20,24 +20,24 @@ class TypeFinder
     /**
      * @param ClassMethod $node
      */
-    public function getTypes(ClassMethod $node, $actualClass, $definition = array())
+    public function getTypes(ClassMethod $node, $actualClass, array $use, $definition = array())
     {
         $attribute = $node->getAttributes();
         $docBlock = $attribute['comments'][0]->getText();
         $phpdoc = new DocBlock($docBlock);
 
-        return $this->parseTags($phpdoc->getTags(), $actualClass, $definition, $node);
+        return $this->parseTags($phpdoc->getTags(), $actualClass, $definition, $node, $use);
     }
 
     /**
      * @param array $tags
      * @throws \Exception
      */
-    private function parseTags(array $tags, $actualClass, $definition, ClassMethod $node)
+    private function parseTags(array $tags, $actualClass, $definition, ClassMethod $node, $use)
     {
         foreach ($tags as $tag) {
             if ($tag instanceof SeeTag) {
-                $definition = $this->parseSeeTag($tag, $actualClass, $definition, $node);
+                $definition = $this->parseSeeTag($tag, $actualClass, $definition, $node, $use);
                 continue;
             } elseif ($tag instanceof ParamTag) {
                 if (isset($definition['params']) === false) {
@@ -69,7 +69,7 @@ class TypeFinder
 
                 $definition['params'][] = array(
                     'name'    => $tag->getVariableName(),
-                    'type'    => $this->findType($tag, $actualClass),
+                    'type'    => $this->findType($tag, $actualClass, $use),
                     'default' => $default
                 );
             } elseif ($this->isReturnTag($tag) === true) {
@@ -78,7 +78,7 @@ class TypeFinder
                 }
 
                 $definition['return'] = array(
-                    'type' => $this->findType($tag, $actualClass)
+                    'type' => $this->findType($tag, $actualClass, $use)
                 );
             } else {
                 continue;
@@ -105,7 +105,7 @@ class TypeFinder
      * @param string $rawType
      * @return string
      */
-    private function findType($tag, $actualClass)
+    private function findType($tag, $actualClass, $use)
     {
         // @TODO add ressource
         $type           = array();
@@ -133,7 +133,7 @@ class TypeFinder
         } elseif (in_array($rawType, $arrayOfPrimitiveTypes)) {
             $type = array('value' => $rawType, 'isClass' => false);
         } else { // considered as class
-            $type = array('value' => $this->searchClass($rawType, $actualClass), 'isClass' => true);
+            $type = array('value' => $this->searchClass($rawType, $actualClass, $use), 'isClass' => true);
         }
 
         return $type;
@@ -145,18 +145,37 @@ class TypeFinder
      * @throws \Exception
      * @return unknown
      */
-    private function searchClass($classReference, $actualClass)
+    private function searchClass($classReference, $actualClass, $uses)
     {
         $classReference   = str_replace('\\\\', '\\', $classReference);
         $actualClassAdded = substr($actualClass, 0, strrpos($actualClass, '\\')) . '\\' . $classReference;
         $actualClassAdded = str_replace('\\\\', '\\', $actualClassAdded);
+        $fullClass = null;
+        $possibleClass = array($classReference, $actualClassAdded);
 
         if ($this->loadClass($classReference) === true) {
             $fullClass = $classReference;
         } elseif ($this->loadClass($actualClassAdded) === true) {
             $fullClass = $actualClassAdded;
         } else {
-            throw new \Exception(sprintf('Class "%s" and "%s" not found', $classReference, $actualClassAdded));
+            // test the use
+            foreach ($uses as $use) {
+                /* @var $use \PhpParser\Node\Stmt\UseUse */
+
+                // test alias
+                if ($use->alias === str_replace('\\', '', $classReference)) {
+                    $aliasClass = implode('\\', $use->name->parts);
+                    $possibleClass[] = $aliasClass;
+                    if ($this->loadClass($aliasClass) === true) {
+                        $fullClass = $aliasClass;
+                        break;
+                    }
+                }
+            }
+
+            if ($fullClass === null) {
+                throw new \Exception(sprintf('Class "%s" not found refrenced in "%s"', implode(' or ', $possibleClass), $actualClass));
+            }
         }
 
         $fullClass = str_replace('\\\\', '\\', $fullClass);
@@ -167,11 +186,11 @@ class TypeFinder
      * @param Tag $tag
      * @throws \Exception
      */
-    private function parseSeeTag(SeeTag $tag, $actualClass, $definition, $node)
+    private function parseSeeTag(SeeTag $tag, $actualClass, $definition, $node, $use)
     {
         $classReference = strstr($tag->getReference(), '::', true);
         $methodRefrence = str_replace('::', '', strstr($tag->getReference(), '::'));
-        $fullClass      = $this->searchClass($classReference, $actualClass);
+        $fullClass      = $this->searchClass($classReference, $actualClass, $use);
 
         $rc = new \ReflectionClass($fullClass);
         if ($rc->hasMethod($methodRefrence) === false) {
@@ -187,11 +206,11 @@ class TypeFinder
 
         $phpdoc = new DocBlock($rc->getMethod($methodRefrence));
 
-        $definition = $this->parseTags($phpdoc->getTags(), $fullClass, $definition, $node);
+        $definition = $this->parseTags($phpdoc->getTags(), $fullClass, $definition, $node, $use);
 
         if ($forceReturnType !== false) {
             $definition['return'] = array(
-                'type' => $this->findType($forceReturnType, $actualClass)
+                'type' => $this->findType($forceReturnType, $actualClass, $use)
             );
         }
 

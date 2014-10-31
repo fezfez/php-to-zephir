@@ -30,16 +30,54 @@ class Engine
      * @param string $class
      * @return string
      */
-    public function convert($class)
+    public function convertClass($class)
     {
         $rc = new \ReflectionClass($class);
 
-        $code = $this->converter->convert(
-            $this->parser->parse(
-                file_get_contents($rc->getFileName())
-            ),
-            $class
-        );
+        $phpCode = file_get_contents($rc->getFileName());
+
+        return $this->convertCode($phpCode, $class);
+    }
+
+    /**
+     * @param string $dir
+     * @return array
+     */
+    public function convertDirectory($dir)
+    {
+        $zephirCode = array();
+
+        foreach (glob($dir . '*.php') as $phpFile) {
+            $classes = get_declared_classes();
+            include $phpFile;
+            $diff = array_diff(get_declared_classes(), $classes);
+            $class = reset($diff);
+
+            $zephirCode[$phpFile] = array(
+                'zephir'   => $this->convertCode(file_get_contents($phpFile), $class),
+                'php'      => substr($phpFile, 0, strrpos($phpFile, '/')),
+                'path'     => substr($phpFile, 0, strrpos($phpFile, '/')),
+                'fileName' => strstr($phpFile, '/'),
+             );
+        }
+
+        return $zephirCode;
+    }
+
+    /**
+     * @param string $phpCode
+     * @return string
+     */
+    private function convertCode($phpCode, $class)
+    {
+        try {
+            $code = $this->converter->convert(
+                $this->parser->parse($phpCode),
+                $class
+            );
+        } catch (\Exception $e) {
+            throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $class, $e->getMessage()));
+        }
 
         $code = str_replace('\\\\', '\\', $code);
         // replace $fezfez = 'fff'; by let $fezfez = 'fff';

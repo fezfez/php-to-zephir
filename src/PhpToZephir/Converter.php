@@ -580,7 +580,7 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_ClassMethod(Stmt\ClassMethod $node) {
-        $types = $this->typeFinder->getTypes($node, $this->class);
+        $types = $this->typeFinder->getTypes($node, $this->class, $this->use);
 
         $stmt = $this->pModifiers($node->type) . 'function ' . ($node->byRef ? '&' : '') . $node->name . '(';
 
