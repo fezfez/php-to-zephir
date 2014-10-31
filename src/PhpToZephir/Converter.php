@@ -425,7 +425,6 @@ class Converter extends PrettyPrinterAbstract
         if ($node->name instanceof Expr) {
             return '${' . $this->p($node->name) . '}';
         } else {
-            var_dump($node);
             return '$' . $node->name;
         }
     }

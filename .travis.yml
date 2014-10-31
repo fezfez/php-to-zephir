@@ -26,9 +26,9 @@ install:
   - phpize -v
 
 before_script:
+  - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - cd $TRAVIS_BUILD_DIR
   - php test.php
   - zephir build
 

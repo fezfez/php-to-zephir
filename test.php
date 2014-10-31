@@ -20,16 +20,11 @@ try {
     $engine = EngineFactory::getInstance();
 
     $classToConvert = array(
-        'Event',
-        'EventDispatcher',
-        'EventDispatcherInterface',
-        'EventSubscriberInterface',
-        'GenericEvent',
-        'ImmutableEventDispatcher'
+        'Event'
     );
 
     foreach ($classToConvert as $name) {
-        echo 'Convert' . $name . "\n";
+        echo 'Convert ' . $name . "\n";
         $rst = $engine->convert('Symfony\Component\EventDispatcher\\' . $name);
         @mkdir('Symfony/Component/EventDispatcher/', 0777, true);
         file_put_contents('Symfony/Component/EventDispatcher/' . $name . '.zep', $rst);
