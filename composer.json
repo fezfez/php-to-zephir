@@ -3,6 +3,7 @@
         "nikic/PHP-Parser": "1.0.*",
         "phpdocumentor/reflection-docblock": "dev-master",
         "symfony/event-dispatcher": "dev-master",
+        "symfony/dependency-injection" : "dev-master",
         "phalcon/zephir": "~0.5"
     },
     "autoload": {
