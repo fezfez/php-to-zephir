@@ -48,10 +48,7 @@ class Engine
         $zephirCode = array();
 
         foreach (glob($dir . '*.php') as $phpFile) {
-            $classes = get_declared_classes();
-            include $phpFile;
-            $diff = array_diff(get_declared_classes(), $classes);
-            $class = reset($diff);
+            $class = shell_exec("php -r \"include('$phpFile'); echo end(get_declared_classes());\"");
 
             $zephirCode[$phpFile] = array(
                 'zephir'   => $this->convertCode(file_get_contents($phpFile), $class),
