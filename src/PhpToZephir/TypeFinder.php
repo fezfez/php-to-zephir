@@ -23,6 +23,10 @@ class TypeFinder
     public function getTypes(ClassMethod $node, $actualClass, array $use, $definition = array())
     {
         $attribute = $node->getAttributes();
+        if (isset($attribute['comments']) === false) {
+            return array();
+        }
+        
         $docBlock = $attribute['comments'][0]->getText();
         $phpdoc = new DocBlock($docBlock);
 
