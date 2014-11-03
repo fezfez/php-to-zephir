@@ -128,7 +128,27 @@ class Converter extends PrettyPrinterAbstract
     // Assignments
 
     public function pExpr_Assign(Expr\Assign $node) {
-        return $this->pInfixOp('Expr_Assign', $node->var, ' = ', $node->expr);
+        $type = 'Expr_Assign';
+        $leftNode = $node->var;
+        $operatorString = ' = ';
+        $rightNode = $node->expr;
+
+        list($precedence, $associativity) = $this->precedenceMap[$type];
+
+        if ($node->var instanceof Expr\List_) {
+            foreach ($node->var->vars as $count => $var) {
+                if (null === $var) {
+                    $pList[] = '';
+                } else {
+                    $pList[] = 'let ' . $this->p($var) . ' = ' . $this->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
+                }
+            }
+            return implode("\n", $pList);
+        } else {
+            return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
+            . $operatorString
+            . $this->pPrec($rightNode, $precedence, $associativity, 1);
+        }
     }
 
     public function pExpr_AssignRef(Expr\AssignRef $node) {
@@ -415,6 +435,8 @@ class Converter extends PrettyPrinterAbstract
                 $pList[] = $this->p($var);
             }
         }
+
+        var_dump($node);exit;
 
         return 'list(' . implode(', ', $pList) . ')';
     }
