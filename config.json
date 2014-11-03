@@ -30,7 +30,7 @@
         "static-constant-class-folding": true,
         "private-internal-methods": true
     },
-    "namespace": "Converted",
+    "namespace": "Symfony",
     "name": "sf2eventdispatcher_ext",
     "description": "Symfony2 Event Dispatcher as PHP extension",
     "author": "Damien Alexandre",
