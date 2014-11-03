@@ -43,22 +43,31 @@ class Engine
      * @param string $dir
      * @return array
      */
-    public function convertDirectory($dir)
+    public function convertDirectory($dir, $baseNamespace)
     {
         $zephirCode = array();
+        $fileExtension = '.php';
 
-        foreach (glob($dir . '*.php') as $phpFile) {
-            $class = shell_exec("php -r \"include('$phpFile'); echo end(get_declared_classes());\"");
+        foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
+            $class = str_replace($fileExtension, '', strstr(str_replace('/', '\\', $phpFile), $baseNamespace));
+            $rcClass = new \ReflectionClass($class);
 
             $zephirCode[$phpFile] = array(
-                'zephir'   => $this->convertCode(file_get_contents($phpFile), $class),
-                'php'      => substr($phpFile, 0, strrpos($phpFile, '/')),
-                'path'     => substr($phpFile, 0, strrpos($phpFile, '/')),
-                'fileName' => strstr($phpFile, '/'),
+                'zephir'    => $this->convertCode(file_get_contents($phpFile), $class),
+                'php'       => file_get_contents($phpFile),
+                'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
+                'namespace' => $rcClass->getNamespaceName(),
+                'className' => $rcClass->getShortName(),
+                'class'     => $class
              );
         }
 
         return $zephirCode;
+    }
+
+    function rstrstr($haystack,$needle)
+    {
+        return substr($haystack, 0,strpos($haystack, $needle));
     }
 
     /**
@@ -67,14 +76,14 @@ class Engine
      */
     private function convertCode($phpCode, $class)
     {
-        try {
+        //try {
             $code = $this->converter->convert(
                 $this->parser->parse($phpCode),
                 $class
             );
-        } catch (\Exception $e) {
+        /*} catch (\Exception $e) {
             throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $class, $e->getMessage()));
-        }
+        }*/
 
         $code = str_replace('\\\\', '\\', $code);
         // replace $fezfez = 'fff'; by let $fezfez = 'fff';

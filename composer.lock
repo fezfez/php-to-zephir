@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3300618855c36097b7ffce3809a1e0bd",
+    "hash": "bc7ad4319b9eccb1a3d8f512ca3ca5b6",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -162,18 +162,75 @@
             "time": "2014-09-02 14:26:20"
         },
         {
+            "name": "symfony/dependency-injection",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/DependencyInjection",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/DependencyInjection.git",
+                "reference": "926500fe0b8a6562c4e8b8166a1cb664733804aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/926500fe0b8a6562c4e8b8166a1cb664733804aa",
+                "reference": "926500fe0b8a6562c4e8b8166a1cb664733804aa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/config": "~2.2",
+                "symfony/expression-language": "~2.4",
+                "symfony/yaml": "~2.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-11-03 03:55:50"
+        },
+        {
             "name": "symfony/event-dispatcher",
             "version": "dev-master",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "294bdb3cb597536221354a5382f1b90e6dc9bb95"
+                "reference": "dcf345d5ed96bc6c3b4521c1989670d2c9e5014e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/294bdb3cb597536221354a5382f1b90e6dc9bb95",
-                "reference": "294bdb3cb597536221354a5382f1b90e6dc9bb95",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/dcf345d5ed96bc6c3b4521c1989670d2c9e5014e",
+                "reference": "dcf345d5ed96bc6c3b4521c1989670d2c9e5014e",
                 "shasum": ""
             },
             "require": {
@@ -217,7 +274,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2014-10-26 07:50:57"
+            "time": "2014-11-03 03:55:50"
         }
     ],
     "packages-dev": [],
@@ -225,7 +282,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "phpdocumentor/reflection-docblock": 20,
-        "symfony/event-dispatcher": 20
+        "symfony/event-dispatcher": 20,
+        "symfony/dependency-injection": 20
     },
     "prefer-stable": false,
     "platform": [],

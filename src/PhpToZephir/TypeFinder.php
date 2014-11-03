@@ -26,7 +26,7 @@ class TypeFinder
         if (isset($attribute['comments']) === false) {
             return array();
         }
-        
+
         $docBlock = $attribute['comments'][0]->getText();
         $phpdoc = new DocBlock($docBlock);
 

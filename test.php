@@ -22,11 +22,14 @@ try {
 
     $dirPath = __DIR__ . '/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/';
 
-    foreach ($engine->convertDirectory($dirPath) as $convertedCode) {
-        echo 'Converted ' . $convertedCode['path'] . '/' . $convertedCode['fileName'] . "\n";
+    foreach ($engine->convertDirectory($dirPath, 'Symfony\Component\EventDispatcher') as $convertedCode) {
+        echo 'Converted converted/' . str_replace('\\', '/', $convertedCode['namespace']) . '/' . $convertedCode['className'] . ".zep\n";
 
-        @mkdir('converted/' . $convertedCode['path'], 0777, true);
-        file_put_contents('converted/' . $convertedCode['path'] . $convertedCode['fileName'] . '.zep', $convertedCode['zephir']);
+        @mkdir('converted/' . str_replace('\\', '/', $convertedCode['namespace']), 0777, true);
+        file_put_contents(
+            'converted/' . str_replace('\\', '/', $convertedCode['namespace']) . '/' . $convertedCode['className'] . '.zep',
+            $convertedCode['zephir']
+        );
     }
 
     /*
