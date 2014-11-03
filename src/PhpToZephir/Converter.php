@@ -613,12 +613,12 @@ class Converter extends PrettyPrinterAbstract
             $stmt .= implode(', ', $params);
         }
 
-        $stmt .= ") -> ";
+        $stmt .= ")";
 
         if (isset($types['return']) === false) {
-            $stmt .= ' void ';
-        } else {
-            $stmt .= $this->printType($types['return']);
+            $stmt .= ' ->  void ';
+        } elseif(isset($types['return']) === true && isset($types['return']['value']) === true && $types['return']['value'] !== '') {
+            $stmt .= ' -> ' . $this->printType($types['return']);
         }
 
         $stmt .= (null !== $node->stmts ? "\n{" . $this->pStmts($node->stmts) . "\n}" : ';') . "\n";
@@ -790,7 +790,11 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Unset(Stmt\Unset_ $node) {
-        return 'unset(' . $this->pCommaSeparated($node->vars) . ');';
+		$unset = '';
+		foreach ($node->vars as $var) {
+			$unset .= 'unset(' . $this->p($var) . ');' . "\n";
+		}
+        return $unset;
     }
 
     public function pStmt_InlineHTML(Stmt\InlineHTML $node) {

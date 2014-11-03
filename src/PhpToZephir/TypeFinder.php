@@ -126,7 +126,7 @@ class TypeFinder
             'callable'
         );
 
-        if ($rawType === 'mixed') {
+        if ($rawType === 'mixed' || $rawType === 'callable' || $rawType === 'callable[]') {
             return array('value' => '', 'isClass' => false);
         }
 
