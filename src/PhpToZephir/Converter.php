@@ -436,8 +436,6 @@ class Converter extends PrettyPrinterAbstract
             }
         }
 
-        var_dump($node);exit;
-
         return 'list(' . implode(', ', $pList) . ')';
     }
 
@@ -668,7 +666,24 @@ class Converter extends PrettyPrinterAbstract
     // Control flow
 
     public function pStmt_If(Stmt\If_ $node) {
-        return 'if (' . $this->p($node->cond) . ') {'
+        $head = '';
+        if ($node->cond instanceof Expr\Assign) {
+            var_dump('assign', $node->cond);
+        }
+        if ($node->cond->left instanceof Expr\Assign) {
+            var_dump('assignl', $node->cond->left);exit;
+        } else {
+
+        }
+
+        if ($node->cond->right instanceof Expr\Assign) {
+            $head .= 'var ' . $this->p($node->cond->right->var) . ';' . "\n";
+            $head .= $this->p($node->cond->right) . ";\n";
+            //var_dump($node->cond->right->var->name);exit;
+            $node->cond->right = new Expr\Variable($node->cond->right->var->name);
+        }
+
+        return $head . 'if (' . $this->p($node->cond) . ') {'
              . $this->pStmts($node->stmts) . "\n" . '}'
              . $this->pImplode($node->elseifs)
              . (null !== $node->else ? $this->p($node->else) : '');
