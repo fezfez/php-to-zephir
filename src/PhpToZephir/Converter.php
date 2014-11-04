@@ -136,14 +136,17 @@ class Converter extends PrettyPrinterAbstract
         list($precedence, $associativity) = $this->precedenceMap[$type];
 
         if ($node->var instanceof Expr\List_) {
+			$vars = array();
             foreach ($node->var->vars as $count => $var) {
                 if (null === $var) {
                     $pList[] = '';
                 } else {
+					$vars[] = $this->p($var);
                     $pList[] = 'let ' . $this->p($var) . ' = ' . $this->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
                 }
             }
-            return implode("\n", $pList);
+			
+            return 'var ' . implode(", ", $vars) ";\n" . implode("\n", $pList);
         } else {
             return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
             . $operatorString
