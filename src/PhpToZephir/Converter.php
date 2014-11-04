@@ -389,7 +389,7 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pExpr_StaticCall(Expr\StaticCall $node) {
-        return $this->p($node->class) . '::'
+        return (($node->class instanceof Expr\Variable) ? '{' . $this->p($node->class) . '}' : $this->p($node->class)) . '::'
              . ($node->name instanceof Expr
                 ? ($node->name instanceof Expr\Variable
                    || $node->name instanceof Expr\ArrayDimFetch
