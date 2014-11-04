@@ -38,6 +38,11 @@ class Engine
 
         return $this->convertCode($phpCode, $class);
     }
+	
+	public function convert($phpCode)
+	{
+		return $this->convertCode($phpCode, '');
+	}
 
     /**
      * @param string $dir

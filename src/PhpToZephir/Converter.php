@@ -107,7 +107,7 @@ class Converter extends PrettyPrinterAbstract
     // Scalars
 
     public function pScalar_String(Scalar\String $node) {
-        return '\'' . $this->pNoIndent(addcslashes($node->value, '\'\\')) . '\'';
+        return '"' . $this->pNoIndent(addcslashes($node->value, '\"\\')) . '"';
     }
 
     public function pScalar_Encapsed(Scalar\Encapsed $node) {
@@ -146,7 +146,7 @@ class Converter extends PrettyPrinterAbstract
                 }
             }
 			
-            return 'var ' . implode(", ", $vars) ";\n" . implode("\n", $pList);
+            return 'var ' . implode(", ", $vars) . ";\n" . implode("\n", $pList);
         } else {
             return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
             . $operatorString
@@ -678,6 +678,8 @@ class Converter extends PrettyPrinterAbstract
         } else {
 
         }
+		
+		var_dump($node);
 
         if ($node->cond->right instanceof Expr\Assign) {
             $head .= 'var ' . $this->p($node->cond->right->var) . ';' . "\n";
