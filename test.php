@@ -20,14 +20,16 @@ $classLoader = new \Composer\Autoload\ClassLoader();
 try {
     $engine = EngineFactory::getInstance();
 
-    $dirPath = __DIR__ . '/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/';
+    $dirPath = __DIR__ . '/vendor/symfony/yaml/Symfony/Component/Yaml/';
 
-    foreach ($engine->convertDirectory($dirPath, 'Symfony\Component\EventDispatcher') as $convertedCode) {
-        echo 'Converted ' . strtolower(str_replace('\\', '/', $convertedCode['namespace']) . '/' . $convertedCode['className']) . ".zep\n";
+    //var_dump($engine->convert('<?php $tutu[$toto++]; '));exit;
 
-        @mkdir(strtolower( str_replace('\\', '/', $convertedCode['namespace'])), 0777, true);
+    foreach ($engine->convertDirectory($dirPath, 'Symfony\Component\Yaml') as $convertedCode) {
+        echo 'Converted ' . strtolower('Symfony/Component/Yaml/' . $convertedCode['fileName']) . ".zep\n";
+
+        @mkdir(strtolower('Symfony/Component/Yaml/'), 0777, true);
         file_put_contents(
-            strtolower(str_replace('\\', '/', $convertedCode['namespace']) . '/' . $convertedCode['className']) . '.zep',
+            strtolower('Symfony/Component/Yaml/' . $convertedCode['fileName']) . '.zep',
             $convertedCode['zephir']
         );
     }

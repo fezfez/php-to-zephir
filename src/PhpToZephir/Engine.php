@@ -36,34 +36,33 @@ class Engine
 
         $phpCode = file_get_contents($rc->getFileName());
 
-        return $this->convertCode($phpCode, $class);
+        return $this->convertCode($phpCode);
     }
-	
+
 	public function convert($phpCode)
 	{
-		return $this->convertCode($phpCode, '');
+		return $this->convertCode($phpCode);
 	}
 
     /**
      * @param string $dir
      * @return array
      */
-    public function convertDirectory($dir, $baseNamespace)
+    public function convertDirectory($dir)
     {
         $zephirCode = array();
         $fileExtension = '.php';
 
         foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
-            $class = str_replace($fileExtension, '', strstr(str_replace('/', '\\', $phpFile), $baseNamespace));
-            $rcClass = new \ReflectionClass($class);
+
+        	$phpCode  = file_get_contents($phpFile);
+        	$fileName = $this->replaceReservedWords(basename($phpFile, '.php'));
 
             $zephirCode[$phpFile] = array(
-                'zephir'    => $this->convertCode(file_get_contents($phpFile), $class),
-                'php'       => file_get_contents($phpFile),
+                'zephir'    => $this->convertCode($phpCode, $phpFile),
+                'php'       => $phpCode,
                 'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
-                'namespace' => $rcClass->getNamespaceName(),
-                'className' => $rcClass->getShortName(),
-                'class'     => $class
+                'fileName'  => $fileName
              );
         }
 
@@ -75,22 +74,26 @@ class Engine
         return substr($haystack, 0,strpos($haystack, $needle));
     }
 
+    private function replaceReservedWords($code)
+    {
+    	$code = str_replace('inline', 'inlinee', $code);
+    	$code = str_replace('Inline', 'Inlinee', $code);
+
+    	return $code;
+    }
     /**
      * @param string $phpCode
      * @return string
      */
-    private function convertCode($phpCode, $class)
+    private function convertCode($phpCode, $fileName = null)
     {
         //try {
-            $code = $this->converter->convert(
-                $this->parser->parse($phpCode),
-                $class
-            );
+            $code = $this->replaceReservedWords($this->converter->prettyPrint($this->parser->parse($phpCode), $fileName));
+            // replace reserved work
+
         /*} catch (\Exception $e) {
             throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $class, $e->getMessage()));
         }*/
-
-        $code = str_replace('\\\\', '\\', $code);
 
         return $code;
     }

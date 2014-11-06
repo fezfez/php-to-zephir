@@ -18,7 +18,10 @@ use phpDocumentor\Reflection\DocBlock;
 class Converter extends PrettyPrinterAbstract
 {
     private $use = array();
+    private $actualNamespace = null;
+    private $classes = array();
     private $class = null;
+    private $fileName = null;
     /**
      * @var TypeFinder
      */
@@ -30,14 +33,11 @@ class Converter extends PrettyPrinterAbstract
         parent::__construct();
     }
 
-    /* (non-PHPdoc)
-     * @see \PhpParser\PrettyPrinterAbstract::prettyPrint()
-     */
-    public function convert(array $stmts, $class)
-    {
-        $this->class = $class;
-        return parent::prettyPrint($stmts);
+    public function prettyPrint(array $stmts, $fileName = null) {
+    	$this->fileName = $fileName;
+		return parent::prettyPrint($stmts);
     }
+
     // Special nodes
 
     public function pParam(Node\Param $node) {
@@ -136,46 +136,75 @@ class Converter extends PrettyPrinterAbstract
         list($precedence, $associativity) = $this->precedenceMap[$type];
 
         if ($node->var instanceof Expr\List_) {
-			$vars = array();
+            $vars = array();
             foreach ($node->var->vars as $count => $var) {
                 if (null === $var) {
                     $pList[] = '';
                 } else {
-					$vars[] = $this->p($var);
+                    $vars[] = $this->p($var);
                     $pList[] = 'let ' . $this->p($var) . ' = ' . $this->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
                 }
             }
-			
+
             return 'var ' . implode(", ", $vars) . ";\n" . implode("\n", $pList);
         } else {
-            return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
-            . $operatorString
-            . $this->pPrec($rightNode, $precedence, $associativity, 1);
+        	if($rightNode instanceof Expr\Assign) { // multiple assign
+        		$withEquals = ' = ' . $this->p($this->findValueToAssign($rightNode));
+        		$withAssign = implode($withEquals . ', ', $this->findVarToAssign($rightNode));
+
+        		return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1) . $withEquals . ', ' . $withAssign . $withEquals;
+        	} else {
+	            return 'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
+	            . $operatorString
+	            . $this->pPrec($rightNode, $precedence, $associativity, 1);
+        	}
         }
     }
 
+    private function findValueToAssign($rightNode)
+    {
+    	if($rightNode->expr instanceof Expr\Assign) {
+    		return $this->findValueToAssign($rightNode->expr);
+    	} else {
+    		return $rightNode->expr;
+    	}
+    }
+
+    private function findVarToAssign($rightNode)
+    {
+    	$toAssign = array();
+
+    	$toAssign[] = $rightNode->var->name;
+
+    	if($rightNode->expr instanceof Expr\Assign) {
+    		$toAssign = array_merge($toAssign, $this->findVarToAssign($rightNode->expr));
+    	}
+
+    	return $toAssign;
+    }
+
     public function pExpr_AssignRef(Expr\AssignRef $node) {
-        return $this->pInfixOp('Expr_AssignRef', $node->var, ' =& ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignRef', $node->var, ' =& ', $node->expr);
     }
 
     public function pExpr_AssignOp_Plus(AssignOp\Plus $node) {
-        return $this->pInfixOp('Expr_AssignOp_Plus', $node->var, ' += ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignOp_Plus', $node->var, ' += ', $node->expr);
     }
 
     public function pExpr_AssignOp_Minus(AssignOp\Minus $node) {
-        return $this->pInfixOp('Expr_AssignOp_Minus', $node->var, ' -= ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignOp_Minus', $node->var, ' -= ', $node->expr);
     }
 
     public function pExpr_AssignOp_Mul(AssignOp\Mul $node) {
-        return $this->pInfixOp('Expr_AssignOp_Mul', $node->var, ' *= ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignOp_Mul', $node->var, ' *= ', $node->expr);
     }
 
     public function pExpr_AssignOp_Div(AssignOp\Div $node) {
-        return $this->pInfixOp('Expr_AssignOp_Div', $node->var, ' /= ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignOp_Div', $node->var, ' /= ', $node->expr);
     }
 
     public function pExpr_AssignOp_Concat(AssignOp\Concat $node) {
-        return $this->pInfixOp('Expr_AssignOp_Concat', $node->var, ' .= ', $node->expr);
+        return 'let ' . $this->pInfixOp('Expr_AssignOp_Concat', $node->var, ' .= ', $node->expr);
     }
 
     public function pExpr_AssignOp_Mod(AssignOp\Mod $node) {
@@ -331,19 +360,19 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pExpr_PreInc(Expr\PreInc $node) {
-        return $this->pPrefixOp('Expr_PreInc', '++', $node->var);
+        return 'let ' .$this->pPostfixOp('Expr_PostInc', $node->var, '++');
     }
 
     public function pExpr_PreDec(Expr\PreDec $node) {
-        return $this->pPrefixOp('Expr_PreDec', '--', $node->var);
+        return 'let ' . $this->pPostfixOp('Expr_PreDec', $node->var, '--');
     }
 
     public function pExpr_PostInc(Expr\PostInc $node) {
-        return $this->pPostfixOp('Expr_PostInc', $node->var, '++');
+        return 'let ' . $this->pPostfixOp('Expr_PostInc', $node->var, '++');
     }
 
     public function pExpr_PostDec(Expr\PostDec $node) {
-        return $this->pPostfixOp('Expr_PostDec', $node->var, '--');
+        return 'let ' . $this->pPostfixOp('Expr_PostDec', $node->var, '--');
     }
 
     public function pExpr_ErrorSuppress(Expr\ErrorSuppress $node) {
@@ -429,7 +458,7 @@ class Converter extends PrettyPrinterAbstract
         return $map[$node->type] . ' ' . $this->p($node->expr);
     }
 
-    public function pExpr_List(Expr\List_ $node) {
+    /*public function pExpr_List(Expr\List_ $node) {
         $pList = array();
         foreach ($node->vars as $var) {
             if (null === $var) {
@@ -440,7 +469,7 @@ class Converter extends PrettyPrinterAbstract
         }
 
         return 'list(' . implode(', ', $pList) . ')';
-    }
+    }*/
 
     // Other
 
@@ -533,6 +562,7 @@ class Converter extends PrettyPrinterAbstract
     // Declarations
 
     public function pStmt_Namespace(Stmt\Namespace_ $node) {
+        $this->actualNamespace =  $this->p($node->name);
         if ($this->canUseSemicolonNamespaces) {
             return 'namespace ' . $this->p($node->name) . ';' . "\n" . $this->pStmts($node->stmts, false);
         } else {
@@ -555,12 +585,15 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Interface(Stmt\Interface_ $node) {
+        $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         return 'interface ' . $node->name
              . (!empty($node->extends) ? ' extends ' . $this->pCommaSeparated($node->extends) : '')
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
     public function pStmt_Class(Stmt\Class_ $node) {
+        $this->classes[] = $this->actualNamespace . '\\' . $node->name;
+        $this->class = $node->name;
         return $this->pModifiers($node->type)
              . 'class ' . $node->name
              . (null !== $node->extends ? ' extends ' . $this->p($node->extends) : '')
@@ -602,15 +635,39 @@ class Converter extends PrettyPrinterAbstract
              . (null !== $node->default ? ' = ' . $this->p($node->default) : '');
     }
 
+    private function collectVars($node)
+    {
+    	$vars = array();
+    	if (is_array($node) === true) {
+    		$nodes = $node;
+    	} elseif (method_exists($node, 'getIterator') === true) {
+    		$nodes = $node->getIterator();
+    	} else {
+    		return $vars;
+    	}
+
+    	foreach ($nodes as $stmt) {
+    		if ($stmt instanceof Expr\Assign) {
+    			if (($stmt->var instanceof Expr\PropertyFetch) === false) {
+    				$vars[] = $stmt->var->name;
+    			}
+    		}
+
+    		$vars = array_merge($vars, $this->collectVars($stmt));
+    	}
+
+    	return $vars;
+    }
+
     public function pStmt_ClassMethod(Stmt\ClassMethod $node) {
-        $types = $this->typeFinder->getTypes($node, $this->class, $this->use);
+        $types = $this->typeFinder->getTypes($node, $this->actualNamespace, $this->use, $this->classes);
 
         $stmt = $this->pModifiers($node->type) . 'function ' . ($node->byRef ? '&' : '') . $node->name . '(';
 
         if (isset($types['params']) === true) {
             $params = array();
             foreach ($types['params'] as $type) {
-                $params[] = $this->printType($type) . ' ' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $type['default']);
+                $params[] = $this->printType($type) . ' $' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $this->p($type['default']));
             }
 
             $stmt .= implode(', ', $params);
@@ -618,21 +675,40 @@ class Converter extends PrettyPrinterAbstract
 
         $stmt .= ")";
 
-        if (isset($types['return']) === false) {
+        if (array_key_exists('return', $types) === false && $this->haveReturnTag($node) === false) {
             $stmt .= ' ->  void ';
-        } elseif(isset($types['return']) === true && isset($types['return']['value']) === true && $types['return']['value'] !== '') {
+        } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
             $stmt .= ' -> ' . $this->printType($types['return']);
         }
 
-        $stmt .= (null !== $node->stmts ? "\n{" . $this->pStmts($node->stmts) . "\n}" : ';') . "\n";
+        $var = '';
+        $vars  = array_unique(array_filter($this->collectVars($node)));
+        if (!empty($vars)) {
+        	$var .= "\n    var " . implode(', ', $vars) . ";\n";
+        }
+
+        $stmt .= (null !== $node->stmts ? "\n{" . $var . $this->pStmts($node->stmts) . "\n}" : ';') . "\n";
 
         return $stmt;
+    }
+
+    private function haveReturnTag(Stmt\ClassMethod $node)
+    {
+        if (empty($node->stmts) === false) {
+            foreach ($node->stmts as $stmt) {
+                if ($stmt instanceof Stmt\Return_) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function printType($type)
     {
         if (isset($type['type']) === false) {
-            throw new \Exception('tpye not found');
+            return '';
         }
         if (isset($type['type']['isClass']) === false) {
             throw new \Exception('isClass not found');
@@ -666,27 +742,61 @@ class Converter extends PrettyPrinterAbstract
         return $node->key . ' = ' . $this->p($node->value);
     }
 
+    private function cleanCondition($node, $head)
+    {
+        if ($node->left instanceof Expr\Assign) {
+            throw new \Exception('Left assign not supported');
+            var_dump('assignl', $node->left);exit;
+        }
+
+        if ($node->left instanceof BinaryOp) {
+            $returned = $this->cleanCondition($node->left, $head);
+            $head = $returned['head'];
+            $node->left = $returned['node'];
+        }
+
+        if ($node->right instanceof BinaryOp) {
+            $returned = $this->cleanCondition($node->right, $head);
+            $head = $returned['head'];
+            $node->right = $returned['node'];
+        }
+
+        // this is yoda ! invert condition
+        if ($node->left instanceof Expr\ConstFetch) {
+            $left = $node->left;
+            $right = $node->right;
+            $node->left = $right;
+            $node->right = $left;
+        }
+
+        // this is tmp var
+        if ($node->right instanceof Expr\Array_) {
+            $head .= "var tmp;\n let tmp = " . $this->p($node->right) . ";\n";
+            $node->right = new Expr\Variable('tmp');
+        }
+
+        if ($node->right instanceof Expr\Assign) {
+            $head .= 'var ' . $this->p($node->right->var) . ';' . "\n";
+            $head .= $this->p($node->right) . ";\n";
+            $node->right = new Expr\Variable($node->right->var->name);
+        }
+
+        if ($node->left instanceof Expr\Assign) {
+            $head .= 'var ' . $this->p($node->left->var) . ';' . "\n";
+            $head .= $this->p($node->left) . ";\n";
+            $node->left = new Expr\Variable($node->left->var->name);
+        }
+
+        return array('head' => $head, 'node' => $node);
+    }
+
     // Control flow
 
     public function pStmt_If(Stmt\If_ $node) {
         $head = '';
-        if ($node->cond instanceof Expr\Assign) {
-            var_dump('assign', $node->cond);
-        }
-        if ($node->cond->left instanceof Expr\Assign) {
-            var_dump('assignl', $node->cond->left);exit;
-        } else {
-
-        }
-		
-		var_dump($node);
-
-        if ($node->cond->right instanceof Expr\Assign) {
-            $head .= 'var ' . $this->p($node->cond->right->var) . ';' . "\n";
-            $head .= $this->p($node->cond->right) . ";\n";
-            //var_dump($node->cond->right->var->name);exit;
-            $node->cond->right = new Expr\Variable($node->cond->right->var->name);
-        }
+        $returned = $this->cleanCondition($node->cond, $head);
+        $head = $returned['head'];
+        $node->cond = $returned['node'];
 
         return $head . 'if (' . $this->p($node->cond) . ') {'
              . $this->pStmts($node->stmts) . "\n" . '}'
@@ -729,8 +839,53 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Switch(Stmt\Switch_ $node) {
-        return 'switch (' . $this->p($node->cond) . ') {'
+    	$transformToIf = false;
+    	foreach ($node->cases as $case) {
+    		if (($case->cond instanceof \PhpParser\Node\Scalar\String) === false && $case->cond !== null) {
+    			$transformToIf = true;
+    		}
+    	}
+
+    	if ($transformToIf === true) {
+    		$stmt = '';
+    		$ifDefined = false;
+    		$left = null;
+
+    		foreach ($node->cases as $case) {
+    			if ($case->cond === null) {
+    				$key       = array_keys($case->stmts);
+    				$breakStmt = $case->stmts[end($key)];
+
+    				if ($breakStmt instanceof \PhpParser\Node\Stmt\Break_) {
+    					unset($case->stmts[end($key)]);
+    				}
+    				$stmt .= $this->pStmt_Else(new \PhpParser\Node\Stmt\Else_($case->stmts));
+    			} else {
+    				if (empty($case->stmts)) { // concatene empty statement
+    					if ($left !== null) {
+    						$left = new BinaryOp\BooleanOr($left, $case->cond);
+    					} else {
+    						$left = $case->cond;
+    					}
+    				} elseif ($ifDefined === false) {
+    					if ($left !== null) {
+    						$stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($left, array('stmts' => $case->stmts)));
+    						$left = array();
+    					} else {
+    						$stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts)));
+    					}
+    					$ifDefined = true;
+    				} else {
+    					$stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
+    				}
+    			}
+    		}
+
+    		return $stmt;
+    	} else {
+        	return 'switch (' . $this->p($node->cond) . ') {'
              . $this->pStmts($node->cases) . "\n" . '}';
+    	}
     }
 
     public function pStmt_Case(Stmt\Case_ $node) {
@@ -747,7 +902,7 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Catch(Stmt\Catch_ $node) {
-        return ' catch (' . $this->p($node->type) . ' $' . $node->var . ') {'
+        return ' catch ' . $this->p($node->type) . ', $' . $node->var . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
@@ -756,7 +911,9 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Continue(Stmt\Continue_ $node) {
-        return 'continue' . ($node->num !== null ? ' ' . $this->p($node->num) : '') . ';';
+    	echo 'Alert "continue $number;" no supported on line ' . $node->getLine() . ' in file "' . $this->fileName . '", replace by continue;' . "\n";
+
+        return 'continue;';
     }
 
     public function pStmt_Return(Stmt\Return_ $node) {
@@ -795,10 +952,10 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Unset(Stmt\Unset_ $node) {
-		$unset = '';
-		foreach ($node->vars as $var) {
-			$unset .= 'unset(' . $this->p($var) . ');' . "\n";
-		}
+        $unset = '';
+        foreach ($node->vars as $var) {
+            $unset .= 'unset(' . $this->p($var) . ');' . "\n";
+        }
         return $unset;
     }
 

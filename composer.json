@@ -4,7 +4,9 @@
         "phpdocumentor/reflection-docblock": "dev-master",
         "symfony/event-dispatcher": "dev-master",
         "symfony/dependency-injection" : "dev-master",
-        "phalcon/zephir": "~0.5"
+        "phalcon/zephir": "0.5.*",
+        "phpunit/phpunit": "4.3.*",
+        "symfony/symfony": "dev-master"
     },
     "autoload": {
         "psr-0": {

@@ -2,13 +2,14 @@
 
 namespace PhpToZephir;
 
-use phpDocumentor\Reflection\DocBlock\Tag\SeeTag;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlock\Tag;
 use phpDocumentor\Reflection\DocBlock\Tag\ParamTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ReturnTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ThrowsTag;
+use phpDocumentor\Reflection\DocBlock\Tag\SeeTag;
 
 class TypeFinder
 {
@@ -19,75 +20,137 @@ class TypeFinder
 
     /**
      * @param ClassMethod $node
+     * @param string $actualNamespace
+     * @param array $use
+     * @param array $classes
+     * @param array $definition
+     * @return array
      */
-    public function getTypes(ClassMethod $node, $actualClass, array $use, $definition = array())
+    private function parseParam(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition)
     {
-        $attribute = $node->getAttributes();
-        if (isset($attribute['comments']) === false) {
-            return array();
-        }
+    	if (isset($definition['params']) === false) {
+    		$definition['params'] = array();
+    	}
 
-        $docBlock = $attribute['comments'][0]->getText();
-        $phpdoc = new DocBlock($docBlock);
+       foreach ($node->params as $param) {
+          $params = array();
+          $params['name'] = $param->name;
+          $params['default'] = $param->default;
+          $params['type'] = null;
 
-        return $this->parseTags($phpdoc->getTags(), $actualClass, $definition, $node, $use);
+          /* @var $param \PhpParser\Node\Param */
+          if ($param->type === null) { // scalar or not strong typed in method
+             $docBlock = $this->nodeToDocBlock($node);
+             if ($docBlock !== null) {
+                $params['type'] = $this->foundTypeInCommentForVar($docBlock, $param,  $actualNamespace, $use, $classes);
+             }
+          } elseif ($param->type instanceof \PhpParser\Node\Name) {
+             $className = implode('\\', $param->type->parts);
+             $params['type']['value'] = $this->searchClass($className, $actualNamespace, $use, $classes);
+             $params['type']['isClass'] = true;
+          }
+
+          $definition['params'][] = $params;
+       }
+
+       return $definition;
     }
 
     /**
-     * @param array $tags
-     * @throws \Exception
+     * @param ClassMethod $node
+     * @return NULL|\phpDocumentor\Reflection\DocBlock
      */
-    private function parseTags(array $tags, $actualClass, $definition, ClassMethod $node, $use)
+    private function nodeToDocBlock(ClassMethod $node)
     {
-        foreach ($tags as $tag) {
-            if ($tag instanceof SeeTag) {
-                $definition = $this->parseSeeTag($tag, $actualClass, $definition, $node, $use);
-                continue;
-            } elseif ($tag instanceof ParamTag) {
-                if (isset($definition['params']) === false) {
-                    $definition['params'] = array();
-                }
+       $attribute = $node->getAttributes();
 
-                $paramed = null;
-                foreach ($node->params as $param) {
-                    if ($param->name === str_replace('$', '', $tag->getVariableName())) {
-                        $paramed = $param;
-                    }
-                }
+       if (isset($attribute['comments']) === false || isset($attribute['comments'][0]) === false) {
+          return null;
+       }
 
-                if ($paramed === null) {
-                    throw new \Exception('not found');
-                }
+       $docBlock = $attribute['comments'][0]->getText();
 
-                $default = null;
-                if ($paramed->default !== null) {
-                    $defaultParamed = $paramed->default;
-                    if (!empty($defaultParamed)) {
-                        $name = $defaultParamed->name;
-                        if (!empty($name)) {
-                            $parts = $name->parts;
-                            $default = $parts[0];
-                        }
-                    }
-                }
+       return new DocBlock($docBlock);
+    }
 
-                $definition['params'][] = array(
-                    'name'    => $tag->getVariableName(),
-                    'type'    => $this->findType($tag, $actualClass, $use),
-                    'default' => $default
-                );
-            } elseif ($this->isReturnTag($tag) === true) {
-                if (isset($definition['return']) === true) {
-                    continue;
-                }
+    /**
+     * @param DocBlock $phpdoc
+     * @param Param $param
+     * @param string $actualNamespace
+     * @param array $use
+     * @param array $classes
+     * @return null|array
+     */
+    private function foundTypeInCommentForVar(DocBlock $phpdoc, Param $param, $actualNamespace, array $use, array $classes)
+    {
+        foreach ($phpdoc->getTags() as $tag) {
+           if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\ParamTag) {
+              if ($param->name === substr($tag->getVariableName(), 1)) {
 
+                 return $this->findType($tag, $actualNamespace, $use, $classes);
+              }
+           }
+        }
+
+        foreach ($phpdoc->getTags() as $tag) {
+           /* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
+           if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
+              $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
+              return $this->foundTypeInCommentForVar($seeDocBlock, $param, $actualNamespace, $use, $classes);
+           }
+        }
+
+       return null;
+    }
+
+    /**
+     * @param ClassMethod $node
+     * @param string $actualNamespace
+     * @param array $use
+     * @param array $classes
+     * @param array $definition
+     * @retur narray
+     */
+    public function getTypes(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition = array())
+    {
+        $definition = $this->parseParam($node, $actualNamespace, $use, $classes, $definition);
+
+
+        $phpdoc = $this->nodeToDocBlock($node);
+
+        if ($phpdoc === null) {
+        	return $definition;
+        }
+
+        return $this->findReturnTag($phpdoc, $actualNamespace, $definition, $use, $classes);
+    }
+
+
+    /**
+     * @param ClassMethod $node
+     * @param string $actualNamespace
+     * @param array $definition
+     * @param array $use
+     * @param array $classes
+     * @return array
+     */
+    private function findReturnTag($phpdoc, $actualNamespace, array $definition, array $use, array $classes)
+    {
+        foreach ($phpdoc->getTags() as $tag) {
+            if ($this->isReturnTag($tag) === true) {
                 $definition['return'] = array(
-                    'type' => $this->findType($tag, $actualClass, $use)
+                    'type' => $this->findType($tag, $actualNamespace, $use, $classes)
                 );
-            } else {
-                continue;
             }
         }
+
+        /* foreach ($phpdoc->getTags() as $tag) {
+        	/* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
+        	/*if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
+        		$seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
+        		return ($this->findReturnTag($seeDocBlock, $actualNamespace, $definition, $use, $classes));
+        	}
+        }*/
 
         return $definition;
     }
@@ -98,7 +161,7 @@ class TypeFinder
      */
     private function isReturnTag(Tag $tag)
     {
-        if ($tag instanceof ReturnTag && ($tag instanceof ThrowsTag) === false) {
+        if ($tag instanceof ReturnTag && ($tag instanceof ThrowsTag) === false && ($tag instanceof ParamTag) === false) {
             return true;
         } else {
             return false;
@@ -109,7 +172,7 @@ class TypeFinder
      * @param string $rawType
      * @return string
      */
-    private function findType($tag, $actualClass, $use)
+    private function findType($tag, $actualNamespace, array $use, array $classes)
     {
         // @TODO add ressource
         $type           = array();
@@ -123,10 +186,11 @@ class TypeFinder
             'boolean',
             'array',
             'null',
-            'callable'
+            'callable',
+        	'scalar'
         );
 
-        if ($rawType === 'mixed' || $rawType === 'callable' || $rawType === 'callable[]') {
+        if ($rawType === 'mixed' || $rawType === 'callable' || $rawType === 'callable[]'  || $rawType === 'scalar' || $rawType === 'scalar[]') {
             return array('value' => '', 'isClass' => false);
         }
 
@@ -137,10 +201,21 @@ class TypeFinder
         } elseif (in_array($rawType, $arrayOfPrimitiveTypes)) {
             $type = array('value' => $rawType, 'isClass' => false);
         } else { // considered as class
-            $type = array('value' => $this->searchClass($rawType, $actualClass, $use), 'isClass' => true);
+            $type = array('value' => $this->searchClass($rawType, $actualNamespace, $use, $classes), 'isClass' => true);
         }
 
         return $type;
+    }
+
+    private function cleanClass($class)
+    {
+       $class = str_replace('\\\\', '\\', $class);
+
+       if (substr($class, 0, 1) === '\\') {
+       		return substr($class, 1);
+       } else {
+       	return $class;
+       }
     }
 
     /**
@@ -149,18 +224,17 @@ class TypeFinder
      * @throws \Exception
      * @return unknown
      */
-    private function searchClass($classReference, $actualClass, $uses)
+    private function searchClass($classReference, $actualNamespace, array $uses, array $classes)
     {
-        $classReference   = str_replace('\\\\', '\\', $classReference);
-        $actualClassAdded = substr($actualClass, 0, strrpos($actualClass, '\\')) . '\\' . $classReference;
-        $actualClassAdded = str_replace('\\\\', '\\', $actualClassAdded);
-        $fullClass = null;
-        $possibleClass = array($classReference, $actualClassAdded);
+        $classReference           = $this->cleanClass($classReference);
+        $classWithActualNamespace = $this->cleanClass($actualNamespace . '\\' . $classReference);
+        $fullClass                = null;
+        $possibleClass            = array($classReference, $classWithActualNamespace);
 
-        if ($this->loadClass($classReference) === true) {
+        if ($this->loadClass($classReference) === true || in_array($classReference, $classes) === true) {
             $fullClass = $classReference;
-        } elseif ($this->loadClass($actualClassAdded) === true) {
-            $fullClass = $actualClassAdded;
+        } elseif ($this->loadClass($classWithActualNamespace) === true || in_array($classWithActualNamespace, $classes) === true) {
+            $fullClass = $classWithActualNamespace;
         } else {
             // test the use
             foreach ($uses as $use) {
@@ -178,47 +252,28 @@ class TypeFinder
             }
 
             if ($fullClass === null) {
-                throw new \Exception(sprintf('Class "%s" not found refrenced in "%s"', implode(' or ', $possibleClass), $actualClass));
+                throw new \Exception(sprintf('Class "%s" not found refrenced in "%s"', implode(' or ', $possibleClass), $actualNamespace));
             }
         }
 
-        $fullClass = str_replace('\\\\', '\\', $fullClass);
-
-        return '\\' . $fullClass;
+        return '\\' . $this->cleanClass($fullClass);
     }
     /**
      * @param Tag $tag
      * @throws \Exception
      */
-    private function parseSeeTag(SeeTag $tag, $actualClass, $definition, $node, $use)
+    private function findSeeDocBlock(SeeTag $tag, $actualNamespace, array $use, array $classes)
     {
         $classReference = strstr($tag->getReference(), '::', true);
         $methodRefrence = str_replace('::', '', strstr($tag->getReference(), '::'));
-        $fullClass      = $this->searchClass($classReference, $actualClass, $use);
+        $fullClass      = $this->searchClass($classReference, $actualNamespace, $use, $classes);
 
         $rc = new \ReflectionClass($fullClass);
         if ($rc->hasMethod($methodRefrence) === false) {
             throw new \Exception('Method does not exist');
         }
 
-        $forceReturnType = false;
-        foreach ($tag->getDocBlock()->getTags() as $childTag) {
-            if ($this->isReturnTag($childTag) === true) {
-                $forceReturnType = $childTag;
-            }
-        }
-
-        $phpdoc = new DocBlock($rc->getMethod($methodRefrence));
-
-        $definition = $this->parseTags($phpdoc->getTags(), $fullClass, $definition, $node, $use);
-
-        if ($forceReturnType !== false) {
-            $definition['return'] = array(
-                'type' => $this->findType($forceReturnType, $actualClass, $use)
-            );
-        }
-
-        return $definition;
+        return new DocBlock($rc->getMethod($methodRefrence)->getDocComment());
     }
 
     /**
