@@ -20,16 +20,16 @@ $classLoader = new \Composer\Autoload\ClassLoader();
 try {
     $engine = EngineFactory::getInstance();
 
-    $dirPath = __DIR__ . '/vendor/symfony/yaml/Symfony/Component/Yaml/';
+    $dirPath = __DIR__ . '/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/';
 
     //var_dump($engine->convert('<?php $tutu[$toto++]; '));exit;
 
-    foreach ($engine->convertDirectory($dirPath, 'Symfony\Component\Yaml') as $convertedCode) {
-        echo 'Converted ' . strtolower('Symfony/Component/Yaml/' . $convertedCode['fileName']) . ".zep\n";
+    foreach ($engine->convertDirectory($dirPath) as $convertedCode) {
+        echo 'Converted ' . strtolower('Symfony/Component/EventDispatcher/' . $convertedCode['fileName']) . ".zep\n";
 
-        @mkdir(strtolower('Symfony/Component/Yaml/'), 0777, true);
+        @mkdir(strtolower('Symfony/Component/EventDispatcher/'), 0777, true);
         file_put_contents(
-            strtolower('Symfony/Component/Yaml/' . $convertedCode['fileName']) . '.zep',
+            strtolower('Symfony/Component/EventDispatcher/' . $convertedCode['fileName']) . '.zep',
             $convertedCode['zephir']
         );
     }
