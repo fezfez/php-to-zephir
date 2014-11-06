@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d2f09f508f31ea784aae47a071f85acf",
+    "hash": "393903a1a86238f43dec2812d5b8126b",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -107,16 +107,16 @@
         },
         {
             "name": "phalcon/zephir",
-            "version": "0.5.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/zephir.git",
-                "reference": "779f9e0062d996e933613017bbdd16980965caf3"
+                "reference": "054f45b725d7e9ce5e5bab01d4907ad4b00e6b64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/zephir/zipball/779f9e0062d996e933613017bbdd16980965caf3",
-                "reference": "779f9e0062d996e933613017bbdd16980965caf3",
+                "url": "https://api.github.com/repos/phalcon/zephir/zipball/054f45b725d7e9ce5e5bab01d4907ad4b00e6b64",
+                "reference": "054f45b725d7e9ce5e5bab01d4907ad4b00e6b64",
                 "shasum": ""
             },
             "require": {
@@ -164,7 +164,7 @@
             "keywords": [
                 "extension"
             ],
-            "time": "2014-10-24 16:03:18"
+            "time": "2014-11-05 02:12:24"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -858,6 +858,61 @@
             "time": "2014-03-07 15:35:33"
         },
         {
+            "name": "symfony/console",
+            "version": "v2.5.6",
+            "target-dir": "Symfony/Component/Console",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Console.git",
+                "reference": "6f177fca24200a5b97aef5ce7a5c98124a0f0db0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/6f177fca24200a5b97aef5ce7a5c98124a0f0db0",
+                "reference": "6f177fca24200a5b97aef5ce7a5c98124a0f0db0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/event-dispatcher": "~2.1"
+            },
+            "suggest": {
+                "psr/log": "For using the console logger",
+                "symfony/event-dispatcher": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Console\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony Console Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-10-05 13:57:04"
+        },
+        {
             "name": "symfony/dependency-injection",
             "version": "dev-master",
             "target-dir": "Symfony/Component/DependencyInjection",
@@ -1026,7 +1081,8 @@
     "stability-flags": {
         "phpdocumentor/reflection-docblock": 20,
         "symfony/event-dispatcher": 20,
-        "symfony/dependency-injection": 20
+        "symfony/dependency-injection": 20,
+        "phalcon/zephir": 20
     },
     "prefer-stable": false,
     "platform": [],

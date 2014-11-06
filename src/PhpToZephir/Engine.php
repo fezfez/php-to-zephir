@@ -57,12 +57,15 @@ class Engine
 
         	$phpCode  = file_get_contents($phpFile);
         	$fileName = $this->replaceReservedWords(basename($phpFile, '.php'));
+        	$converted = $this->convertCode($phpCode, $phpFile);
 
             $zephirCode[$phpFile] = array(
-                'zephir'    => $this->convertCode($phpCode, $phpFile),
+                'zephir'    => $converted['code'],
                 'php'       => $phpCode,
                 'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
-                'fileName'  => $fileName
+                'fileName'  => $fileName,
+            	'namespace' => $converted['namespace'],
+            	'destination' => str_replace('\\', '/', $converted['namespace']) . '/'
              );
         }
 
@@ -88,13 +91,14 @@ class Engine
     private function convertCode($phpCode, $fileName = null)
     {
         //try {
-            $code = $this->replaceReservedWords($this->converter->prettyPrint($this->parser->parse($phpCode), $fileName));
+        	$converted = $this->converter->prettyPrint($this->parser->parse($phpCode), $fileName);
+            $converted['code'] = $this->replaceReservedWords($converted['code']);
             // replace reserved work
 
         /*} catch (\Exception $e) {
             throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $class, $e->getMessage()));
         }*/
 
-        return $code;
+        return $converted;
     }
 }

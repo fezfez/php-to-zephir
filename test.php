@@ -22,14 +22,14 @@ try {
 
     $dirPath = __DIR__ . '/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/';
 
-    //var_dump($engine->convert('<?php $tutu[$toto++]; '));exit;
+    //var_dump($engine->convert('<?php $tutu[$i++][$i++][$i++]; '));exit;
 
     foreach ($engine->convertDirectory($dirPath) as $convertedCode) {
-        echo 'Converted ' . strtolower('Symfony/Component/EventDispatcher/' . $convertedCode['fileName']) . ".zep\n";
+        echo 'Converted ' . strtolower($convertedCode['destination'] . $convertedCode['fileName']) . ".zep\n";
 
-        @mkdir(strtolower('Symfony/Component/EventDispatcher/'), 0777, true);
+        @mkdir(strtolower($convertedCode['destination']), 0777, true);
         file_put_contents(
-            strtolower('Symfony/Component/EventDispatcher/' . $convertedCode['fileName']) . '.zep',
+            strtolower($convertedCode['destination'] . $convertedCode['fileName']) . '.zep',
             $convertedCode['zephir']
         );
     }

@@ -35,7 +35,11 @@ class Converter extends PrettyPrinterAbstract
 
     public function prettyPrint(array $stmts, $fileName = null) {
     	$this->fileName = $fileName;
-		return parent::prettyPrint($stmts);
+
+		return array(
+			'code' => parent::prettyPrint($stmts),
+			'namespace' => $this->actualNamespace
+		);
     }
 
     // Special nodes
@@ -491,7 +495,15 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) {
-        return $this->pVarOrNewExpr($node->var)
+    	$head = '';
+
+    	// @todo recursive
+    	if (($node->dim instanceof Expr\Variable) === false && ($node->dim instanceof Scalar) === false && $node->dim !== null) {
+			$head .= $this->p($node->dim) . ";\n";
+			$node->dim = $node->dim->var;
+    	}
+
+        return $head . $this->pVarOrNewExpr($node->var)
              . '[' . (null !== $node->dim ? $this->p($node->dim) : '') . ']';
     }
 
