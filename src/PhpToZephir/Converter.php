@@ -663,6 +663,11 @@ class Converter extends PrettyPrinterAbstract
     			if (($stmt->var instanceof Expr\PropertyFetch) === false) {
     				$vars[] = $stmt->var->name;
     			}
+    		} elseif ($stmt instanceof Stmt\Foreach_) {
+    			if (null !== $stmt->keyVar) {
+    				$vars[] = $stmt->keyVar->name;
+    			}
+    			$vars[] = $stmt->valueVar->name;
     		}
 
     		$vars = array_merge($vars, $this->collectVars($stmt));
@@ -675,10 +680,12 @@ class Converter extends PrettyPrinterAbstract
         $types = $this->typeFinder->getTypes($node, $this->actualNamespace, $this->use, $this->classes);
 
         $stmt = $this->pModifiers($node->type) . 'function ' . ($node->byRef ? '&' : '') . $node->name . '(';
+        $varsInMethodSign = array();
 
         if (isset($types['params']) === true) {
             $params = array();
             foreach ($types['params'] as $type) {
+            	$varsInMethodSign[] = $type['name'];
                 $params[] = $this->printType($type) . ' $' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $this->p($type['default']));
             }
 
@@ -694,7 +701,7 @@ class Converter extends PrettyPrinterAbstract
         }
 
         $var = '';
-        $vars  = array_unique(array_filter($this->collectVars($node)));
+        $vars  = array_diff(array_unique(array_filter($this->collectVars($node))), $varsInMethodSign);
         if (!empty($vars)) {
         	$var .= "\n    var " . implode(', ', $vars) . ";\n";
         }
@@ -834,8 +841,7 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_Foreach(Stmt\Foreach_ $node) {
-        return 'var ' .(null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '') . $this->p($node->valueVar) . ';' . "\n\n" .
-               'for ' . (null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '') . $this->p($node->valueVar) .
+        return 'for ' . (null !== $node->keyVar ? $this->p($node->keyVar) . ', ' : '') . $this->p($node->valueVar) .
                ' in ' . $this->p($node->expr) . ' {' .
                $this->pStmts($node->stmts) . "\n" . '}';
     }
