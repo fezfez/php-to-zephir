@@ -18,18 +18,15 @@ install:
   - ./configure
   - make
   - sudo make install
-  - wget https://github.com/phalcon/zephir/archive/master.zip -O zephir
-  - unzip -q zephir
-  - cd zephir-master
-  - sudo ./install -c
-  - zephir
   - phpize -v
-
-before_script:
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - sudo php ./bin/php-to-zephir.php phpToZephir:convertDir ./vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/
-  - zephir build
+  - ./vendor/bin/zephir install
+  - ./vendor/bin/zephir
 
-script: php -dextension=Symfony.so ./vendor/bin/phpunit
+before_script:
+  - sudo php ./bin/php-to-zephir.php phpToZephir:convertDir ./vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/
+  - ./vendor/bin/zephir build
+
+script: php -dextension=symfony.so ./vendor/bin/phpunit
