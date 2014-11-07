@@ -479,9 +479,9 @@ class Converter extends PrettyPrinterAbstract
 
     public function pExpr_Variable(Expr\Variable $node) {
         if ($node->name instanceof Expr) {
-            return '${' . $this->p($node->name) . '}';
+            return '{' . $this->p($node->name) . '}';
         } else {
-            return '$' . $node->name;
+            return '' . $node->name;
         }
     }
 
@@ -676,12 +676,37 @@ class Converter extends PrettyPrinterAbstract
                 if ($stmt->left instanceof Expr\Assign) {
                     $vars[] = $stmt->left->var->name;
                 }
+            } elseif ($stmt instanceof Stmt\Catch_) {
+                $vars[] = $stmt->var;
             }
 
             $vars = array_merge($vars, $this->collectVars($stmt));
         }
 
         return $vars;
+    }
+
+    private function hasReturnStatement($node)
+    {
+        $hasReturn = false;
+        if (is_array($node) === true) {
+            $nodes = $node;
+        } elseif (method_exists($node, 'getIterator') === true) {
+            $nodes = $node->getIterator();
+        } else {
+            return $hasReturn;
+        }
+
+        foreach ($nodes as $stmt) {
+            if ($stmt instanceof Stmt\Return_) {
+                $hasReturn = true;
+                return $hasReturn;
+            }
+
+            $hasReturn = $this->hasReturnStatement($stmt);
+        }
+
+        return $hasReturn;
     }
 
     public function pStmt_ClassMethod(Stmt\ClassMethod $node) {
@@ -694,7 +719,8 @@ class Converter extends PrettyPrinterAbstract
             $params = array();
             foreach ($types['params'] as $type) {
                 $varsInMethodSign[] = $type['name'];
-                $params[] = $this->printType($type) . ' $' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $this->p($type['default']));
+                $stringType = $this->printType($type);
+                $params[] = ((!empty($stringType)) ? $stringType . ' ' : '') . '$' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $this->p($type['default']));
             }
 
             $stmt .= implode(', ', $params);
@@ -702,8 +728,9 @@ class Converter extends PrettyPrinterAbstract
 
         $stmt .= ")";
 
-        if (array_key_exists('return', $types) === false && $this->haveReturnTag($node) === false) {
-            $stmt .= ' ->  void ';
+        $hasReturn = $this->hasReturnStatement($node);
+        if (array_key_exists('return', $types) === false && $this->haveReturnTag($node) === false && $hasReturn === false) {
+            $stmt .= ' -> void';
         } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
             $stmt .= ' -> ' . $this->printType($types['return']);
         }
@@ -771,8 +798,9 @@ class Converter extends PrettyPrinterAbstract
 
     private function cleanCondition($node, $head)
     {
-        if ($node->left instanceof Expr\Assign) {
-            throw new \Exception('Left assign not supported');
+        if ($node instanceof Expr\Assign) {
+        	$head .= $this->pExpr_Assign($node) . ";\n\n";
+        	$node = new Expr\Variable($node->var->name);
         }
 
         if ($node->left instanceof BinaryOp) {
@@ -801,15 +829,33 @@ class Converter extends PrettyPrinterAbstract
             $node->right = new Expr\Variable('tmp');
         }
 
+        if ($node->right instanceof Expr\Assign && $node->right->expr instanceof BinaryOp) {
+        	$returned = $this->cleanCondition($node->right->expr, $head);
+        	//var_dump('right', $returned);
+        	$head = $returned['head'];
+        	$node->right->expr = $returned['node'];
+        }
+
+        if ($node->left instanceof Expr\Assign && $node->left->expr instanceof BinaryOp) {
+        	$returned = $this->cleanCondition($node->left->expr, $head);
+        	//var_dump('left', $returned);
+        	$head = $returned['head'];
+        	$node->left->expr = $returned['node'];
+        }
+
+
         if ($node->right instanceof Expr\Assign) {
-            $head = $this->p($node->right) . ";\n";
-            $node->right = new Expr\Variable($node->right->var->name);
+        	//var_dump('assign right', $node->right);
+        	$head .= $this->p($node->right) . ";\n";
+        	$node->right = new Expr\Variable($node->right->var->name);
         }
 
         if ($node->left instanceof Expr\Assign) {
-            $head = $this->p($node->left) . ";\n";
-            $node->left = new Expr\Variable($node->left->var->name);
+        	//var_dump('assign right');
+        	$head .= $this->p($node->left) . ";\n";
+        	$node->left = new Expr\Variable($node->left->var->name);
         }
+
 
         return array('head' => $head, 'node' => $node);
     }
@@ -822,14 +868,14 @@ class Converter extends PrettyPrinterAbstract
         $head = $returned['head'];
         $node->cond = $returned['node'];
 
-        return $head . 'if (' . $this->p($node->cond) . ') {'
+        return $head . 'if ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}'
              . $this->pImplode($node->elseifs)
              . (null !== $node->else ? $this->p($node->else) : '');
     }
 
     public function pStmt_ElseIf(Stmt\ElseIf_ $node) {
-        return ' elseif (' . $this->p($node->cond) . ') {'
+        return ' elseif ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
@@ -838,11 +884,11 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pStmt_For(Stmt\For_ $node) {
-        return 'for ('
+        return 'for '
              . $this->pCommaSeparated($node->init) . ';' . (!empty($node->cond) ? ' ' : '')
              . $this->pCommaSeparated($node->cond) . ';' . (!empty($node->loop) ? ' ' : '')
              . $this->pCommaSeparated($node->loop)
-             . ') {' . $this->pStmts($node->stmts) . "\n" . '}';
+             . ' {' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
     public function pStmt_Foreach(Stmt\Foreach_ $node) {
@@ -861,6 +907,62 @@ class Converter extends PrettyPrinterAbstract
              . '} while (' . $this->p($node->cond) . ');';
     }
 
+    private function removeBreakStmt($case)
+    {
+        if (is_array($case->stmts) && !empty($case->stmts)) {
+            $key = array_keys($case->stmts);
+
+            $breakStmt = $case->stmts[end($key)];
+
+            if ($breakStmt instanceof \PhpParser\Node\Stmt\Break_) {
+                unset($case->stmts[end($key)]);
+            }
+        }
+
+        return $case;
+    }
+
+    private function convertSwitchToIfelse(Stmt\Switch_ $node)
+    {
+        $stmt = '';
+        $ifDefined = false;
+        $left = null;
+
+        foreach ($node->cases as $case) {
+            $case = $this->removeBreakStmt($case);
+            if (end($node->cases) === $case) {
+                $stmt .= $this->pStmt_Else(new \PhpParser\Node\Stmt\Else_($case->stmts));
+            } else {
+                if (empty($case->stmts)) { // concatene empty statement
+                    if ($left !== null) {
+                        $left = new BinaryOp\BooleanOr($left, $case->cond);
+                    } else {
+                        $left = $case->cond;
+                    }
+                } elseif ($ifDefined === false) {
+                    if ($left !== null) {
+                    	$lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
+                        $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($lastLeft, array('stmts' => $case->stmts)));
+                        $left = array();
+                    } else {
+                        $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts)));
+                    }
+                    $ifDefined = true;
+                } else {
+                	if ($left !== null) {
+                		$lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
+                		$stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts));
+                		$left = array();
+                	} else {
+                		$stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
+                	}
+                }
+            }
+        }
+
+        return $stmt;
+    }
+
     public function pStmt_Switch(Stmt\Switch_ $node) {
         $transformToIf = false;
         foreach ($node->cases as $case) {
@@ -870,41 +972,7 @@ class Converter extends PrettyPrinterAbstract
         }
 
         if ($transformToIf === true) {
-            $stmt = '';
-            $ifDefined = false;
-            $left = null;
-
-            foreach ($node->cases as $case) {
-                if ($case->cond === null) {
-                    $key       = array_keys($case->stmts);
-                    $breakStmt = $case->stmts[end($key)];
-
-                    if ($breakStmt instanceof \PhpParser\Node\Stmt\Break_) {
-                        unset($case->stmts[end($key)]);
-                    }
-                    $stmt .= $this->pStmt_Else(new \PhpParser\Node\Stmt\Else_($case->stmts));
-                } else {
-                    if (empty($case->stmts)) { // concatene empty statement
-                        if ($left !== null) {
-                            $left = new BinaryOp\BooleanOr($left, $case->cond);
-                        } else {
-                            $left = $case->cond;
-                        }
-                    } elseif ($ifDefined === false) {
-                        if ($left !== null) {
-                            $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($left, array('stmts' => $case->stmts)));
-                            $left = array();
-                        } else {
-                            $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts)));
-                        }
-                        $ifDefined = true;
-                    } else {
-                        $stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
-                    }
-                }
-            }
-
-            return $stmt;
+            return $this->convertSwitchToIfelse($node);
         } else {
             return 'switch (' . $this->p($node->cond) . ') {'
              . $this->pStmts($node->cases) . "\n" . '}';
@@ -1003,7 +1071,7 @@ class Converter extends PrettyPrinterAbstract
     public function pModifiers($modifiers) {
         return ($modifiers & Stmt\Class_::MODIFIER_PUBLIC    ? 'public '    : '')
              . ($modifiers & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
-             . ($modifiers & Stmt\Class_::MODIFIER_PRIVATE   ? 'private '   : '')
+             . ($modifiers & Stmt\Class_::MODIFIER_PRIVATE   ? 'protected '   : '') // due to #issues/251
              . ($modifiers & Stmt\Class_::MODIFIER_STATIC    ? 'static '    : '')
              . ($modifiers & Stmt\Class_::MODIFIER_ABSTRACT  ? 'abstract '  : '')
              . ($modifiers & Stmt\Class_::MODIFIER_FINAL     ? 'final '     : '');

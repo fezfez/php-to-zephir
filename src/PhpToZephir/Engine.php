@@ -48,7 +48,7 @@ class Engine
      * @param string $dir
      * @return array
      */
-    public function convertDirectory($dir)
+    public function convertDirectory($dir, $recursive = true)
     {
         $zephirCode = array();
         $fileExtension = '.php';
@@ -67,6 +67,16 @@ class Engine
             	'namespace' => $converted['namespace'],
             	'destination' => str_replace('\\', '/', $converted['namespace']) . '/'
              );
+        }
+
+        if ($recursive === true) {
+        	$paths = glob($dir. '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
+        	foreach ($paths as $recursiveDir) {
+        		$zephirCode = array_merge(
+        			$zephirCode,
+        			$this->convertDirectory($recursiveDir, $recursive)
+        		);
+        	}
         }
 
         return $zephirCode;

@@ -28,9 +28,9 @@ class TypeFinder
      */
     private function parseParam(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition)
     {
-    	if (isset($definition['params']) === false) {
-    		$definition['params'] = array();
-    	}
+        if (isset($definition['params']) === false) {
+            $definition['params'] = array();
+        }
 
        foreach ($node->params as $param) {
           $params = array();
@@ -119,7 +119,7 @@ class TypeFinder
         $phpdoc = $this->nodeToDocBlock($node);
 
         if ($phpdoc === null) {
-        	return $definition;
+            return $definition;
         }
 
         return $this->findReturnTag($phpdoc, $actualNamespace, $definition, $use, $classes);
@@ -145,11 +145,11 @@ class TypeFinder
         }
 
         /* foreach ($phpdoc->getTags() as $tag) {
-        	/* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
-        	/*if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
-        		$seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
-        		return ($this->findReturnTag($seeDocBlock, $actualNamespace, $definition, $use, $classes));
-        	}
+            /* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
+            /*if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
+                $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
+                return ($this->findReturnTag($seeDocBlock, $actualNamespace, $definition, $use, $classes));
+            }
         }*/
 
         return $definition;
@@ -182,15 +182,20 @@ class TypeFinder
             'int',
             'integer',
             'float',
+            'double',
             'bool',
             'boolean',
             'array',
             'null',
             'callable',
-        	'scalar'
+            'scalar',
+            'void',
+            'object'
         );
 
-        if ($rawType === 'mixed' || $rawType === 'callable' || $rawType === 'callable[]'  || $rawType === 'scalar' || $rawType === 'scalar[]') {
+        $excludedType = array('mixed', 'callable', 'callable[]', 'scalar', 'scalar[]', 'void', 'object', 'self');
+
+        if (in_array($rawType, $excludedType) === true || count(explode('|', $rawType)) !== 1) {
             return array('value' => '', 'isClass' => false);
         }
 
@@ -212,9 +217,9 @@ class TypeFinder
        $class = str_replace('\\\\', '\\', $class);
 
        if (substr($class, 0, 1) === '\\') {
-       		return substr($class, 1);
+               return substr($class, 1);
        } else {
-       	return $class;
+           return $class;
        }
     }
 
@@ -265,12 +270,13 @@ class TypeFinder
     private function findSeeDocBlock(SeeTag $tag, $actualNamespace, array $use, array $classes)
     {
         $classReference = strstr($tag->getReference(), '::', true);
-        $methodRefrence = str_replace('::', '', strstr($tag->getReference(), '::'));
+        $methodRefrence = str_replace(array(':', '(', ')'), '', strstr($tag->getReference(), '::'));
         $fullClass      = $this->searchClass($classReference, $actualNamespace, $use, $classes);
 
         $rc = new \ReflectionClass($fullClass);
+
         if ($rc->hasMethod($methodRefrence) === false) {
-            throw new \Exception('Method does not exist');
+            throw new \Exception(sprintf('Method "%s" does not exist in "%s"', $methodRefrence, $fullClass));
         }
 
         return new DocBlock($rc->getMethod($methodRefrence)->getDocComment());
