@@ -29,7 +29,7 @@ before_script:
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - php test.php
+  - ./bin/php-to-zephir.php phpToZephir:convertDir ./vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/
   - zephir build
 
 script: php -dextension=Symfony.so ./vendor/bin/phpunit
