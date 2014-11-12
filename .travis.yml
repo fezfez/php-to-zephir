@@ -29,6 +29,6 @@ install:
 
 before_script:
   - ./vendor/bin/phpunit
-  - ./vendor/bin/zephir build
+  - zephir build
 
 script: php -dextension=code.so ./vendor/bin/phpunit
