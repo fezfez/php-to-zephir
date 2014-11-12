@@ -22,7 +22,7 @@ install:
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - ./vendor/bin/zephir
+  - sudo ./vendor/bin/zephir install
 
 before_script:
   - ./vendor/bin/phpunit
