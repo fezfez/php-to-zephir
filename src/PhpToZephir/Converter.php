@@ -13,6 +13,10 @@ use PhpParser\Node\Expr\Cast;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Name;
 use phpDocumentor\Reflection\DocBlock;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\BinaryOp\Equal;
+use PhpParser\Node\Scalar\String;
 
 
 class Converter extends PrettyPrinterAbstract
@@ -796,79 +800,90 @@ class Converter extends PrettyPrinterAbstract
         return $node->key . ' = ' . $this->p($node->value);
     }
 
-    private function cleanCondition($node, $head)
+    private function isBinaryOp($node)
     {
-        if ($node instanceof Expr\Assign) {
-        	$head .= $this->pExpr_Assign($node) . ";\n\n";
-        	$node = new Expr\Variable($node->var->name);
+        return is_object($node) && strstr(get_class($node), 'PhpParser\Node\Expr\BinaryOp\\') !== false;
+    }
+
+    private function isScalar($node)
+    {
+        return is_object($node) && strstr(get_class($node), 'PhpParser\Node\Scalar\\') !== false;
+    }
+
+    private function transformAssignInCondition($node)
+    {
+        if ($this->isBinaryOp($node) !== false) {
+            if ($node->right instanceof Assign) {
+                $node->right = $this->transformAssignInCondition($node->right);
+            } elseif ($node->right instanceof Expr\Array_) {
+                $node->right = new Expr\Variable('tmp');
+            } elseif ($this->isBinaryOp($node->right) !== false) {
+                $node->right = $this->transformAssignInCondition($node->right);
+            }
+            if ($node->left instanceof Expr\Array_) {
+                $node->left = new Expr\Variable('tmp');
+            } elseif ($this->isBinaryOp($node->left) !== false) {
+            	$node->left = $this->transformAssignInCondition($node->left);
+            } elseif ($node->left instanceof Expr\ConstFetch || $this->isScalar($node->left) !== false) {  // this is yoda ! invert condition
+                $left = $node->left;
+                $right = $node->right;
+                $node->left = $right;
+                $node->right = $left;
+            }
+
+        } elseif ($node instanceof Assign) {
+
+            if ($this->isBinaryOp($node->expr) !== false) {
+                $returned = $this->transformAssignInCondition($node->expr);
+
+                if ($this->isBinaryOp($returned) !== false) {
+                    $returned->left = $node->var;
+                    $finalNode = $returned;
+                }
+            } else {
+                $finalNode = $node->var;
+            }
+
+            return $finalNode;
         }
 
-        if ($node->left instanceof BinaryOp) {
-            $returned = $this->cleanCondition($node->left, $head);
-            $head = $returned['head'];
-            $node->left = $returned['node'];
+        return $node;
+    }
+
+    private function collectAssignInCondition($node, $collected = '')
+    {
+        if ($this->isBinaryOp($node) !== false) {
+            if ($node->right instanceof Assign) {
+                $collected = $this->collectAssignInCondition($node->right, $collected);
+            } elseif ($node->right instanceof Expr\Array_) {
+                $collected .= "var tmp;\nlet tmp = " . $this->p($node->right) . ";\n";
+            }
+            if ($node->left instanceof Expr\Array_) {
+                $collected .= "var tmp;\nlet tmp = " . $this->p($node->left) . ";\n";
+            }
+        } elseif ($node instanceof Assign) {
+            $rightCollected = '';
+            $tmpNode = clone $node;
+            if ($this->isBinaryOp($tmpNode->expr) !== false) {
+                $rightCollected = $this->collectAssignInCondition($tmpNode->expr, $collected);
+                $tmpNode->expr = $tmpNode->expr->left;
+            }
+
+            $collected .= $this->pExpr_Assign($tmpNode) . ";\n" . $rightCollected;
         }
 
-        if ($node->right instanceof BinaryOp) {
-            $returned = $this->cleanCondition($node->right, $head);
-            $head = $returned['head'];
-            $node->right = $returned['node'];
-        }
-
-        // this is yoda ! invert condition
-        if ($node->left instanceof Expr\ConstFetch) {
-            $left = $node->left;
-            $right = $node->right;
-            $node->left = $right;
-            $node->right = $left;
-        }
-
-        // this is tmp var
-        if ($node->right instanceof Expr\Array_) {
-            $head .= "var tmp;\n let tmp = " . $this->p($node->right) . ";\n";
-            $node->right = new Expr\Variable('tmp');
-        }
-
-        if ($node->right instanceof Expr\Assign && $node->right->expr instanceof BinaryOp) {
-        	$returned = $this->cleanCondition($node->right->expr, $head);
-        	//var_dump('right', $returned);
-        	$head = $returned['head'];
-        	$node->right->expr = $returned['node'];
-        }
-
-        if ($node->left instanceof Expr\Assign && $node->left->expr instanceof BinaryOp) {
-        	$returned = $this->cleanCondition($node->left->expr, $head);
-        	//var_dump('left', $returned);
-        	$head = $returned['head'];
-        	$node->left->expr = $returned['node'];
-        }
-
-
-        if ($node->right instanceof Expr\Assign) {
-        	//var_dump('assign right', $node->right);
-        	$head .= $this->p($node->right) . ";\n";
-        	$node->right = new Expr\Variable($node->right->var->name);
-        }
-
-        if ($node->left instanceof Expr\Assign) {
-        	//var_dump('assign right');
-        	$head .= $this->p($node->left) . ";\n";
-        	$node->left = new Expr\Variable($node->left->var->name);
-        }
-
-
-        return array('head' => $head, 'node' => $node);
+        return $collected;
     }
 
     // Control flow
 
-    public function pStmt_If(Stmt\If_ $node) {
-        $head = '';
-        $returned = $this->cleanCondition($node->cond, $head);
-        $head = $returned['head'];
-        $node->cond = $returned['node'];
+    public function pStmt_If(Stmt\If_ $node)
+    {
+        $condition = clone $node;
+        $collected = $this->collectAssignInCondition($condition->cond);
+        $node->cond = $this->transformAssignInCondition($node->cond);
 
-        return $head . 'if ' . $this->p($node->cond) . ' {'
+        return $collected . 'if ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}'
              . $this->pImplode($node->elseifs)
              . (null !== $node->else ? $this->p($node->else) : '');
@@ -941,7 +956,7 @@ class Converter extends PrettyPrinterAbstract
                     }
                 } elseif ($ifDefined === false) {
                     if ($left !== null) {
-                    	$lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
+                        $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
                         $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($lastLeft, array('stmts' => $case->stmts)));
                         $left = array();
                     } else {
@@ -949,13 +964,13 @@ class Converter extends PrettyPrinterAbstract
                     }
                     $ifDefined = true;
                 } else {
-                	if ($left !== null) {
-                		$lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                		$stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts));
-                		$left = array();
-                	} else {
-                		$stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
-                	}
+                    if ($left !== null) {
+                        $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
+                        $stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts));
+                        $left = array();
+                    } else {
+                        $stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
+                    }
                 }
             }
         }

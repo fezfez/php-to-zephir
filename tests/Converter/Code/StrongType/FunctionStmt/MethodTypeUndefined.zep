@@ -1,4 +1,6 @@
-class Sample
+namespace Code\StrongType\FunctionStmt;
+
+class MethodTypeUndefined
 {
     public function test($toto) -> void
     {

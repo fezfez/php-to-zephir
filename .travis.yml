@@ -22,11 +22,10 @@ install:
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - ./vendor/bin/zephir install
   - ./vendor/bin/zephir
 
 before_script:
-  - sudo php ./bin/php-to-zephir.php phpToZephir:convertDir ./vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/
+  - ./vendor/bin/phpunit
   - ./vendor/bin/zephir build
 
-script: php -dextension=symfony.so ./vendor/bin/phpunit
+script: php -dextension=code.so ./vendor/bin/phpunit

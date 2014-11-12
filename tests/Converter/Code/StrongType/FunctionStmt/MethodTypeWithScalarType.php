@@ -1,6 +1,8 @@
 <?php
 
-class Sample
+namespace Code\StrongType\FunctionStmt;
+
+class MethodTypeWithScalarType
 {
     /**
      * @param string $toto

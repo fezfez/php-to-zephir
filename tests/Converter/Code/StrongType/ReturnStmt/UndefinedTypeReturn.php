@@ -1,6 +1,8 @@
 <?php
 
-class Sample
+namespace Code\StrongType\ReturnStmt;
+
+class UndefinedTypeReturn
 {
     public function test($toto)
     {

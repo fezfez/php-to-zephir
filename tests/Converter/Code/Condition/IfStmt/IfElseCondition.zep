@@ -1,4 +1,6 @@
-class Sample
+namespace Code\Condition\IfStmt;
+
+class IfElseCondition
 {
     public function test($toto) -> void
     {

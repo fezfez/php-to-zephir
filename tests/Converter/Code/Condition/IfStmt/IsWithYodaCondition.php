@@ -1,6 +1,8 @@
 <?php
 
-class Sample
+namespace Code\Condition\IfStmt;
+
+class IsWithYodaCondition
 {
     public function test($toto)
     {

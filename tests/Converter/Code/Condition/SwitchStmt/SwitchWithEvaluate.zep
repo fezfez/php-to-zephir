@@ -1,4 +1,6 @@
-class Sample
+namespace Code\Condition\SwitchStmt;
+
+class SwitchWithEvaluate
 {
     public function test($toto) -> void
     {
