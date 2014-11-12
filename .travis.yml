@@ -18,11 +18,14 @@ install:
   - ./configure
   - make
   - sudo make install
+  - wget https://github.com/phalcon/zephir/archive/master.zip -O zephir
+  - unzip -q zephir
+  - cd zephir-master
+  - sudo ./install -c
   - phpize -v
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
-  - sudo ./vendor/bin/zephir install
 
 before_script:
   - ./vendor/bin/phpunit

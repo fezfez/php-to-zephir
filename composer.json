@@ -19,13 +19,10 @@
         "nikic/PHP-Parser": "1.0.*",
         "phpdocumentor/reflection-docblock": "dev-master",
         "phalcon/zephir": "dev-master",
-        "symfony/console": "2.5.*",
-        "fezfez/code-generator": "dev-master"
+        "symfony/console": "2.5.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*",
-         "symfony/event-dispatcher": "dev-master",
-        "symfony/dependency-injection" : "dev-master"
+        "phpunit/phpunit": "4.3.*"
     },
     "autoload": {
         "psr-0": {
