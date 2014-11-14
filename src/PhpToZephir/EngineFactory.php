@@ -7,11 +7,11 @@ use PhpParser\Lexer\Emulative;
 
 class EngineFactory
 {
-    public static function getInstance()
+    public static function getInstance(Logger $logger)
     {
         return new Engine(
             new Parser(new Emulative()),
-            new Converter(new TypeFinder())
+            new Converter(new TypeFinder(), $logger)
         );
     }
 }

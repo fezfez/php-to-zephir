@@ -36,7 +36,7 @@ class CliFactory
         $application->getHelperSet()->set(new FormatterHelper(), 'formatter');
         $application->getHelperSet()->set($questionHelper, 'question');
 
-       $application->add(new ConvertDirectory());
+        $application->add(new ConvertDirectory());
 
         return $application;
     }

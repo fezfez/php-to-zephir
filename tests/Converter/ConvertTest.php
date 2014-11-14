@@ -1,6 +1,8 @@
 <?php
 
 use PhpToZephir\EngineFactory;
+use PhpToZephir\Logger;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ConvertTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,32 +13,14 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
 
     private function convert($dir)
     {
-        $engine = EngineFactory::getInstance();
+        $engine = EngineFactory::getInstance(new Logger(new ConsoleOutput()));
 
-        foreach (glob($dir . '*.php') as $file) {
-            /*if (basename($file, '.php') !== 'IfWithCreateTmpVarInCondition') {
-                continue;
-            }*/
-
-            $converted   = $engine->convert(file_get_contents($file));
-            $destination = strtolower($converted['destination'] . basename($file, '.php')) . '.zep';
-
-            @mkdir(strtolower($converted['destination']), 0777, true);
+        foreach ($engine->convertDirectory($dir, true) as $file) {
+            @mkdir(strtolower($file['destination']), 0777, true);
             file_put_contents(
-                $destination,
-                $converted['zephir']
+                $file['fileDestination'],
+                $file['zephir']
             );
-
-            $this->assertStringEqualsFile(
-                $dir . basename($file, '.php') . '.zep',
-                $converted['zephir'],
-                'test faile on file ' . $file
-            );
-        }
-
-        $paths = glob($dir. '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
-        foreach ($paths as $recursiveDir) {
-            $this->convert($recursiveDir);
         }
     }
 }

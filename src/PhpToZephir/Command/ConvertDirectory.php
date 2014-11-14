@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Input\InputArgument;
 use PhpToZephir\EngineFactory;
+use PhpToZephir\Logger;
 
 /**
  * Generator command
@@ -36,7 +37,7 @@ class ConvertDirectory extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $engine = EngineFactory::getInstance();
+        $engine = EngineFactory::getInstance(new Logger($output));
         $dir    = $input->getArgument('dir');
 
         if (is_dir($dir) === false) {
@@ -44,7 +45,7 @@ class ConvertDirectory extends Command
         }
 
         foreach ($engine->convertDirectory($dir) as $convertedCode) {
-            echo 'Converted ' . strtolower($convertedCode['destination'] . $convertedCode['fileName']) . ".zep\n";
+            $output->writeln('Converted ' . strtolower($convertedCode['destination'] . $convertedCode['fileName']) . ".zep");
 
             @mkdir(strtolower($convertedCode['destination']), 0777, true);
             file_put_contents(

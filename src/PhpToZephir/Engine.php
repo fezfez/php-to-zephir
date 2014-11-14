@@ -48,24 +48,41 @@ class Engine
      * @param string $dir
      * @return array
      */
-    public function convertDirectory($dir, $recursive = true)
+    public function convertDirectory($dir, $recursive = true, $filterFileName = null)
     {
         $zephirCode = array();
         $fileExtension = '.php';
 
         foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
 
-            $phpCode  = file_get_contents($phpFile);
-            $fileName = $this->replaceReservedWords(basename($phpFile, '.php'));
+            if ($filterFileName !== null) {
+                if (basename($phpFile, '.php') !== $filterFileName) {
+                    continue;
+                }
+            }
+
+            $phpCode   = file_get_contents($phpFile);
+            $fileName  = $this->replaceReservedWords(basename($phpFile, '.php'));
             $converted = $this->convertCode($phpCode, $phpFile);
 
             $zephirCode[$phpFile] = array_merge(
                 $converted,
                 array(
                     'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
-                    'fileName'  => $fileName
+                    'fileName'  => $fileName,
+                    'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']) . '/' . $converted['class']) . '.zep'
                 )
              );
+
+            foreach ($converted['additionalClass'] as $aditionalClass) {
+                $zephirCode[$phpFile . $aditionalClass['name']] = array_merge(
+                    array(
+                        'fileName'  => $aditionalClass['name'],
+                        'zephir' => $aditionalClass['code'],
+                        'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']) . '/' . $aditionalClass['name']) . '.zep'
+                    )
+                );
+            }
         }
 
         if ($recursive === true) {
@@ -73,7 +90,7 @@ class Engine
             foreach ($paths as $recursiveDir) {
                 $zephirCode = array_merge(
                     $zephirCode,
-                    $this->convertDirectory($recursiveDir, $recursive)
+                    $this->convertDirectory($recursiveDir, $recursive, $filterFileName)
                 );
             }
         }
@@ -100,13 +117,16 @@ class Engine
     private function convertCode($phpCode, $fileName = null)
     {
         //try {
-            $converted = $this->converter->prettyPrint($this->parser->parse($phpCode), $fileName);
+            $converter = clone $this->converter;
+            $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName);
             $converted['code'] = $this->replaceReservedWords($converted['code']);
             $toReturn = array(
                 'zephir'    => $converted['code'],
                 'php'       => $phpCode,
                 'namespace' => $converted['namespace'],
-                'destination' => str_replace('\\', '/', $converted['namespace']) . '/'
+                'class'     => $converted['class'],
+                'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
+                'additionalClass' => $converted['additionalClass']
             );
             // replace reserved work
 

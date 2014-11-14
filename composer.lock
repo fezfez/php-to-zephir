@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c38c48f895aae2961ab342cc8bbb8052",
+    "hash": "e57032105bda89fd4b21cb960b145801",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -53,16 +53,16 @@
         },
         {
             "name": "phalcon/zephir",
-            "version": "dev-master",
+            "version": "0.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/zephir.git",
-                "reference": "7a5e3fa7ab65b45f47c5771dc4f8863096b9f3fe"
+                "reference": "779f9e0062d996e933613017bbdd16980965caf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/zephir/zipball/7a5e3fa7ab65b45f47c5771dc4f8863096b9f3fe",
-                "reference": "7a5e3fa7ab65b45f47c5771dc4f8863096b9f3fe",
+                "url": "https://api.github.com/repos/phalcon/zephir/zipball/779f9e0062d996e933613017bbdd16980965caf3",
+                "reference": "779f9e0062d996e933613017bbdd16980965caf3",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
             "keywords": [
                 "extension"
             ],
-            "time": "2014-11-11 21:57:56"
+            "time": "2014-10-24 16:03:18"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -965,8 +965,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "phpdocumentor/reflection-docblock": 20,
-        "phalcon/zephir": 20
+        "phpdocumentor/reflection-docblock": 20
     },
     "prefer-stable": true,
     "platform": [],

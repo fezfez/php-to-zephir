@@ -1,8 +1,0 @@
-<?php
-
-var_dump($argv);exit;
-include(__DIR__ . '/vendor/autoload.php');
-$classes = get_declared_classes();
-include('/var/www/default/php/php-to-zephir/vendor/symfony/event-dispatcher/Symfony/Component/EventDispatcher/ContainerAwareEventDispatcher.php');
-$diff = array_diff(get_declared_classes(), $classes);
-echo reset($diff);
