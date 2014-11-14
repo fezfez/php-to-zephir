@@ -200,7 +200,14 @@ class Converter extends PrettyPrinterAbstract
 
             $head = '';
 
-            if ($rightNode instanceof Variable || $rightNode instanceof Scalar || $rightNode instanceof Array_) {
+            if ($rightNode instanceof Variable ||
+                $rightNode instanceof Scalar ||
+                $rightNode instanceof Array_ ||
+                $rightNode instanceof Expr\StaticCall ||
+                $rightNode instanceof Expr\FuncCall ||
+                $rightNode instanceof Expr\ConstFetch ||
+                $rightNode instanceof Expr\Clone_
+            ) {
                 $rightString = $this->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
                 $head .= $this->pPrec($rightNode, $precedence, $associativity, 1) . ";\n";
@@ -804,6 +811,7 @@ $class .= "
 
     public function pStmt_Interface(Stmt\Interface_ $node) {
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
+        $this->class = $node->name;
         return 'interface ' . $node->name
              . (!empty($node->extends) ? ' extends ' . $this->pCommaSeparated($node->extends) : '')
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';

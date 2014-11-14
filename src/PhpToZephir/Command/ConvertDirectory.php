@@ -45,11 +45,11 @@ class ConvertDirectory extends Command
         }
 
         foreach ($engine->convertDirectory($dir) as $convertedCode) {
-            $output->writeln('Converted ' . strtolower($convertedCode['destination'] . $convertedCode['fileName']) . ".zep");
+            $output->writeln('Converted ' . strtolower($convertedCode['fileDestination']));
 
             @mkdir(strtolower($convertedCode['destination']), 0777, true);
             file_put_contents(
-                strtolower($convertedCode['destination'] . $convertedCode['fileName']) . '.zep',
+                strtolower($convertedCode['fileDestination']),
                 $convertedCode['zephir']
             );
         }
