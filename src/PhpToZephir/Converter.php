@@ -610,7 +610,16 @@ class Converter extends PrettyPrinterAbstract
         $var = $collected[0];
         unset($collected[0]);
 
-        if(!empty($collected)) {
+        $needToSplit = false;
+
+        foreach ($collected as $rst) {
+            if ($rst['splitTab'] === true) {
+                $needToSplit = true;
+                break;
+            }
+        }
+
+        if(!empty($collected) && $needToSplit === true) {
         	$head = "var tmpArray;\n";
         	$lastSplitTable = true;
         	foreach ($collected as $expr) {

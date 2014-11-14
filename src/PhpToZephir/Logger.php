@@ -18,13 +18,13 @@ class Logger
         $this->output = $output;
 	}
 
-	public function logNode($message, Node $node, $fileName = null)
+	public function logNode($message, Node $node, $class = null)
 	{
-        $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $fileName . '"');
+        $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
 	}
 
-	public function trace($message, Node $node, $fileName = null)
+	public function trace($message, Node $node, $class = null)
 	{
-        // $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $fileName . '"');
+        // $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
 	}
 }
