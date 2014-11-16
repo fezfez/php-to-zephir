@@ -2,7 +2,7 @@
 /**
  * This file is part of the Code Generator package.
  *
- * (c) Stéphane Demonchaux <demonchaux.stephane@gmail.com>
+ * (c) Stï¿½phane Demonchaux <demonchaux.stephane@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -20,7 +20,7 @@ use PhpToZephir\Logger;
 /**
  * Generator command
  *
- * @author Stéphane Demonchaux
+ * @author Stï¿½phane Demonchaux
  */
 class ConvertDirectory extends Command
 {

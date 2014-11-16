@@ -774,7 +774,9 @@ $class .= "
         $class = implode('\\', $node->parts);
         $lastPartsClass = array_map(function ($value) { return substr(strrchr($value, '\\'), 1); }, $this->classes);
 
-        if (in_array($class, $this->classes)) {
+        if ($class === 'self') {
+        	return 'self';
+        } elseif (in_array($class, $this->classes)) {
             return '\\' . $class;
         } elseif (array_key_exists($class, $this->classesAlias)) {
             $classKey = array_keys($this->classesAlias, $class);
@@ -826,9 +828,9 @@ $class .= "
     // Declarations
 
     public function pStmt_Namespace(Stmt\Namespace_ $node) {
-        $this->actualNamespace =  $this->p($node->name);
+        $this->actualNamespace =  implode('\\', $node->name->parts);
         if ($this->canUseSemicolonNamespaces) {
-            return 'namespace ' . $this->p($node->name) . ';' . "\n" . $this->pStmts($node->stmts, false);
+            return 'namespace ' . $this->actualNamespace . ';' . "\n" . $this->pStmts($node->stmts, false);
         } else {
             return 'namespace' . (null !== $node->name ? ' ' . $this->p($node->name) : '')
                  . ' {' . $this->pStmts($node->stmts) . "\n" . '}';
