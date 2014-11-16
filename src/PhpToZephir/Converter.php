@@ -32,6 +32,7 @@ class Converter extends PrettyPrinterAbstract
     private $fileName = null;
     private $additionalClass = array();
     private $lastMethodConverted = null;
+    private $classesAlias = array();
     /**
      * @var TypeFinder
      */
@@ -89,7 +90,8 @@ class Converter extends PrettyPrinterAbstract
     public function pName(Name $node)
     {
     	$this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
-        return implode('\\', $node->parts);
+
+        return $this->findRightClass($node);
     }
 
     public function pName_FullyQualified(Name\FullyQualified $node)
@@ -689,6 +691,8 @@ class Converter extends PrettyPrinterAbstract
 
     	$name = $this->class . $this->lastMethodConverted . "Closure";
 
+    	$this->logger->logNode("Closure does not exist in Zephir, a class with __invoke is created", $node);
+
     	$this->additionalClass[] = array(
     	    'name' => $name,
     	    'code' => $this->createClass($name, $this->actualNamespace, $node)
@@ -758,7 +762,30 @@ $class .= "
     {
     	$this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
 
-        return ($node->byRef ? '&' : '') . '' . $node->var;
+    	if ($node->byRef) {
+    	    $this->logger->logNode("Zephir not support reference parameters for now. Stay tuned for https://github.com/phalcon/zephir/issues/203", $node, $this->class);
+    	}
+
+        return $node->var;
+    }
+
+    private function findRightClass(Node\Name $node)
+    {
+        $class = implode('\\', $node->parts);
+        $lastPartsClass = array_map(function ($value) { return substr(strrchr($value, '\\'), 1); }, $this->classes);
+
+        if (in_array($class, $this->classes)) {
+            return '\\' . $class;
+        } elseif (array_key_exists($class, $this->classesAlias)) {
+            $classKey = array_keys($this->classesAlias, $class);
+            return '\\' . $this->classesAlias[$class];
+        } elseif (false !== $key = array_search($class, $lastPartsClass)) {
+            return '\\' . $this->classes[$key];
+        } elseif (class_exists($class)) { //native php class @FIXME did not work in case of overdrive in same namespace (without use)
+            return '\\' . $class;
+        } else {
+            return '\\' . $this->actualNamespace . '\\' . $class;
+        }
     }
 
     public function pExpr_New(Expr\New_ $node) {
@@ -809,11 +836,19 @@ $class .= "
     }
 
     public function pStmt_Use(Stmt\Use_ $node) {
+        foreach ($node->uses as $use) {
+            $this->pStmt_UseUse($use);
+        }
+
         $this->use = array_merge($this->use, $node->uses);
         return;
     }
 
     public function pStmt_UseUse(Stmt\UseUse $node) {
+        $this->classes[] = implode('\\', $node->name->parts);
+        if ($node->name->getLast() !== $node->alias) {
+            $this->classesAlias[$node->alias] = implode('\\', $node->name->parts);
+        }
         return ''; $this->p($node->name)
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }
@@ -822,7 +857,7 @@ $class .= "
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
         return 'interface ' . $node->name
-             . (!empty($node->extends) ? ' extends ' . $this->pCommaSeparated($node->extends) : '')
+             . (!empty($node->extends) ? ' extends ' . $this->findRightClass($node->extends) : '')
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
@@ -832,9 +867,20 @@ $class .= "
         $this->fullClass = $this->actualNamespace . '\\' . $node->name;
         return $this->pModifiers($node->type)
              . 'class ' . $node->name
-             . (null !== $node->extends ? ' extends ' . $this->p($node->extends) : '')
-             . (!empty($node->implements) ? ' implements ' . $this->pCommaSeparated($node->implements) : '')
+             . (null !== $node->extends ? ' extends ' . $this->findRightClass($node->extends) : '')
+             . (!empty($node->implements) ? ' implements ' . $this->p_implements($node->implements) : '')
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
+    }
+
+    private function p_implements($nodes)
+    {
+        $classes = array();
+
+        foreach ($nodes as $node) {
+            $classes[] = $this->findRightClass($node);
+        }
+
+        return implode(', ', $classes);
     }
 
     public function pStmt_Trait(Stmt\Trait_ $node)
@@ -1283,6 +1329,7 @@ $class .= "
     public function pStmt_Throw(Stmt\Throw_ $node)
     {
     	$this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
+
         return 'throw ' . $this->p($node->expr) . ';';
     }
 
