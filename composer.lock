@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e57032105bda89fd4b21cb960b145801",
+    "hash": "d567e4b1a7a6623bcb1836fcd5d85bfc",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -53,16 +53,16 @@
         },
         {
             "name": "phalcon/zephir",
-            "version": "0.5.5",
+            "version": "0.5.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/zephir.git",
-                "reference": "779f9e0062d996e933613017bbdd16980965caf3"
+                "reference": "a1d1fea12e98f72ef9402e918145858112d41b9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/zephir/zipball/779f9e0062d996e933613017bbdd16980965caf3",
-                "reference": "779f9e0062d996e933613017bbdd16980965caf3",
+                "url": "https://api.github.com/repos/phalcon/zephir/zipball/a1d1fea12e98f72ef9402e918145858112d41b9b",
+                "reference": "a1d1fea12e98f72ef9402e918145858112d41b9b",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +110,7 @@
             "keywords": [
                 "extension"
             ],
-            "time": "2014-10-24 16:03:18"
+            "time": "2014-11-18 02:26:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -215,6 +215,121 @@
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
             "time": "2014-10-05 13:57:04"
+        },
+        {
+            "name": "symfony/dependency-injection",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/DependencyInjection",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/DependencyInjection.git",
+                "reference": "84fa0a1e46f1bd4da38dc624b1d7c26f90e221dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/84fa0a1e46f1bd4da38dc624b1d7c26f90e221dd",
+                "reference": "84fa0a1e46f1bd4da38dc624b1d7c26f90e221dd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/config": "~2.2",
+                "symfony/expression-language": "~2.4",
+                "symfony/yaml": "~2.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-11-16 17:28:29"
+        },
+        {
+            "name": "symfony/event-dispatcher",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/EventDispatcher",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/EventDispatcher.git",
+                "reference": "3d8c5d466f471c5a97a334ee7ea5e30290c7d032"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/3d8c5d466f471c5a97a334ee7ea5e30290c7d032",
+                "reference": "3d8c5d466f471c5a97a334ee7ea5e30290c7d032",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "~2.0",
+                "symfony/dependency-injection": "~2.6",
+                "symfony/expression-language": "~2.6",
+                "symfony/stopwatch": "~2.2"
+            },
+            "suggest": {
+                "symfony/dependency-injection": "",
+                "symfony/http-kernel": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\EventDispatcher\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony EventDispatcher Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-11-11 08:37:22"
         }
     ],
     "packages-dev": [
@@ -965,7 +1080,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "phpdocumentor/reflection-docblock": 20
+        "phpdocumentor/reflection-docblock": 20,
+        "symfony/event-dispatcher": 20,
+        "symfony/dependency-injection": 20
     },
     "prefer-stable": true,
     "platform": [],

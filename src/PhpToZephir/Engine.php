@@ -129,7 +129,7 @@ class Engine
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
-        //try {
+        try {
             $converter = clone $this->converter;
             $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
             $toReturn = array(
@@ -140,11 +140,10 @@ class Engine
                 'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
                 'additionalClass' => $converted['additionalClass']
             );
-            // replace reserved work
 
-        /*} catch (\Exception $e) {
-            throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $class, $e->getMessage()));
-        }*/
+        } catch (\Exception $e) {
+            throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $fileName, $e->getMessage()), $e->getCode(), $e);
+        }
 
         return $toReturn;
     }

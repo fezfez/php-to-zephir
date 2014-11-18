@@ -18,8 +18,10 @@
     "require": {
         "nikic/PHP-Parser": "1.0.*",
         "phpdocumentor/reflection-docblock": "dev-master",
-        "phalcon/zephir": "0.5.5",
-        "symfony/console": "2.5.*"
+        "phalcon/zephir": "0.5.9",
+        "symfony/console": "2.5.*",
+        "symfony/event-dispatcher": "~3.0@dev",
+        "symfony/dependency-injection": "~3.0@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "4.3.*"

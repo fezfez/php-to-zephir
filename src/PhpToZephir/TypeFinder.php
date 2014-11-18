@@ -39,7 +39,10 @@ class TypeFinder
           $params['type'] = null;
 
           /* @var $param \PhpParser\Node\Param */
-          if ($param->type === null) { // scalar or not strong typed in method
+          if ($param->type === 'array') {
+              $params['type']['value'] = 'array';
+              $params['type']['isClass'] = false;
+          } elseif ($param->type === null) { // scalar or not strong typed in method
              $docBlock = $this->nodeToDocBlock($node);
              if ($docBlock !== null) {
                 $params['type'] = $this->foundTypeInCommentForVar($docBlock, $param,  $actualNamespace, $use, $classes);
@@ -149,6 +152,7 @@ class TypeFinder
                 $definition['return'] = array(
                     'type' => $this->findType($tag, $actualNamespace, $use, $classes)
                 );
+                break;
             }
         }
 
@@ -209,7 +213,9 @@ class TypeFinder
 
         $arrayOfPrimitiveTypes = array_map(function($val) { return $val . '[]'; }, $primitiveTypes);
 
-        if (in_array($rawType, $primitiveTypes)) {
+        if (preg_match("/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/", $rawType) === 0) { // this is a typo
+            $type = array('value' => '', 'isClass' => false);
+        } elseif (in_array($rawType, $primitiveTypes)) {
             $type = array('value' => $rawType, 'isClass' => false);
         } elseif (in_array($rawType, $arrayOfPrimitiveTypes)) {
             $type = array('value' => $rawType, 'isClass' => false);
@@ -261,6 +267,15 @@ class TypeFinder
                         $fullClass = $aliasClass;
                         break;
                     }
+                } else  {
+                    $use->name->parts[count($use->name->parts) - 1] = null;
+                    //$use->name->parts[count($use->name->parts)] = null;
+                    $classParts = implode('\\', $use->name->parts) . $classReference;
+                    $possibleClass[] = $classParts;
+                    if ($this->loadClass($classParts) === true) {
+                        $fullClass = $classParts;
+                        break;
+                    }
                 }
             }
 
@@ -296,9 +311,9 @@ class TypeFinder
      */
     private function loadClass($class)
     {
-        if (interface_exists ($class) === true) {
+        if (interface_exists ($class, false) === true) {
             return true;
-        } elseif (class_exists($class) === true) {
+        } elseif (class_exists($class, false) === true) {
             return true;
         } elseif (interface_exists ($class, true) === true) {
             return true;

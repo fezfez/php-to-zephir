@@ -219,7 +219,9 @@ class Converter extends PrettyPrinterAbstract
                 $rightNode instanceof Expr\StaticCall ||
                 $rightNode instanceof Expr\FuncCall ||
                 $rightNode instanceof Expr\ConstFetch ||
-                $rightNode instanceof Expr\Clone_
+                $rightNode instanceof Expr\Clone_ ||
+                $rightNode instanceof Expr\New_ ||
+                $rightNode instanceof Expr\ClassConstFetch
             ) {
                 $rightString = $this->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
@@ -595,12 +597,25 @@ class Converter extends PrettyPrinterAbstract
              . ($node->byRef ? '&' : '') . $this->p($node->value);
     }
 
-    private function isInvalidInArrayDimFetch(Expr\ArrayDimFetch $node)
+    private function isInvalidInArrayDimFetch($node)
     {
-        return ($node->dim instanceof Expr\Variable) === false && ($node->dim instanceof Scalar) === false && $node->dim !== null;
+        if ($node->dim instanceof BinaryOp\Concat) {
+            return $this->isInvalidInArrayDimFetch($node->dim->left)
+                && $this->isInvalidInArrayDimFetch($node->dim->right);
+        } else {
+            return $this->isInvalidIn($node->dim);
+        }
     }
 
-
+    private function isInvalidIn($node)
+    {
+        return ($node instanceof Expr\Variable) === false
+            && ($node instanceof Expr\ClassConstFetch) === false
+            && ($node instanceof Expr\ConstFetch) === false
+            && ($node instanceof BinaryOp\Minus) === false
+            && ($node instanceof Scalar) === false
+            && $node !== null;
+    }
 
     private function findComplexArrayDimFetch($node, $collected = array())
     {
@@ -675,7 +690,7 @@ class Converter extends PrettyPrinterAbstract
                             $head .= 'let tmpArray = ';
                             $head .= $this->p($var) . '[' . $expr['expr'] . ']';
                         } else {
-                            $lastExpr = $this->p($var) . '[' . $expr['var'] . ']';
+                            $lastExpr = $this->p($var) . '[' . $expr['expr'] . ']';
                         }
                     }
                 }
@@ -963,8 +978,21 @@ $class .= "
         $node->name = $this->replaceReservedWords($node->name);
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
+
+        $extendsStmt = '';
+
+        if (!empty($node->extends)) {
+            $extendsStmt = ' extends ';
+            $extends = array();
+            foreach ($node->extends as $extend) {
+                $extends[] = $this->findRightClass($extend);
+            }
+
+            $extendsStmt .= implode(', ', $extends);
+        }
+
         return 'interface ' . $node->name
-             . (!empty($node->extends) ? ' extends ' . $this->findRightClass($node->extends) : '')
+             . $extendsStmt
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
