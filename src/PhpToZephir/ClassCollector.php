@@ -533,15 +533,23 @@ class ClassCollector extends PrettyPrinterAbstract
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }
 
+    private function replaceReservedWords($string)
+    {
+        $string = str_replace('inline', 'inlinee', $string);
+        $string = str_replace('Inline', 'Inlinee', $string);
+
+        return $string;
+    }
+
     public function pStmt_Interface(Stmt\Interface_ $node) {
-        $this->class = $this->actualNamespace . '\\' . $node->name;
+        $this->class = $this->replaceReservedWords($this->actualNamespace . '\\' . $node->name);
         return 'interface ' . $node->name
              . (!empty($node->extends) ? ' extends ' . $this->pCommaSeparated($node->extends) : '')
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
     public function pStmt_Class(Stmt\Class_ $node) {
-        $this->class = $this->actualNamespace . '\\' . $node->name;
+        $this->class = $this->replaceReservedWords($this->actualNamespace . '\\' . $node->name);
         return $this->pModifiers($node->type)
              . 'class ' . $node->name
              . (null !== $node->extends ? ' extends ' . $this->p($node->extends) : '')

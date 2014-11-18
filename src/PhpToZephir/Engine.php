@@ -92,7 +92,7 @@ class Engine
             }
 
             $phpCode   = file_get_contents($phpFile);
-            $fileName  = $this->replaceReservedWords(basename($phpFile, '.php'));
+            $fileName  = basename($phpFile, '.php');
             $converted = $this->convertCode($phpCode, $phpFile, $classes);
 
             $zephirCode[$phpFile] = array_merge(
@@ -123,13 +123,6 @@ class Engine
         return substr($haystack, 0, strpos($haystack, $needle));
     }
 
-    private function replaceReservedWords($code)
-    {
-        $code = str_replace('inline', 'inlinee', $code);
-        $code = str_replace('Inline', 'Inlinee', $code);
-
-        return $code;
-    }
     /**
      * @param string $phpCode
      * @return string
@@ -139,7 +132,6 @@ class Engine
         //try {
             $converter = clone $this->converter;
             $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
-            $converted['code'] = $this->replaceReservedWords($converted['code']);
             $toReturn = array(
                 'zephir'    => $converted['code'],
                 'php'       => $phpCode,

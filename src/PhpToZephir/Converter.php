@@ -206,10 +206,12 @@ class Converter extends PrettyPrinterAbstract
             $head = '';
 
             if ($rightNode instanceof ArrayDimFetch) {
-                if ($this->arrayNeedToBeSplit($rightNode) === false) {
+                if (false === $splitedArray = $this->arrayNeedToBeSplit($rightNode)) {
                     $rightString = $this->pPrec($rightNode, $precedence, $associativity, 1);
                 } else {
-                    throw new \Exception('Please take care of me');
+                    $result = $this->pExpr_ArrayDimFetch($rightNode, true);
+                    $head .= $result['head'];
+                    $rightString = $result['lastExpr'];
                 }
             } elseif ($rightNode instanceof Variable ||
                 $rightNode instanceof Scalar ||
@@ -578,7 +580,7 @@ class Converter extends PrettyPrinterAbstract
         if ($node->name instanceof Expr) {
             return '{' . $this->p($node->name) . '}';
         } else {
-            return '' . $node->name;
+            return '' . $this->replaceReservedWords($node->name);
         }
     }
 
@@ -608,7 +610,8 @@ class Converter extends PrettyPrinterAbstract
             } else {
                 $collected[] = array(
                     'expr' => $this->p($node->dim) . ";\n",
-                    'splitTab' => true, 'var' => $this->p($node->dim->var)
+                    'splitTab' => true,
+                    'var' => $this->p($node->dim->var)
                 );
             }
         } else {
@@ -641,7 +644,7 @@ class Converter extends PrettyPrinterAbstract
         return false;
     }
 
-    public function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) {
+    public function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node, $returnAsArray = false) {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
 
         $collected = $this->arrayNeedToBeSplit($node);
@@ -650,6 +653,7 @@ class Converter extends PrettyPrinterAbstract
 
             $var = $collected[0];
             unset($collected[0]);
+            $lastExpr = null;
 
 
             $head = "var tmpArray;\n";
@@ -659,19 +663,20 @@ class Converter extends PrettyPrinterAbstract
                     $head .= $expr['expr'];
                     if ($expr !== end($collected)) {
                         $head .= 'let tmpArray = ';
+                        $head .= $this->p($var) . '[' . $expr['var'] . ']';
                     } else {
-                        $head .= 'let ';
+                        $lastExpr = $this->p($var) . '[' . $expr['var'] . ']';
                     }
-                    $head .= $this->p($var) . '[' . $expr['var'] . ']';
+
                     $lastSplitTable = true;
                 } else {
                     if ($lastSplitTable === true) {
                         if ($expr !== end($collected)) {
                             $head .= 'let tmpArray = ';
+                            $head .= $this->p($var) . '[' . $expr['expr'] . ']';
                         } else {
-                          $head .= 'let ';
+                            $lastExpr = $this->p($var) . '[' . $expr['var'] . ']';
                         }
-                        $head .= $this->p($var) . '[' . $expr['expr'] . ']';
                     }
                 }
 
@@ -680,17 +685,34 @@ class Converter extends PrettyPrinterAbstract
                 }
             }
 
-            return $head;
+            if ($returnAsArray === true) {
+                return array(
+                    'head' => $head,
+                    'lastExpr' => $lastExpr
+                );
+            } else {
+                return $head;
+            }
         } else {
-            return $this->pVarOrNewExpr($node->var)
+            $result = $this->pVarOrNewExpr($node->var)
                  . '[' . (null !== $node->dim ? $this->p($node->dim) : '') . ']';
+
+            if ($returnAsArray === true) {
+                return array(
+                    'head' => '',
+                    'lastExpr' => $result
+                );
+            } else {
+                return $result;
+            }
         }
     }
 
     public function pExpr_ConstFetch(Expr\ConstFetch $node)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
-        return $this->p($node->name);
+
+        return implode('\\', $node->name->parts);
     }
 
     public function pExpr_ClassConstFetch(Expr\ClassConstFetch $node)
@@ -838,10 +860,25 @@ $class .= "
         return $node->var;
     }
 
+    private function replaceReservedWords($string)
+    {
+        $string = str_replace('inline', 'inlinee', $string);
+        $string = str_replace('Inline', 'Inlinee', $string);
+        $string = str_replace('array', 'myArray', $string);
+
+        if (ctype_upper($string)) {
+            $string = strtolower($string);
+        }
+
+        return $string;
+    }
+
     private function findRightClass(Node\Name $node)
     {
         $class = implode('\\', $node->parts);
         $lastPartsClass = array_map(function ($value) { return substr(strrchr($value, '\\'), 1); }, $this->classes);
+
+        $class = $this->replaceReservedWords($class);
 
         if (in_array($class, $this->classes)) {
             return '\\' . $class;
@@ -914,15 +951,16 @@ $class .= "
     }
 
     public function pStmt_UseUse(Stmt\UseUse $node) {
-        $this->classes[] = implode('\\', $node->name->parts);
+        $this->classes[] = $this->replaceReservedWords(implode('\\', $node->name->parts));
         if ($node->name->getLast() !== $node->alias) {
-            $this->classesAlias[$node->alias] = implode('\\', $node->name->parts);
+            $this->classesAlias[$node->alias] = $this->replaceReservedWords(implode('\\', $node->name->parts));
         }
         return ''; $this->p($node->name)
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }
 
     public function pStmt_Interface(Stmt\Interface_ $node) {
+        $node->name = $this->replaceReservedWords($node->name);
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
         return 'interface ' . $node->name
@@ -931,6 +969,7 @@ $class .= "
     }
 
     public function pStmt_Class(Stmt\Class_ $node) {
+        $node->name = $this->replaceReservedWords($node->name);
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
         $this->fullClass = $this->actualNamespace . '\\' . $node->name;
@@ -1026,6 +1065,8 @@ $class .= "
 
             $vars = array_merge($vars, $this->collectVars($stmt));
         }
+
+        $vars = array_map(array($this, 'replaceReservedWords'), $vars);
 
         return $vars;
     }
@@ -1229,6 +1270,11 @@ $class .= "
         $collected = $this->collectAssignInCondition($condition->cond);
         $node->cond = $this->transformAssignInCondition($node->cond);
 
+        if (empty($node->stmts)) {
+            $node->stmts = array(new Stmt\Echo_(array(new Scalar\String("not allowed"))));
+            $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->fullClass);
+        }
+
         return $collected . 'if ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}'
              . $this->pImplode($node->elseifs)
@@ -1392,7 +1438,9 @@ $class .= "
 
     public function pStmt_Continue(Stmt\Continue_ $node)
     {
-        $this->logger->logNode('"continue $number;" no supported in zephir', $node, $this->fullClass);
+        if ($node->num !== null) {
+            $this->logger->logNode('"continue $number;" no supported in zephir', $node, $this->fullClass);
+        }
         return 'continue;';
     }
 

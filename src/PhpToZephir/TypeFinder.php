@@ -34,7 +34,7 @@ class TypeFinder
 
        foreach ($node->params as $param) {
           $params = array();
-          $params['name'] = $param->name;
+          $params['name'] = $this->replaceReservedWords($param->name);
           $params['default'] = $param->default;
           $params['type'] = null;
 
@@ -54,6 +54,14 @@ class TypeFinder
        }
 
        return $definition;
+    }
+
+    private function replaceReservedWords($string)
+    {
+        $string = str_replace('inline', 'inlinee', $string);
+        $string = str_replace('Inline', 'Inlinee', $string);
+
+        return $string;
     }
 
     /**
