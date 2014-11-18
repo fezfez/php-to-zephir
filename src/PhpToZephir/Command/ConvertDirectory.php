@@ -44,12 +44,17 @@ class ConvertDirectory extends Command
         	throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
         }
 
-        foreach ($engine->convertDirectory($dir) as $convertedCode) {
-            $output->writeln('Converted ' . strtolower($convertedCode['fileDestination']));
+        foreach ($engine->convertDirectory($dir) as $file => $convertedCode) {
+            $output->writeln(
+                sprintf(
+                    '<info>Converted %s</info>',
+                    $convertedCode['fileDestination']
+                )
+            );
 
             @mkdir(strtolower($convertedCode['destination']), 0777, true);
             file_put_contents(
-                strtolower($convertedCode['fileDestination']),
+                $convertedCode['fileDestination'],
                 $convertedCode['zephir']
             );
         }

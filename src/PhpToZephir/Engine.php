@@ -15,15 +15,21 @@ class Engine
      * @var Converter
      */
     private $converter = null;
+    /**
+     * @var ClassCollector
+     */
+    private $classCollector = null;
 
     /**
      * @param Parser $parser
      * @param Converter $converter
+     * @param ClassCollector $classCollector
      */
-    public function __construct(Parser $parser, Converter $converter)
+    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector)
     {
         $this->parser = $parser;
         $this->converter = $converter;
+        $this->classCollector = $classCollector;
     }
 
     /**
@@ -44,6 +50,23 @@ class Engine
         return $this->convertCode($phpCode);
     }
 
+    private function findFiles($dir, array $files = array(), $recursive = true)
+    {
+        $fileExtension = '.php';
+
+        foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
+            $files[] = $phpFile;
+        }
+
+        if ($recursive === true) {
+            $paths = glob($dir. '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
+            foreach ($paths as $recursiveDir) {
+                $files = $this->findFiles($recursiveDir, $files, $recursive);
+            }
+        }
+
+        return $files;
+    }
     /**
      * @param string $dir
      * @return array
@@ -52,8 +75,15 @@ class Engine
     {
         $zephirCode = array();
         $fileExtension = '.php';
+        $classes = array();
 
-        foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
+        $files = $this->findFiles($dir, array(), $recursive);
+
+        foreach ($files as $file) {
+            $classes[] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)));
+        }
+
+        foreach ($files as $phpFile) {
 
             if ($filterFileName !== null) {
                 if (basename($phpFile, '.php') !== $filterFileName) {
@@ -63,7 +93,7 @@ class Engine
 
             $phpCode   = file_get_contents($phpFile);
             $fileName  = $this->replaceReservedWords(basename($phpFile, '.php'));
-            $converted = $this->convertCode($phpCode, $phpFile);
+            $converted = $this->convertCode($phpCode, $phpFile, $classes);
 
             $zephirCode[$phpFile] = array_merge(
                 $converted,
@@ -85,22 +115,12 @@ class Engine
             }
         }
 
-        if ($recursive === true) {
-            $paths = glob($dir. '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
-            foreach ($paths as $recursiveDir) {
-                $zephirCode = array_merge(
-                    $zephirCode,
-                    $this->convertDirectory($recursiveDir, $recursive, $filterFileName)
-                );
-            }
-        }
-
         return $zephirCode;
     }
 
-    function rstrstr($haystack,$needle)
+    private function rstrstr($haystack,$needle)
     {
-        return substr($haystack, 0,strpos($haystack, $needle));
+        return substr($haystack, 0, strpos($haystack, $needle));
     }
 
     private function replaceReservedWords($code)
@@ -114,11 +134,11 @@ class Engine
      * @param string $phpCode
      * @return string
      */
-    private function convertCode($phpCode, $fileName = null)
+    private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
         //try {
             $converter = clone $this->converter;
-            $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName);
+            $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
             $converted['code'] = $this->replaceReservedWords($converted['code']);
             $toReturn = array(
                 'zephir'    => $converted['code'],

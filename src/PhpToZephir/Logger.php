@@ -8,23 +8,33 @@ use PhpParser\Node;
 
 class Logger
 {
-	/**
-	 * @var OutputInterface
-	 */
-	private $output = null;
+    /**
+     * @var OutputInterface
+     */
+    private $output = null;
 
-	public function __construct(OutputInterface $output)
-	{
+    /**
+     * @param OutputInterface $output
+     */
+    public function __construct(OutputInterface $output)
+    {
         $this->output = $output;
-	}
+    }
 
-	public function logNode($message, Node $node, $class = null)
-	{
-        $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
-	}
+    /**
+     * @param string $message
+     * @param Node $node
+     * @param string $class
+     */
+    public function logNode($message, Node $node, $class = null)
+    {
+        $this->output->writeln(
+            '<comment>' . $message . ' on line ' . $node->getLine() . ' in class "' . $class . '"</comment>'
+        );
+    }
 
-	public function trace($message, Node $node, $class = null)
-	{
+    public function trace($message, Node $node, $class = null)
+    {
         // $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
-	}
+    }
 }
