@@ -54,9 +54,14 @@ class Converter extends PrettyPrinterAbstract
     {
         $this->fileName = $fileName;
         $this->classCollected = $classes;
+        $code = parent::prettyPrint($stmts);
+
+        if ($this->class === null) {
+            throw new \Exception('Cant convert file without class');
+        }
 
         return array(
-            'code' => parent::prettyPrint($stmts),
+            'code' => $code,
             'namespace' => $this->actualNamespace,
             'class'     => $this->class,
             'additionalClass' => $this->additionalClass
@@ -213,16 +218,35 @@ class Converter extends PrettyPrinterAbstract
                     $head .= $result['head'];
                     $rightString = $result['lastExpr'];
                 }
-            } elseif ($rightNode instanceof Variable ||
+            } elseif (
+                $rightNode instanceof Variable ||
                 $rightNode instanceof Scalar ||
                 $rightNode instanceof Array_ ||
+                $rightNode instanceof BinaryOp\Concat ||
+                $rightNode instanceof BinaryOp\BooleanOr ||
+                $rightNode instanceof BinaryOp\Minus ||
+                $rightNode instanceof BinaryOp\Plus ||
+                $rightNode instanceof BinaryOp\BitwiseOr ||
+                $rightNode instanceof BinaryOp\BitwiseAnd ||
+                $rightNode instanceof Expr\UnaryMinus ||
+                $rightNode instanceof BinaryOp\Mul ||
                 $rightNode instanceof Expr\StaticCall ||
                 $rightNode instanceof Expr\FuncCall ||
                 $rightNode instanceof Expr\ConstFetch ||
                 $rightNode instanceof Expr\Clone_ ||
                 $rightNode instanceof Expr\New_ ||
-                $rightNode instanceof Expr\ClassConstFetch
+                $rightNode instanceof Expr\ClassConstFetch ||
+                $rightNode instanceof Expr\Ternary ||
+                $rightNode instanceof Expr\BooleanNot ||
+                $rightNode instanceof Expr\Cast ||
+                $rightNode instanceof Expr\MethodCall ||
+                $rightNode instanceof Expr\Isset_ ||
+                $rightNode instanceof Expr\Empty_ ||
+                $rightNode instanceof Expr\Closure ||
+                $rightNode instanceof Expr\ArrayDimFetch ||
+                $rightNode instanceof Expr\Include_
             ) {
+                // @TODO add test case for each
                 $rightString = $this->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
                 $head .= $this->pPrec($rightNode, $precedence, $associativity, 1) . ";\n";
@@ -565,6 +589,7 @@ class Converter extends PrettyPrinterAbstract
 
     public function pExpr_Include(Expr\Include_ $node)
     {
+        throw new \Exception("Include not supported");
         static $map = array(
             Expr\Include_::TYPE_INCLUDE      => 'include',
             Expr\Include_::TYPE_INCLUDE_ONCE => 'include_once',
@@ -611,8 +636,12 @@ class Converter extends PrettyPrinterAbstract
     {
         return ($node instanceof Expr\Variable) === false
             && ($node instanceof Expr\ClassConstFetch) === false
+            && ($node instanceof Expr\Cast) === false
             && ($node instanceof Expr\ConstFetch) === false
+            && ($node instanceof Expr\StaticCall) === false
             && ($node instanceof BinaryOp\Minus) === false
+            && ($node instanceof BinaryOp\Plus) === false
+            && ($node instanceof BinaryOp\Mod) === false
             && ($node instanceof Scalar) === false
             && $node !== null;
     }
@@ -877,6 +906,16 @@ $class .= "
 
     private function replaceReservedWords($string)
     {
+        if ($string === null) {
+            return $string;
+        }
+        if (is_object($string) === true) {
+            try {
+            throw new \Exception('not string bitch !');
+            } catch (\Exception $e)  {
+                var_dump($e->getTraceAsString());exit;
+            }
+        }
         $string = str_replace('inline', 'inlinee', $string);
         $string = str_replace('Inline', 'Inlinee', $string);
         $string = str_replace('array', 'myArray', $string);
@@ -961,11 +1000,11 @@ $class .= "
             $this->pStmt_UseUse($use);
         }
 
-        $this->use = array_merge($this->use, $node->uses);
         return;
     }
 
     public function pStmt_UseUse(Stmt\UseUse $node) {
+        $this->use[] = $node;
         $this->classes[] = $this->replaceReservedWords(implode('\\', $node->name->parts));
         if ($node->name->getLast() !== $node->alias) {
             $this->classesAlias[$node->alias] = $this->replaceReservedWords(implode('\\', $node->name->parts));
@@ -1063,7 +1102,7 @@ $class .= "
         $vars = array();
         if (is_array($node) === true) {
             $nodes = $node;
-        } elseif (method_exists($node, 'getIterator') === true) {
+        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
             $nodes = $node->getIterator();
         } else {
             return $vars;
@@ -1072,7 +1111,9 @@ $class .= "
         foreach ($nodes as $stmt) {
             if ($stmt instanceof Expr\Assign) {
                 if (($stmt->var instanceof Expr\PropertyFetch) === false) {
-                    $vars[] = $stmt->var->name;
+                    if (is_object($stmt->var->name) === false) { // if true it is a dynamic var
+                        $vars[] = $stmt->var->name;
+                    }
                 }
             } elseif ($stmt instanceof Stmt\Foreach_) {
                 if (null !== $stmt->keyVar) {
@@ -1104,7 +1145,7 @@ $class .= "
         $hasReturn = false;
         if (is_array($node) === true) {
             $nodes = $node;
-        } elseif (method_exists($node, 'getIterator') === true) {
+        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
             $nodes = $node->getIterator();
         } else {
             return $hasReturn;

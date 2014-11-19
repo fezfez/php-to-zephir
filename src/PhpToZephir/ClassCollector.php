@@ -37,6 +37,10 @@ class ClassCollector extends PrettyPrinterAbstract
     {
         parent::prettyPrint($stmts);
 
+        if ($this->class === null) {
+            throw new \Exception('No class found');
+        }
+
         return $this->class;
     }
 
@@ -398,6 +402,7 @@ class ClassCollector extends PrettyPrinterAbstract
     }
 
     public function pExpr_Include(Expr\Include_ $node) {
+        throw new \Exception('Include not supported in ' . $this->class . ' on line ' . $node->getLine());
         static $map = array(
             Expr\Include_::TYPE_INCLUDE      => 'include',
             Expr\Include_::TYPE_INCLUDE_ONCE => 'include_once',

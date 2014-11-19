@@ -19,17 +19,23 @@ class Engine
      * @var ClassCollector
      */
     private $classCollector = null;
+    /**
+     * @var Logger
+     */
+    private $logger = null;
 
     /**
      * @param Parser $parser
      * @param Converter $converter
      * @param ClassCollector $classCollector
+     * @param Logger $logger
      */
-    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector)
+    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector, Logger $logger)
     {
         $this->parser = $parser;
         $this->converter = $converter;
         $this->classCollector = $classCollector;
+        $this->logger = $logger;
     }
 
     /**
@@ -50,22 +56,13 @@ class Engine
         return $this->convertCode($phpCode);
     }
 
-    private function findFiles($dir, array $files = array(), $recursive = true)
+    private function findFiles($dir)
     {
-        $fileExtension = '.php';
+        $directory = new \RecursiveDirectoryIterator($dir);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
 
-        foreach (glob($dir . '*' . $fileExtension) as $phpFile) {
-            $files[] = $phpFile;
-        }
-
-        if ($recursive === true) {
-            $paths = glob($dir. '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
-            foreach ($paths as $recursiveDir) {
-                $files = $this->findFiles($recursiveDir, $files, $recursive);
-            }
-        }
-
-        return $files;
+        return $regex;
     }
     /**
      * @param string $dir
@@ -77,14 +74,29 @@ class Engine
         $fileExtension = '.php';
         $classes = array();
 
-        $files = $this->findFiles($dir, array(), $recursive);
+        $files = $this->findFiles($dir);
 
-        foreach ($files as $file) {
-            $classes[] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)));
+        $count = iterator_count($files);
+        $this->logger->log('Collect class names');
+        $progress = $this->logger->progress($count);
+        foreach ($files as $filei) {
+            $file = $filei[0];
+            $classCollector = clone $this->classCollector;
+            try {
+                $classes[$file] = $classCollector->collect($this->parser->parse(file_get_contents($file)));
+            } catch (\Exception $e) {
+                $this->logger->log(sprintf('Could not convert file "%s" cause : %s ' . "\n", $file, $e->getMessage()));
+            }
+            $progress->advance();
         }
 
-        foreach ($files as $phpFile) {
+        $progress->finish();
+        $this->logger->log("\n");
 
+        $this->logger->log('Convert php to zep');
+        $progress = $this->logger->progress(count($classes));
+
+        foreach ($classes as $phpFile => $class) {
             if ($filterFileName !== null) {
                 if (basename($phpFile, '.php') !== $filterFileName) {
                     continue;
@@ -93,7 +105,13 @@ class Engine
 
             $phpCode   = file_get_contents($phpFile);
             $fileName  = basename($phpFile, '.php');
-            $converted = $this->convertCode($phpCode, $phpFile, $classes);
+            try {
+                $converted = $this->convertCode($phpCode, $phpFile, $classes);
+            } catch (\Exception $e) {
+                $this->logger->log(sprintf('Could not convert class "%s" cause : %s ' . "\n", $fileName, $e->getMessage()));
+                $progress->advance();
+                continue;
+            }
 
             $zephirCode[$phpFile] = array_merge(
                 $converted,
@@ -113,7 +131,11 @@ class Engine
                     )
                 );
             }
+            $progress->advance();
         }
+
+        $progress->finish();
+        $this->logger->log("\n");
 
         return $zephirCode;
     }
@@ -129,21 +151,16 @@ class Engine
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
-        try {
-            $converter = clone $this->converter;
-            $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
-            $toReturn = array(
-                'zephir'    => $converted['code'],
-                'php'       => $phpCode,
-                'namespace' => $converted['namespace'],
-                'class'     => $converted['class'],
-                'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
-                'additionalClass' => $converted['additionalClass']
-            );
-
-        } catch (\Exception $e) {
-            throw new \Exception(sprintf('Could not convert class "%s" cause : %s ', $fileName, $e->getMessage()), $e->getCode(), $e);
-        }
+        $converter = clone $this->converter;
+        $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
+        $toReturn = array(
+            'zephir'    => $converted['code'],
+            'php'       => $phpCode,
+            'namespace' => $converted['namespace'],
+            'class'     => $converted['class'],
+            'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
+            'additionalClass' => $converted['additionalClass']
+        );
 
         return $toReturn;
     }

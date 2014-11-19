@@ -12,7 +12,8 @@ class EngineFactory
         return new Engine(
             new Parser(new Emulative()),
             new Converter(new TypeFinder(), $logger),
-            new ClassCollector($logger)
+            new ClassCollector($logger),
+            $logger
         );
     }
 }

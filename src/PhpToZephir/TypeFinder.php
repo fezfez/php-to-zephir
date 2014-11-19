@@ -106,8 +106,12 @@ class TypeFinder
         foreach ($phpdoc->getTags() as $tag) {
            /* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
            if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
-              $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
-              return $this->foundTypeInCommentForVar($seeDocBlock, $param, $actualNamespace, $use, $classes);
+               try {
+                   $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
+                   return $this->foundTypeInCommentForVar($seeDocBlock, $param, $actualNamespace, $use, $classes);
+               } catch (\Exception $e) {
+                    echo $e->getMessage() . "\n";
+               }
            }
         }
 
@@ -205,7 +209,7 @@ class TypeFinder
             'object'
         );
 
-        $excludedType = array('mixed', 'callable', 'callable[]', 'scalar', 'scalar[]', 'void', 'object', 'self');
+        $excludedType = array('mixed', 'callable', 'callable[]', 'scalar', 'scalar[]', 'void', 'object', 'self', 'resource', 'true');
 
         if (in_array($rawType, $excludedType) === true || count(explode('|', $rawType)) !== 1) {
             return array('value' => '', 'isClass' => false);
@@ -215,10 +219,10 @@ class TypeFinder
 
         if (preg_match("/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/", $rawType) === 0) { // this is a typo
             $type = array('value' => '', 'isClass' => false);
-        } elseif (in_array($rawType, $primitiveTypes)) {
-            $type = array('value' => $rawType, 'isClass' => false);
-        } elseif (in_array($rawType, $arrayOfPrimitiveTypes)) {
-            $type = array('value' => $rawType, 'isClass' => false);
+        } elseif (in_array(strtolower($rawType), $primitiveTypes)) {
+            $type = array('value' => strtolower($rawType), 'isClass' => false);
+        } elseif (in_array(strtolower($rawType), $arrayOfPrimitiveTypes)) {
+            $type = array('value' => strtolower($rawType), 'isClass' => false);
         } else { // considered as class
             $type = array('value' => $this->searchClass($rawType, $actualNamespace, $use, $classes), 'isClass' => true);
         }
@@ -259,7 +263,7 @@ class TypeFinder
             foreach ($uses as $use) {
                 /* @var $use \PhpParser\Node\Stmt\UseUse */
 
-                // test alias
+                // test alias ex : test\myClass as mySuperClass ( mySuperClass === $classReference)
                 if ($use->alias === str_replace('\\', '', $classReference)) {
                     $aliasClass = implode('\\', $use->name->parts);
                     $possibleClass[] = $aliasClass;
@@ -268,9 +272,15 @@ class TypeFinder
                         break;
                     }
                 } else  {
-                    $use->name->parts[count($use->name->parts) - 1] = null;
-                    //$use->name->parts[count($use->name->parts)] = null;
-                    $classParts = implode('\\', $use->name->parts) . $classReference;
+                    // test alias ex : test\myClass as mySuperClass ( test\myClass\Test === $classReference)
+                    $classParts = str_replace($use->alias, implode('\\', $use->name->parts), $classReference);
+                    $possibleClass[] = $classParts;
+                    if ($this->loadClass($classParts) === true) {
+                        $fullClass = $classParts;
+                        break;
+                    }
+
+                    $classParts = $this->rstrstr(implode('\\', $use->name->parts), '\\') . '\\' . $classReference;
                     $possibleClass[] = $classParts;
                     if ($this->loadClass($classParts) === true) {
                         $fullClass = $classParts;
@@ -285,6 +295,11 @@ class TypeFinder
         }
 
         return '\\' . $this->cleanClass($fullClass);
+    }
+
+    private function rstrstr($haystack,$needle)
+    {
+        return substr($haystack, 0, strrpos($haystack, $needle));
     }
     /**
      * @param Tag $tag
