@@ -919,6 +919,8 @@ $class .= "
         $string = str_replace('inline', 'inlinee', $string);
         $string = str_replace('Inline', 'Inlinee', $string);
         $string = str_replace('array', 'myArray', $string);
+        $string = str_replace('class', 'classs', $string);
+        $string = str_replace('var', 'varr', $string);
 
         if (ctype_upper($string)) {
             $string = strtolower($string);
