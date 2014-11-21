@@ -61,8 +61,27 @@ class TypeFinder
 
     private function replaceReservedWords($string)
     {
-        $string = str_replace('inline', 'inlinee', $string);
-        $string = str_replace('Inline', 'Inlinee', $string);
+        $reservedWord = array(
+            'inline' => 'inlinee',
+            'Inline' => 'Inlinee',
+            'array' => 'myArray',
+            'class' => 'classs',
+            'var' => 'varr',
+            'bool' => 'booll',
+            'namespace' => 'namespacee',
+            'const' => 'constt'
+        );
+
+        foreach ($reservedWord as $word => $replacement) {
+            if ($string == $word) {
+                $string = $replacement;
+                break;
+            }
+        }
+
+        if (ctype_upper($string)) {
+            $string = strtolower($string);
+        }
 
         return $string;
     }
@@ -193,6 +212,11 @@ class TypeFinder
         // @TODO add ressource
         $type           = array();
         $rawType        = $tag->getType();
+
+        if ($rawType === 'integer') {
+            $rawType = 'int';
+        }
+
         $primitiveTypes = array(
             'string',
             'int',

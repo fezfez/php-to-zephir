@@ -9,4 +9,14 @@ class SimpleWhile
 			break;
 		}
 	}
+
+	public function whileWithAssign()
+	{
+        $pos = 0;
+        $input = 'mySuperString';
+
+        /*while (($pos = strpos($input, '@', $pos)) !== false) {
+
+	    }*/
+	}
 }

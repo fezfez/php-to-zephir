@@ -204,7 +204,20 @@ class Converter extends PrettyPrinterAbstract
 
         list($precedence, $associativity) = $this->precedenceMap[$type];
 
-        if ($node->var instanceof Expr\List_) {
+        if ($rightNode instanceof Expr\Array_) {
+            $collect = $this->pExpr_Array($rightNode, true);
+
+            return implode(";\n", $collect['extracted']) . "\n" .
+                'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
+                . $operatorString . ' ' . $collect['expr'];
+        } elseif ($rightNode instanceof Expr\Ternary) {
+            $collect = $this->pExpr_Ternary($rightNode, true);
+
+            return implode(";\n", $collect['extracted']) . "\n" .
+                   'let ' . $this->pPrec($leftNode, $precedence, $associativity, -1)
+            . $operatorString . ' ' . $collect['expr'];
+
+        } elseif ($node->var instanceof Expr\List_) {
             return $this->convertListStmtToAssign($node);
         } elseif ($leftNode instanceof Expr\ArrayDimFetch || $rightNode instanceof Expr\ArrayDimFetch) {
 
@@ -244,7 +257,8 @@ class Converter extends PrettyPrinterAbstract
                 $rightNode instanceof Expr\Empty_ ||
                 $rightNode instanceof Expr\Closure ||
                 $rightNode instanceof Expr\ArrayDimFetch ||
-                $rightNode instanceof Expr\Include_
+                $rightNode instanceof Expr\Include_ ||
+                $rightNode instanceof Expr\PropertyFetch
             ) {
                 // @TODO add test case for each
                 $rightString = $this->pPrec($rightNode, $precedence, $associativity, 1);
@@ -339,7 +353,7 @@ class Converter extends PrettyPrinterAbstract
     }
 
     public function pExpr_AssignOp_BitwiseOr(AssignOp\BitwiseOr $node) {
-        return $this->pInfixOp('Expr_AssignOp_BitwiseOr', $node->var, ' |= ', $node->expr);
+        return 'let ' . $this->p($node->var) . ' = ' . $this->p($node->var) . ' | ' . $this->p($node->expr);
     }
 
     public function pExpr_AssignOp_BitwiseXor(AssignOp\BitwiseXor $node) {
@@ -611,9 +625,19 @@ class Converter extends PrettyPrinterAbstract
         }
     }
 
-    public function pExpr_Array(Expr\Array_ $node) {
+    public function pExpr_Array(Expr\Array_ $node, $returnAsArray = false) {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
-        return '[' . $this->pCommaSeparated($node->items) . ']';
+
+        $collected = $this->collectAssignInCondition($node->items);
+        $node->items = $this->transformAssignInConditionTest($node->items);
+
+        $collected['expr'] = '[' . $this->pCommaSeparated($node->items) . ']';
+
+        if ($returnAsArray === true) {
+            return $collected;
+        } else {
+            return implode(";\n", $collected['extracted']) . "\n" . $collected['expr'];
+        }
     }
 
     public function pExpr_ArrayItem(Expr\ArrayItem $node) {
@@ -639,6 +663,7 @@ class Converter extends PrettyPrinterAbstract
             && ($node instanceof Expr\Cast) === false
             && ($node instanceof Expr\ConstFetch) === false
             && ($node instanceof Expr\StaticCall) === false
+            && ($node instanceof Expr\PropertyFetch) === false
             && ($node instanceof BinaryOp\Minus) === false
             && ($node instanceof BinaryOp\Plus) === false
             && ($node instanceof BinaryOp\Mod) === false
@@ -909,18 +934,25 @@ $class .= "
         if ($string === null) {
             return $string;
         }
-        if (is_object($string) === true) {
-            try {
-            throw new \Exception('not string bitch !');
-            } catch (\Exception $e)  {
-                var_dump($e->getTraceAsString());exit;
+
+        $reservedWord = array(
+            'inline' => 'inlinee',
+            'Inline' => 'Inlinee',
+            'array' => 'myArray',
+            'class' => 'classs',
+            'var' => 'varr',
+            'bool' => 'booll',
+            'namespace' => 'namespacee',
+            'const' => 'constt',
+            'enum'  => 'enumm'
+        );
+
+        foreach ($reservedWord as $word => $replacement) {
+            if ($string == $word) {
+                $string = $replacement;
+                break;
             }
         }
-        $string = str_replace('inline', 'inlinee', $string);
-        $string = str_replace('Inline', 'Inlinee', $string);
-        $string = str_replace('array', 'myArray', $string);
-        $string = str_replace('class', 'classs', $string);
-        $string = str_replace('var', 'varr', $string);
 
         if (ctype_upper($string)) {
             $string = strtolower($string);
@@ -958,13 +990,23 @@ $class .= "
         return 'clone ' . $this->p($node->expr);
     }
 
-    public function pExpr_Ternary(Expr\Ternary $node) {
+    public function pExpr_Ternary(Expr\Ternary $node, $returnAsArray = false) {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
         // a bit of cheating: we treat the ternary as a binary op where the ?...: part is the operator.
         // this is okay because the part between ? and : never needs parentheses.
-        return $this->pInfixOp('Expr_Ternary',
+
+        $collected = $this->collectAssignInCondition($node->cond);
+        $node->cond = $this->transformAssignInConditionTest($node->cond);
+
+        $collected['expr'] = $this->pInfixOp('Expr_Ternary',
             $node->cond, ' ?' . (null !== $node->if ? ' ' . $this->p($node->if) . ' ' : '') . ': ', $node->else
         );
+
+        if ($returnAsArray === true) {
+            return $collected;
+        } else {
+            return implode(";\n", $collected['extracted']) . "\n" . $collected['expr'];
+        }
     }
 
     public function pExpr_Exit(Expr\Exit_ $node) {
@@ -1307,29 +1349,75 @@ $class .= "
         return $node;
     }
 
-    private function collectAssignInCondition($node, $collected = '')
+    private function foreachNodes($nodesCollection, array $nodes = array())
     {
-        if ($this->isBinaryOp($node) !== false) {
-            if ($node->right instanceof Assign) {
-                $collected = $this->collectAssignInCondition($node->right, $collected);
-            } elseif ($node->right instanceof Expr\Array_) {
-                $collected .= "var tmp;\nlet tmp = " . $this->p($node->right) . ";\n";
-            }
-            if ($node->left instanceof Expr\Array_) {
-                $collected .= "var tmp;\nlet tmp = " . $this->p($node->left) . ";\n";
-            }
-        } elseif ($node instanceof Assign) {
-            $rightCollected = '';
-            $tmpNode = clone $node;
-            if ($this->isBinaryOp($tmpNode->expr) !== false) {
-                $rightCollected = $this->collectAssignInCondition($tmpNode->expr, $collected);
-                $tmpNode->expr = $tmpNode->expr->left;
-            }
+        $nodes[] = $nodesCollection;
 
-            $collected .= $this->pExpr_Assign($tmpNode) . ";\n" . $rightCollected;
+        if (is_array($nodesCollection) === true) {
+            $nodesCollection = $nodesCollection;
+        } elseif (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
+            $nodesCollection = $nodesCollection->getIterator();
+        } else {
+            return $nodes;
+        }
+
+        foreach ($nodesCollection as $node) {
+            $nodes[] = $node;
+            $nodes = $this->foreachNodes($node, $nodes);
+        }
+
+        return $nodes;
+    }
+
+    private function collectAssignInCondition($node)
+    {
+        $collected = array(
+            'extracted' => array()
+        );
+
+        foreach ($this->foreachNodes($node) as $key => $stmt) {
+            if ($stmt instanceof Assign) {
+                if ($stmt->expr instanceof BinaryOp) {
+                    $stmt->expr = $stmt->expr->left;
+                    $collected['extracted'][] = $this->pExpr_Assign($stmt) . ";";
+                } else {
+                    $collected['extracted'][] = $this->pExpr_Assign($stmt) . ";";
+                }
+            } elseif ($this->isVarModification($stmt)) {
+                $collected['extracted'][] = $this->p($stmt) . ";";
+            }
         }
 
         return $collected;
+    }
+
+    private function isVarModification($stmt)
+    {
+        return $stmt instanceof Expr\PostDec ||
+               $stmt instanceof Expr\PostInc ||
+               $stmt instanceof Expr\PreDec ||
+               $stmt instanceof Expr\PreInc;
+    }
+
+   private function transformAssignInConditionTest($primaryNode)
+    {
+        if ($primaryNode instanceof Expr\Assign) {
+            $primaryNode = $primaryNode->var;
+        } elseif ($this->isVarModification($primaryNode)) {
+            $primaryNode = $primaryNode->var;
+        } else {
+            if (is_array($primaryNode) === true) {
+                foreach ($primaryNode as $key => $node) {
+                    $primaryNode[$key] = $this->transformAssignInConditionTest($node);
+                }
+            } elseif (is_string($primaryNode) === false && method_exists($primaryNode, 'getIterator') === true) {
+                foreach ($primaryNode->getIterator() as $key => $node) {
+                    $primaryNode->{$key} = $this->transformAssignInConditionTest($node);
+                }
+            }
+        }
+
+        return $primaryNode;
     }
 
     // Control flow
@@ -1337,24 +1425,46 @@ $class .= "
     public function pStmt_If(Stmt\If_ $node)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
-        $condition = clone $node;
-        $collected = $this->collectAssignInCondition($condition->cond);
-        $node->cond = $this->transformAssignInCondition($node->cond);
+        $collected = $this->collectAssignInCondition($node->cond);
+        $node->cond = $this->transformAssignInConditionTest($node->cond);
 
         if (empty($node->stmts)) {
             $node->stmts = array(new Stmt\Echo_(array(new Scalar\String("not allowed"))));
             $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->fullClass);
         }
 
-        return $collected . 'if ' . $this->p($node->cond) . ' {'
+        return implode(";\n", $collected['extracted']) . "\n" .
+               'if ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}'
-             . $this->pImplode($node->elseifs)
-             . (null !== $node->else ? $this->p($node->else) : '');
+             . $this->implodeElseIfs($node);
+    }
+
+    private function implodeElseIfs(Stmt\If_ $node)
+    {
+        $elseCount = 0;
+        $toReturn = '';
+
+        foreach ($node->elseifs as $elseIf) {
+            $collected = $this->collectAssignInCondition($elseIf->cond);
+
+            if (!empty($collected)) {
+                $elseCount++;
+                $toReturn .=' else { ' . "\n" .  $this->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator())) . "\n";
+            } else {
+                var_dump($collected);
+                $toReturn .= $this->pStmt_ElseIf($elseIf);
+            }
+        }
+
+        $toReturn .= (null !== $node->else ? $this->p($node->else) : '');
+
+        return $toReturn . str_repeat('}', $elseCount);
     }
 
     public function pStmt_ElseIf(Stmt\ElseIf_ $node)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
+
         return ' elseif ' . $this->p($node->cond) . ' {'
              . $this->pStmts($node->stmts) . "\n" . '}';
     }
@@ -1388,8 +1498,11 @@ $class .= "
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
 
-        return 'while (' . $this->p($node->cond) . ') {'
-             . $this->pStmts($node->stmts) . "\n" . '}';
+        $collected = $this->collectAssignInCondition($node->cond);
+        $node->cond = $this->transformAssignInConditionTest($node->cond);
+
+        return implode(";\n", $collected['extracted']) . "\n" . 'while (' . $this->p($node->cond) . ') {'
+             . $this->pStmts($node->stmts) . "\n" . implode(";\n", $collected['extracted']) . "\n" . '}';
     }
 
     public function pStmt_Do(Stmt\Do_ $node) {
@@ -1419,14 +1532,18 @@ $class .= "
 
     private function convertSwitchToIfelse(Stmt\Switch_ $node)
     {
-        $stmt = '';
+        $stmt = array(
+            'else' => null,
+            'elseifs' => array()
+        );
+        $if = null;
         $ifDefined = false;
         $left = null;
 
         foreach ($node->cases as $case) {
             $case = $this->removeBreakStmt($case);
             if (end($node->cases) === $case) {
-                $stmt .= $this->pStmt_Else(new \PhpParser\Node\Stmt\Else_($case->stmts));
+                $stmt['else'] = new \PhpParser\Node\Stmt\Else_($case->stmts);
             } else {
                 if (empty($case->stmts)) { // concatene empty statement
                     if ($left !== null) {
@@ -1437,25 +1554,33 @@ $class .= "
                 } elseif ($ifDefined === false) {
                     if ($left !== null) {
                         $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                        $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($lastLeft, array('stmts' => $case->stmts)));
+                        $if = new \PhpParser\Node\Stmt\If_($lastLeft, array('stmts' => $case->stmts));
                         $left = null;
                     } else {
-                        $stmt .= $this->pStmt_If(new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts)));
+                        $if = new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts));
                     }
                     $ifDefined = true;
                 } else {
                     if ($left !== null) {
                         $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                        $stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts));
+                        $stmt['elseifs'][] = new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts);
                         $left = null;
                     } else {
-                        $stmt .= $this->pStmt_Elseif(new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts));
+                        $stmt['elseifs'][] = new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts);
                     }
                 }
             }
         }
 
-        return $stmt;
+        $elseifs = array_reverse($stmt['elseifs']);
+
+        $if = new \PhpParser\Node\Stmt\If_($if->cond, array(
+            'stmts' => $if->stmts,
+            'elseifs' => $elseifs,
+            'else' => $stmt['else']
+        ));
+
+        return $this->pStmt_If($if);
     }
 
     public function pStmt_Switch(Stmt\Switch_ $node)
@@ -1516,7 +1641,10 @@ $class .= "
     }
 
     public function pStmt_Return(Stmt\Return_ $node) {
-        return 'return' . (null !== $node->expr ? ' ' . $this->p($node->expr) : '') . ';';
+        $collected = $this->collectAssignInCondition($node->expr);
+        $node->expr = $this->transformAssignInConditionTest($node->expr);
+
+        return implode(";\n", $collected['extracted']) . "\n" .'return' . (null !== $node->expr ? ' ' . $this->p($node->expr) : '') . ';';
     }
 
     public function pStmt_Throw(Stmt\Throw_ $node)
