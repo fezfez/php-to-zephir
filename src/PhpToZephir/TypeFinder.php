@@ -13,9 +13,17 @@ use phpDocumentor\Reflection\DocBlock\Tag\SeeTag;
 
 class TypeFinder
 {
-    public function __construct()
-    {
+    /**
+     * @var ReservedWordReplacer
+     */
+    private $reservedWordReplacer = null;
 
+    /**
+     * @param ReservedWordReplacer $reservedWordReplacer
+     */
+    public function __construct(ReservedWordReplacer $reservedWordReplacer)
+    {
+        $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     /**
@@ -61,29 +69,7 @@ class TypeFinder
 
     private function replaceReservedWords($string)
     {
-        $reservedWord = array(
-            'inline' => 'inlinee',
-            'Inline' => 'Inlinee',
-            'array' => 'myArray',
-            'class' => 'classs',
-            'var' => 'varr',
-            'bool' => 'booll',
-            'namespace' => 'namespacee',
-            'const' => 'constt'
-        );
-
-        foreach ($reservedWord as $word => $replacement) {
-            if ($string == $word) {
-                $string = $replacement;
-                break;
-            }
-        }
-
-        if (ctype_upper($string)) {
-            $string = strtolower($string);
-        }
-
-        return $string;
+        return $this->reservedWordReplacer->replace($string);
     }
 
     /**

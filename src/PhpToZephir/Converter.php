@@ -42,11 +42,21 @@ class Converter extends PrettyPrinterAbstract
      * @var Logger
      */
     private $logger = null;
+    /**
+     * @var ReservedWordReplacer
+     */
+    private $reservedWordReplacer = null;
 
-    public function __construct(TypeFinder $typeFinder, Logger $logger)
+    /**
+     * @param TypeFinder $typeFinder
+     * @param Logger $logger
+     * @param ReservedWordReplacer $reservedWordReplacer
+     */
+    public function __construct(TypeFinder $typeFinder, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
         $this->typeFinder = $typeFinder;
         $this->logger     = $logger;
+        $this->reservedWordReplacer = $reservedWordReplacer;
         parent::__construct();
     }
 
@@ -565,7 +575,11 @@ class Converter extends PrettyPrinterAbstract
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->fullClass);
 
-        return $this->pVarOrNewExpr($node->var) . '->' . $this->pObjectProperty($node->name)
+        $collected = $this->collectAssignInCondition($node->args);
+        $node->args = $this->transformAssignInConditionTest($node->args);
+
+
+        return implode(";\n", $collected['extracted']) . "\n" . $this->pVarOrNewExpr($node->var) . '->' . $this->pObjectProperty($node->name)
              . '(' . $this->pCommaSeparated($node->args) . ')';
     }
 
@@ -926,39 +940,16 @@ $class .= "
             $this->logger->logNode("Zephir not support reference parameters for now. Stay tuned for https://github.com/phalcon/zephir/issues/203", $node, $this->class);
         }
 
-        return $node->var;
+        return $this->replaceReservedWords($node->var);
     }
 
     private function replaceReservedWords($string)
     {
-        if ($string === null) {
-            return $string;
+        if (substr($string, 0, 6) === 'this->') {
+            return 'this->' . $this->reservedWordReplacer->replace(substr($string, 6));
+        } else {
+            return $this->reservedWordReplacer->replace($string);
         }
-
-        $reservedWord = array(
-            'inline' => 'inlinee',
-            'Inline' => 'Inlinee',
-            'array' => 'myArray',
-            'class' => 'classs',
-            'var' => 'varr',
-            'bool' => 'booll',
-            'namespace' => 'namespacee',
-            'const' => 'constt',
-            'enum'  => 'enumm'
-        );
-
-        foreach ($reservedWord as $word => $replacement) {
-            if ($string == $word) {
-                $string = $replacement;
-                break;
-            }
-        }
-
-        if (ctype_upper($string)) {
-            $string = strtolower($string);
-        }
-
-        return $string;
     }
 
     private function findRightClass(Node\Name $node)
@@ -984,6 +975,18 @@ $class .= "
 
     public function pExpr_New(Expr\New_ $node) {
         return 'new ' . $this->p($node->class) . '(' . $this->pCommaSeparated($node->args) . ')';
+    }
+
+    /**
+     * Pretty prints an array of nodes and implodes the printed values with commas.
+     *
+     * @param Node[] $nodes Array of Nodes to be printed
+     *
+     * @return string Comma separated pretty printed nodes
+     */
+    protected function pCommaSeparated(array $nodes) {
+
+        return $this->pImplode($nodes, ', ');
     }
 
     public function pExpr_Clone(Expr\Clone_ $node) {
@@ -1057,7 +1060,12 @@ $class .= "
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }
 
-    public function pStmt_Interface(Stmt\Interface_ $node) {
+    public function pStmt_Interface(Stmt\Interface_ $node)
+    {
+        if ($this->class !== null) {
+            throw new \Exception('Multiple class detected');
+        }
+
         $node->name = $this->replaceReservedWords($node->name);
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
@@ -1079,11 +1087,17 @@ $class .= "
              . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
-    public function pStmt_Class(Stmt\Class_ $node) {
+    public function pStmt_Class(Stmt\Class_ $node)
+    {
+        if ($this->class !== null) {
+            throw new \Exception('Multiple class detected');
+        }
+
         $node->name = $this->replaceReservedWords($node->name);
         $this->classes[] = $this->actualNamespace . '\\' . $node->name;
         $this->class = $node->name;
         $this->fullClass = $this->actualNamespace . '\\' . $node->name;
+
         return $this->pModifiers($node->type)
              . 'class ' . $node->name
              . (null !== $node->extends ? ' extends ' . $this->findRightClass($node->extends) : '')
