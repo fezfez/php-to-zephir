@@ -40,6 +40,10 @@ class IfPrinter
         return "pStmt_If";
     }
 
+    /**
+     * @param Stmt\If_ $node
+     * @return string
+     */
     public function convert(Stmt\If_ $node)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
@@ -69,7 +73,7 @@ class IfPrinter
             $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
             if (!empty($collected)) {
                 $elseCount++;
-                $toReturn .=' else { ' . "\n" .  $this->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator())) . "\n";
+                $toReturn .=' else { ' . "\n" .  $this->dispatcher->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator())) . "\n";
             } else {
                 $toReturn .= $this->dispatcher->pStmt_ElseIf($elseIf);
             }

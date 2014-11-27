@@ -49,11 +49,16 @@ class AssignPrinter
         return "pExpr_Assign";
     }
 
-    public function convert(Expr\Assign $node) {
-        $type = 'Expr_Assign';
-        $leftNode = $node->var;
+    /**
+     * @param Expr\Assign $node
+     * @return string
+     */
+    public function convert(Expr\Assign $node)
+    {
+        $type           = 'Expr_Assign';
+        $leftNode       = $node->var;
         $operatorString = ' = ';
-        $rightNode = $node->expr;
+        $rightNode      = $node->expr;
 
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
@@ -84,35 +89,7 @@ class AssignPrinter
                     $head .= $result['head'];
                     $rightString = $result['lastExpr'];
                 }
-            } elseif (
-                $rightNode instanceof Variable ||
-                $rightNode instanceof Scalar ||
-                $rightNode instanceof Array_ ||
-                $rightNode instanceof BinaryOp\Concat ||
-                $rightNode instanceof BinaryOp\BooleanOr ||
-                $rightNode instanceof BinaryOp\Minus ||
-                $rightNode instanceof BinaryOp\Plus ||
-                $rightNode instanceof BinaryOp\BitwiseOr ||
-                $rightNode instanceof BinaryOp\BitwiseAnd ||
-                $rightNode instanceof Expr\UnaryMinus ||
-                $rightNode instanceof BinaryOp\Mul ||
-                $rightNode instanceof Expr\StaticCall ||
-                $rightNode instanceof Expr\FuncCall ||
-                $rightNode instanceof Expr\ConstFetch ||
-                $rightNode instanceof Expr\Clone_ ||
-                $rightNode instanceof Expr\New_ ||
-                $rightNode instanceof Expr\ClassConstFetch ||
-                $rightNode instanceof Expr\Ternary ||
-                $rightNode instanceof Expr\BooleanNot ||
-                $rightNode instanceof Expr\Cast ||
-                $rightNode instanceof Expr\MethodCall ||
-                $rightNode instanceof Expr\Isset_ ||
-                $rightNode instanceof Expr\Empty_ ||
-                $rightNode instanceof Expr\Closure ||
-                $rightNode instanceof Expr\ArrayDimFetch ||
-                $rightNode instanceof Expr\Include_ ||
-                $rightNode instanceof Expr\PropertyFetch
-            ) {
+            } elseif ($this->isSomething($rightNode)) {
                 // @TODO add test case for each
                 $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
@@ -149,6 +126,37 @@ class AssignPrinter
             return 'let ' . $this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                    . $operatorString . ' ' . $this->dispatcher->p($rightNode);
         }
+    }
+
+    private function isSomething($rightNode)
+    {
+        return  $rightNode instanceof Variable ||
+                $rightNode instanceof Scalar ||
+                $rightNode instanceof Array_ ||
+                $rightNode instanceof BinaryOp\Concat ||
+                $rightNode instanceof BinaryOp\BooleanOr ||
+                $rightNode instanceof BinaryOp\Minus ||
+                $rightNode instanceof BinaryOp\Plus ||
+                $rightNode instanceof BinaryOp\BitwiseOr ||
+                $rightNode instanceof BinaryOp\BitwiseAnd ||
+                $rightNode instanceof Expr\UnaryMinus ||
+                $rightNode instanceof BinaryOp\Mul ||
+                $rightNode instanceof Expr\StaticCall ||
+                $rightNode instanceof Expr\FuncCall ||
+                $rightNode instanceof Expr\ConstFetch ||
+                $rightNode instanceof Expr\Clone_ ||
+                $rightNode instanceof Expr\New_ ||
+                $rightNode instanceof Expr\ClassConstFetch ||
+                $rightNode instanceof Expr\Ternary ||
+                $rightNode instanceof Expr\BooleanNot ||
+                $rightNode instanceof Expr\Cast ||
+                $rightNode instanceof Expr\MethodCall ||
+                $rightNode instanceof Expr\Isset_ ||
+                $rightNode instanceof Expr\Empty_ ||
+                $rightNode instanceof Expr\Closure ||
+                $rightNode instanceof Expr\ArrayDimFetch ||
+                $rightNode instanceof Expr\Include_ ||
+                $rightNode instanceof Expr\PropertyFetch;
     }
 
     private function findValueToAssign($rightNode)

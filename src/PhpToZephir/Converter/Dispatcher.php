@@ -19,6 +19,8 @@ use PhpToZephir\Logger;
  * @method string pObjectProperty($node)
  * @method string pPrefixOp(string $type, string $operatorString, \PhpParser\Node $node)
  * @method string pEncapsList(array $encapsList, string $quote)
+ * @method string pPostfixOp(string $type, \PhpParser\Node $node, string $operatorString)
+ * @method string pStmt_ElseIf(\PhpParser\Node\Stmt\ElseIf_ $node)
  *
  *
  */
