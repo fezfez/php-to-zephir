@@ -21,6 +21,12 @@ class ClassManipulator
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
+    /**
+     * @param Node\Name $node
+     * @param ClassMetadata $metadata
+     * @param array $classCollected
+     * @return string
+     */
     public function findRightClass(Node\Name $node, ClassMetadata $metadata, array $classCollected = array())
     {
         $class = implode('\\', $node->parts);
@@ -35,7 +41,7 @@ class ClassManipulator
             $classKey = array_keys($alias, $class);
             return '\\' . $alias[$class];
         } elseif (false !== $key = array_search($class, $lastPartsClass)) {
-            return '\\' . $this->classes[$key];
+            return '\\' . $classCollected[$key];
         } elseif (false !== $key = array_search($metadata->getNamespace() . '\\' . $class, $classCollected)) {
             return '\\' . $classCollected[$key];
         } else {

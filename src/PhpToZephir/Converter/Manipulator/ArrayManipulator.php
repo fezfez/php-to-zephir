@@ -2,8 +2,10 @@
 
 namespace PhpToZephir\converter\Manipulator;
 
-use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\BinaryOp;
 use PhpToZephir\Converter\Dispatcher;
+use PhpParser\Node\Scalar;
 
 class ArrayManipulator
 {
@@ -26,7 +28,7 @@ class ArrayManipulator
     private function findComplexArrayDimFetch($node, $collected = array())
     {
         if ($this->isInvalidInArrayDimFetch($node) === true) {
-            if ($node->dim instanceof FuncCall) {
+            if ($node->dim instanceof Expr\FuncCall) {
                 $this->logger->trace(__METHOD__ . ' ' . __LINE__ . ' Non supported funccall in array', $node, $this->fullClass);
             } else {
                 $collected[] = array(
@@ -43,7 +45,7 @@ class ArrayManipulator
             }
         }
 
-        if ($node->var instanceof ArrayDimFetch) {
+        if ($node->var instanceof Expr\ArrayDimFetch) {
             $collected = $this->findComplexArrayDimFetch($node->var, $collected);
         } else {
             $collected[] = $node->var;
@@ -54,7 +56,7 @@ class ArrayManipulator
 
     private function isInvalidInArrayDimFetch($node)
     {
-        if ($node->dim instanceof Concat) {
+        if ($node->dim instanceof BinaryOp\Concat) {
             return $this->isInvalidInArrayDimFetch($node->dim->left)
             && $this->isInvalidInArrayDimFetch($node->dim->right);
         } else {
@@ -77,7 +79,7 @@ class ArrayManipulator
         && $node !== null;
     }
 
-    public function arrayNeedToBeSplit(ArrayDimFetch $node)
+    public function arrayNeedToBeSplit(Expr\ArrayDimFetch $node)
     {
         $collected = array_reverse($this->findComplexArrayDimFetch($node));
 

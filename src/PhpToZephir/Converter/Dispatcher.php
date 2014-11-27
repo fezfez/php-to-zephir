@@ -4,6 +4,16 @@ namespace PhpToZephir\Converter;
 
 use PhpToZephir\Logger;
 
+/**
+ * @method string pExpr_Assign()
+ * @method string pImplode()
+ * @method string pVarOrNewExpr()
+ * @method string pCommaSeparated()
+ * @method string pInfixOp()
+ * @method string pPrec()
+ * @method string pExpr_Ternary()
+ * @method string pStmts()
+ */
 class Dispatcher
 {
     /**
@@ -26,6 +36,14 @@ class Dispatcher
      * @var Logger
      */
     private $logger = null;
+    /**
+     * @var string
+     */
+    private $lastMethod = null;
+    /**
+     * @var ClassMetadata
+     */
+    private $metadata = null;
 
     /**
      * @param PrinterCollection $printerCollection
@@ -94,6 +112,7 @@ class Dispatcher
         if ($reflectionClass->getConstructor() === null) {
             return new $className;
         }
+        $dependencies = array();
 
         foreach ($reflectionClass->getConstructor()->getParameters() as $nmb => $param) {
             $name = $param->getClass()->name;
@@ -142,7 +161,7 @@ class Dispatcher
     }
 
     /**
-     * @return \PhpToZephir\Converter\ClassMetadata
+     * @return ClassMetadata
      */
     public function getMetadata()
     {

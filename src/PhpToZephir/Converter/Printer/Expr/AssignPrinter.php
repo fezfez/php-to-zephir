@@ -71,7 +71,7 @@ class AssignPrinter
             . $operatorString . ' ' . $collect['expr'];
 
         } elseif ($node->var instanceof Expr\List_) {
-            return $this->dispatcher->convertListStmtToAssign($node);
+            return $this->convertListStmtToAssign($node);
         } elseif ($leftNode instanceof Expr\ArrayDimFetch || $rightNode instanceof Expr\ArrayDimFetch) {
 
             $head = '';
@@ -127,7 +127,7 @@ class AssignPrinter
         } elseif($rightNode instanceof Expr\Assign) { // multiple assign
             $valueToAssign = ' = ' . $this->dispatcher->p($this->dispatcher->findValueToAssign($rightNode));
             $vars = array($this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1));
-            foreach($this->dispatcher->findVarToAssign($rightNode) as $nodeAssigned) {
+            foreach($this->findVarToAssign($rightNode) as $nodeAssigned) {
                 $vars[] = $nodeAssigned;
             }
 
@@ -149,5 +149,33 @@ class AssignPrinter
             return 'let ' . $this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                    . $operatorString . ' ' . $this->dispatcher->p($rightNode);
         }
+    }
+
+    private function convertListStmtToAssign($node)
+    {
+        $type = 'Expr_Assign';
+        $leftNode = $node->var;
+        $operatorString = ' = ';
+        $rightNode = $node->expr;
+        list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
+        $vars = array();
+        foreach ($node->var->vars as $count => $var) {
+            if (null === $var) {
+                $pList[] = '';
+            } else {
+                $vars[] = $this->p($var);
+                $pList[] = 'let ' . $this->p($var) . ' = ' . $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
+            }
+        }
+        return 'var ' . implode(", ", $vars) . ";\n" . implode("\n", $pList);
+    }
+
+    private function findVarToAssign($rightNode, array $toAssign = array())
+    {
+        if($rightNode->expr instanceof Expr\Assign) {
+            $toAssign = $this->findVarToAssign($rightNode->expr);
+        }
+        $toAssign[] = $this->p($rightNode->var);
+        return $toAssign;
     }
 }

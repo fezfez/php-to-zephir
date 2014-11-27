@@ -5,6 +5,7 @@ namespace PhpToZephir;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Scalar\MagicConst;
 
 class ClassCollector
 {
@@ -48,6 +49,12 @@ class ClassCollector
                 throw new \Exception('Include not supported in ' . $fileName . ' on line ' . $node->getLine());
             } elseif ($node instanceof Stmt\Goto_) {
                 throw new \Exception('Goto not supported in ' . $fileName . ' on line ' . $node->getLine());
+            } elseif ($node instanceof Stmt\InlineHTML) {
+                throw new \Exception('InlineHTML not supported in ' . $fileName . ' on line ' . $node->getLine());
+            } elseif ($node instanceof Stmt\HaltCompiler) {
+                throw new \Exception('HaltCompiler not supported in ' . $fileName . ' on line ' . $node->getLine());
+            } elseif ($node instanceof MagicConst\Trait_) {
+                throw new \Exception('MagicConst\Trait_ not supported in ' . $fileName . ' on line ' . $node->getLine());
             } elseif ($node instanceof Stmt\Namespace_) {
                 $namespace = implode('\\', $node->name->parts);
             } elseif ($node instanceof Stmt\Interface_ || $node instanceof Stmt\Class_) {

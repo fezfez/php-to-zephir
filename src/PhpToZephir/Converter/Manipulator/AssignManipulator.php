@@ -2,6 +2,7 @@
 
 namespace PhpToZephir\converter\Manipulator;
 
+use PhpParser\Node\Expr;
 use PhpToZephir\NodeFetcher;
 use PhpToZephir\Converter\Dispatcher;
 
@@ -32,8 +33,8 @@ class AssignManipulator
         );
 
         foreach ($this->nodeFetcher->foreachNodes($node) as $key => $stmt) {
-            if ($stmt instanceof Assign) {
-                if ($stmt->expr instanceof BinaryOp) {
+            if ($stmt instanceof Expr\Assign) {
+                if ($stmt->expr instanceof Expr\BinaryOp) {
                     $stmt->expr = $stmt->expr->left;
                     $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
                 } else {
