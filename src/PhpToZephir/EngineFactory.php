@@ -4,8 +4,6 @@ namespace PhpToZephir;
 
 use PhpParser\Parser;
 use PhpParser\Lexer\Emulative;
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Converter\DispatcherFactory;
 use PhpToZephir\Converter\ConverterFactory;
 
 class EngineFactory

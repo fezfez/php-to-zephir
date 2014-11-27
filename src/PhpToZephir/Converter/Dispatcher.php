@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter;
 
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
 use PhpToZephir\Logger;
 
 class Dispatcher
@@ -76,6 +74,9 @@ class Dispatcher
         return $this->classes[$type];
     }
 
+    /**
+     * @param string $value
+     */
     public function setLastMethod($value)
     {
         $this->lastMethod = $value;
@@ -120,7 +121,7 @@ class Dispatcher
 
     /**
      * @param string $type
-     * @return array
+     * @return boolean
      */
     public function issetPrecedenceMap($type)
     {

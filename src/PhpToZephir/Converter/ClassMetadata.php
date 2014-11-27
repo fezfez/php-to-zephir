@@ -10,6 +10,9 @@ class ClassMetadata
     private $classes = array();
     private $classesAlias = array();
 
+    /**
+     * @param string $value
+     */
     public function setNamespace($value)
     {
         $this->namespace = $value;
@@ -18,6 +21,10 @@ class ClassMetadata
     {
         $this->class = $value;
     }
+
+    /**
+     * @param \PhpParser\Node\Stmt\UseUse $value
+     */
     public function addUse($value)
     {
         $this->use[] = $value;
@@ -26,6 +33,10 @@ class ClassMetadata
     {
         $this->classes[] = $value;
     }
+
+    /**
+     * @param string $key
+     */
     public function addClassesAlias($key, $value)
     {
         $this->classesAlias[$key] = $value;
