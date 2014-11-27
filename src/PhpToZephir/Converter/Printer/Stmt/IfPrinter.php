@@ -66,16 +66,15 @@ class IfPrinter
         $elseCount = 0;
         $toReturn = '';
         foreach ($node->elseifs as $elseIf) {
-            $collected = $this->collectAssignInCondition($elseIf->cond);
+            $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
             if (!empty($collected)) {
                 $elseCount++;
                 $toReturn .=' else { ' . "\n" .  $this->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator())) . "\n";
             } else {
-                var_dump($collected);
-                $toReturn .= $this->pStmt_ElseIf($elseIf);
+                $toReturn .= $this->dispatcher->pStmt_ElseIf($elseIf);
             }
         }
-        $toReturn .= (null !== $node->else ? $this->p($node->else) : '');
+        $toReturn .= (null !== $node->else ? $this->dispatcher->p($node->else) : '');
         return $toReturn . str_repeat('}', $elseCount);
     }
 }
