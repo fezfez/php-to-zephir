@@ -18,13 +18,18 @@ class Logger
      * @var ProgressBar
      */
     private $progress = null;
+    /**
+     * @var boolean
+     */
+    private $trace = null;
 
     /**
      * @param OutputInterface $output
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(OutputInterface $output, $trace = false)
     {
         $this->output = $output;
+        $this->trace  = $trace;
     }
 
     private function cleanProgressbar()
@@ -60,9 +65,11 @@ class Logger
      */
     public function trace($message, Node $node, $class = null)
     {
-        //$this->cleanProgressbar();
-        // $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
-        //$this->reDrawProgressBar();
+        if ($this->trace === true) {
+            $this->cleanProgressbar();
+            $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
+            $this->reDrawProgressBar();
+        }
     }
 
     /**

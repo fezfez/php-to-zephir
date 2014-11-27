@@ -55,7 +55,8 @@ class ClassMethodPrinter
         return "pStmt_ClassMethod";
     }
 
-    public function convert(Stmt\ClassMethod $node) {
+    public function convert(Stmt\ClassMethod $node)
+    {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         $types = $this->typeFinder->getTypes(
             $node,
@@ -80,21 +81,34 @@ class ClassMethodPrinter
         }
 
         $stmt .= ")";
+        $stmt .= $this->printReturn($node, $types);
 
-        $hasReturn = $this->hasReturnStatement($node);
-        if (array_key_exists('return', $types) === false && $this->hasReturnStatement($node) === false && $hasReturn === false) {
-            $stmt .= ' -> void';
-        } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
-            $stmt .= ' -> ' . $this->printType($types['return']);
-        }
+        $stmt .= (null !== $node->stmts ? "\n{" . $this->printVars($node, $varsInMethodSign) .
+             $this->dispatcher->pStmts($node->stmts) . "\n}" : ';') . "\n";
 
+        return $stmt;
+    }
+
+    private function printVars(Stmt\ClassMethod $node, array $varsInMethodSign)
+    {
         $var = '';
         $vars  = array_diff(array_unique(array_filter($this->collectVars($node))), $varsInMethodSign);
         if (!empty($vars)) {
             $var .= "\n    var " . implode(', ', $vars) . ";\n";
         }
 
-        $stmt .= (null !== $node->stmts ? "\n{" . $var . $this->dispatcher->pStmts($node->stmts) . "\n}" : ';') . "\n";
+        return $var;
+    }
+
+    private function printReturn(Stmt\ClassMethod $node, array $types)
+    {
+        $stmt = '';
+        $hasReturn = $this->hasReturnStatement($node);
+        if (array_key_exists('return', $types) === false && $this->hasReturnStatement($node) === false && $hasReturn === false) {
+            $stmt .= ' -> void';
+        } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
+            $stmt .= ' -> ' . $this->printType($types['return']);
+        }
 
         return $stmt;
     }
