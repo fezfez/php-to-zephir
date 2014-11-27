@@ -21,6 +21,8 @@ use PhpToZephir\Logger;
  * @method string pEncapsList(array $encapsList, string $quote)
  * @method string pPostfixOp(string $type, \PhpParser\Node $node, string $operatorString)
  * @method string pStmt_ElseIf(\PhpParser\Node\Stmt\ElseIf_ $node)
+ * @method string pStmt_If(\PhpParser\Node\Stmt\If_ $node)
+ *
  *
  *
  */

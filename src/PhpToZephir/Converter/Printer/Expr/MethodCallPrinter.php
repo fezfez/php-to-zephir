@@ -46,7 +46,8 @@ class MethodCallPrinter
         $node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
 
 
-        return implode(";\n", $collected['extracted']) . "\n" . $this->dispatcher->pVarOrNewExpr($node->var) . '->' . $this->dispatcher->pObjectProperty($node->name)
+        return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted']) . "\n" : '') .
+                $this->dispatcher->pVarOrNewExpr($node->var) . '->' . $this->dispatcher->pObjectProperty($node->name)
              . '(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
     }
 }

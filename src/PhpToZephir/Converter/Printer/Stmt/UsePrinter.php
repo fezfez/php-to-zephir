@@ -32,11 +32,11 @@ class UsePrinter
         return "pStmt_Use";
     }
 
-    public function convert(Stmt\Use_ $node) {
-        foreach ($node->uses as $use) {
-            $this->dispatcher->p($use);
-        }
-
-        return;
+    public function convert(Stmt\Use_ $node)
+    {
+        return 'use '
+             . ($node->type === Stmt\Use_::TYPE_FUNCTION ? 'function ' : '')
+             . ($node->type === Stmt\Use_::TYPE_CONSTANT ? 'const ' : '')
+             . $this->dispatcher->pCommaSeparated($node->uses) . ';';
     }
 }

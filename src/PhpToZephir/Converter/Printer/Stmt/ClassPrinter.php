@@ -57,8 +57,8 @@ class ClassPrinter
 
         return $this->dispatcher->pModifiers($node->type)
              . 'class ' . $node->name
-             . (null !== $node->extends ? ' extends ' . $this->classManipulator->findRightClass($node->extends, $this->dispatcher->getMetadata()) : '')
-             . (!empty($node->implements) ? ' implements ' . $this->p_implements($node->implements) : '')
+             . (null !== $node->extends ? ' extends ' . $this->dispatcher->p($node->extends) : '')
+             . (!empty($node->implements) ? ' implements ' . $this->dispatcher->pCommaSeparated($node->implements) : '')
              . "\n" . '{' . $this->dispatcher->pStmts($node->stmts) . "\n" . '}';
     }
 

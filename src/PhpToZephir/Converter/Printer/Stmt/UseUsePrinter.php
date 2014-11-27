@@ -41,7 +41,7 @@ class UseUsePrinter
 
     public function convert(Stmt\UseUse $node)
     {
-        return ''; $this->dispatcher->p($node->name)
+        return $this->dispatcher->p($node->name)
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }
 }
