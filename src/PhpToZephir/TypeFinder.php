@@ -67,6 +67,9 @@ class TypeFinder
        return $definition;
     }
 
+    /**
+     * @param string $string
+     */
     private function replaceReservedWords($string)
     {
         return $this->reservedWordReplacer->replace($string);
@@ -147,11 +150,11 @@ class TypeFinder
 
 
     /**
-     * @param ClassMethod $node
      * @param string $actualNamespace
      * @param array $definition
      * @param array $use
      * @param array $classes
+     * @param DocBlock $phpdoc
      * @return array
      */
     private function findReturnTag($phpdoc, $actualNamespace, array $definition, array $use, array $classes)
@@ -190,7 +193,7 @@ class TypeFinder
     }
 
     /**
-     * @param string $rawType
+     * @param string $actualNamespace
      * @return string
      */
     private function findType($tag, $actualNamespace, array $use, array $classes)
@@ -253,9 +256,8 @@ class TypeFinder
 
     /**
      * @param string $classReference
-     * @param string $actualClass
      * @throws \Exception
-     * @return unknown
+     * @return string
      */
     private function searchClass($classReference, $actualNamespace, array $uses, array $classes)
     {
@@ -307,12 +309,17 @@ class TypeFinder
         return '\\' . $this->cleanClass($fullClass);
     }
 
+    /**
+     * @param string $haystack
+     * @param string $needle
+     */
     private function rstrstr($haystack,$needle)
     {
         return substr($haystack, 0, strrpos($haystack, $needle));
     }
     /**
      * @param Tag $tag
+     * @param string $actualNamespace
      * @throws \Exception
      */
     private function findSeeDocBlock(SeeTag $tag, $actualNamespace, array $use, array $classes)

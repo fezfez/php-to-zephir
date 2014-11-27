@@ -5,22 +5,8 @@ namespace PhpToZephir\Converter\Printer\Expr;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node;
-use PhpParser\Node\Scalar;
-use PhpParser\Node\Scalar\MagicConst;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\AssignOp;
-use PhpParser\Node\Expr\BinaryOp;
-use PhpParser\Node\Expr\Cast;
-use PhpParser\Node\Stmt;
-use PhpParser\Node\Name;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
-use PhpParser\Node\Expr\BinaryOp\Equal;
-use PhpParser\Node\Scalar\String;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayDimFetch;
-use phpDocumentor\Reflection\DocBlock;
 
 class ClosurePrinter
 {
@@ -72,6 +58,10 @@ class ClosurePrinter
         return "new " . $name . '(' . $this->dispatcher->pCommaSeparated($node->uses) . ')';
     }
 
+    /**
+     * @param null|string $lastMethod
+     * @param integer $number
+     */
     public function createClosureClass(Expr\Closure $node, $lastMethod, $number)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
@@ -90,6 +80,9 @@ class ClosurePrinter
         );
     }
 
+    /**
+     * @param string $name
+     */
     private function createClass($name, $namespace, Expr\Closure $node)
     {
         $class = "namespace $namespace;
@@ -121,6 +114,10 @@ class $name
         return $class;
     }
 
+    /**
+     * @param Node[] $node
+     * @param Expr\ClosureUse[] $uses
+     */
     private function convertUseToMemberAttribute($node, $uses)
     {
         $vars = array();

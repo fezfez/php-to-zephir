@@ -3,7 +3,6 @@
 namespace PhpToZephir\converter\Manipulator;
 
 use PhpToZephir\NodeFetcher;
-use PhpToZephir\Converter\Mediator;
 use PhpToZephir\Converter\Dispatcher;
 
 class AssignManipulator

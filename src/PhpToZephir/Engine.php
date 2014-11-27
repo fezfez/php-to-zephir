@@ -4,7 +4,6 @@ namespace PhpToZephir;
 
 use PhpParser\Parser;
 use PhpToZephir\Converter;
-use PhpToZephir\Converter\Dispatcher;
 
 class Engine
 {
@@ -27,7 +26,7 @@ class Engine
 
     /**
      * @param Parser $parser
-     * @param Converter $converter
+     * @param Converter\Converter $converter
      * @param ClassCollector $classCollector
      * @param Logger $logger
      */
@@ -57,6 +56,9 @@ class Engine
         return $this->convertCode($phpCode);
     }
 
+    /**
+     * @param string $dir
+     */
     private function findFiles($dir)
     {
         $directory = new \RecursiveDirectoryIterator($dir);

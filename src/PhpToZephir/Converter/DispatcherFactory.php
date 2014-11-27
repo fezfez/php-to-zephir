@@ -2,11 +2,6 @@
 
 namespace PhpToZephir\Converter;
 
-use PhpToZephir\TypeFinder;
-use PhpToZephir\ReservedWordReplacer;
-use PhpToZephir\NodeFetcher;
-use PhpToZephir\converter\Manipulator\AssignManipulator;
-use PhpToZephir\converter\Manipulator\ArrayManipulator;
 use PhpToZephir\Logger;
 
 class DispatcherFactory

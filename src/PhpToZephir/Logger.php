@@ -55,6 +55,9 @@ class Logger
         $this->reDrawProgressBar();
     }
 
+    /**
+     * @param string $message
+     */
     public function trace($message, Node $node, $class = null)
     {
         //$this->cleanProgressbar();
@@ -62,6 +65,9 @@ class Logger
         //$this->reDrawProgressBar();
     }
 
+    /**
+     * @param string $message
+     */
     public function log($message)
     {
         $this->cleanProgressbar();
@@ -69,6 +75,9 @@ class Logger
         $this->reDrawProgressBar();
     }
 
+    /**
+     * @param integer $number
+     */
     public function progress($number)
     {
         $progress = new ProgressBar($this->output, $number);

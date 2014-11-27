@@ -20,6 +20,9 @@ class ArrayManipulator
         $this->dispatcher = $dispatcher;
     }
 
+    /**
+     * @param ArrayDimFetch $node
+     */
     private function findComplexArrayDimFetch($node, $collected = array())
     {
         if ($this->isInvalidInArrayDimFetch($node) === true) {
