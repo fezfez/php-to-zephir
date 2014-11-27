@@ -54,6 +54,28 @@ class IfPrinter
         return implode(";\n", $collected['extracted']) . "\n" .
                'if ' . $this->dispatcher->p($node->cond) . ' {'
              . $this->dispatcher->pStmts($node->stmts) . "\n" . '}'
-             . $this->dispatcher->implodeElseIfs($node);
+             . $this->implodeElseIfs($node);
+    }
+
+    /**
+     * @param Stmt\If_ $node
+     * @return string
+     */
+    private function implodeElseIfs(Stmt\If_ $node)
+    {
+        $elseCount = 0;
+        $toReturn = '';
+        foreach ($node->elseifs as $elseIf) {
+            $collected = $this->collectAssignInCondition($elseIf->cond);
+            if (!empty($collected)) {
+                $elseCount++;
+                $toReturn .=' else { ' . "\n" .  $this->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator())) . "\n";
+            } else {
+                var_dump($collected);
+                $toReturn .= $this->pStmt_ElseIf($elseIf);
+            }
+        }
+        $toReturn .= (null !== $node->else ? $this->p($node->else) : '');
+        return $toReturn . str_repeat('}', $elseCount);
     }
 }

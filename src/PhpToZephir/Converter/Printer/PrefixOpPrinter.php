@@ -42,6 +42,6 @@ class PrefixOpPrinter
     public function convert($type, $operatorString, Node $node)
     {
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
-        return $operatorString . $this->dispathcer->pPrec($node, $precedence, $associativity, 1);
+        return $operatorString . $this->dispatcher->pPrec($node, $precedence, $associativity, 1);
     }
 }

@@ -16,6 +16,9 @@ use PhpToZephir\Logger;
  * @method string pModifiers(integer $modifiers)
  * @method string pExpr_Array(\PhpParser\Node\Expr\Array_ $node, boolean $returnAsArray = false)
  * @method string pExpr_ArrayDimFetch(\PhpParser\Node\Expr\ArrayDimFetch $node, $returnAsArray = false)
+ * @method string pObjectProperty($node)
+ * @method string pPrefixOp(string $type, string $operatorString, \PhpParser\Node $node)
+ * @method string pEncapsList(array $encapsList, string $quote)
  *
  *
  */

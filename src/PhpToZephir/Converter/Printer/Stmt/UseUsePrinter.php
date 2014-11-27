@@ -22,6 +22,11 @@ class UseUsePrinter
      */
     private $reservedWordReplacer = null;
 
+    /**
+     * @param Dispatcher $dispatcher
+     * @param Logger $logger
+     * @param ReservedWordReplacer $reservedWordReplacer
+     */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
         $this->dispatcher           = $dispatcher;
@@ -36,9 +41,6 @@ class UseUsePrinter
 
     public function convert(Stmt\UseUse $node)
     {
-        if ($node->name->getLast() !== $node->alias) {
-            $this->classesAlias[$node->alias] = $this->reservedWordReplacer->replace(implode('\\', $node->name->parts));
-        }
         return ''; $this->dispatcher->p($node->name)
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
     }

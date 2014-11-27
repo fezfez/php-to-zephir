@@ -52,10 +52,6 @@ class InterfacePrinter
 
     public function convert(Stmt\Interface_ $node)
     {
-        if ($this->class !== null) {
-            throw new \Exception('Multiple class detected');
-        }
-
         $node->name = $this->reservedWordReplacer->replace($node->name);
 
         $extendsStmt = '';
