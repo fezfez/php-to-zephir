@@ -4,6 +4,7 @@ namespace PhpToZephir;
 
 use PhpParser\Parser;
 use PhpToZephir\Converter;
+use PhpToZephir\Converter\Dispatcher;
 
 class Engine
 {
@@ -30,7 +31,7 @@ class Engine
      * @param ClassCollector $classCollector
      * @param Logger $logger
      */
-    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector, Logger $logger)
+    public function __construct(Parser $parser, \PhpToZephir\Converter\Converter $converter, ClassCollector $classCollector, Logger $logger)
     {
         $this->parser = $parser;
         $this->converter = $converter;
@@ -81,9 +82,8 @@ class Engine
         $progress = $this->logger->progress($count);
         foreach ($files as $filei) {
             $file = $filei[0];
-            $classCollector = clone $this->classCollector;
             try {
-                $classes[$file] = $classCollector->collect($this->parser->parse(file_get_contents($file)));
+                $classes[$file] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)), $file);
             } catch (\Exception $e) {
                 $this->logger->log(sprintf('Could not convert file "%s" cause : %s ' . "\n", $file, $e->getMessage()));
             }
@@ -91,9 +91,8 @@ class Engine
         }
 
         $progress->finish();
-        $this->logger->log("\n");
 
-        $this->logger->log('Convert php to zep');
+        $this->logger->log("\nConvert php to zep");
         $progress = $this->logger->progress(count($classes));
 
         foreach ($classes as $phpFile => $class) {
@@ -107,6 +106,7 @@ class Engine
             $fileName  = basename($phpFile, '.php');
             try {
                 $converted = $this->convertCode($phpCode, $phpFile, $classes);
+                $converted['class'] = $class;
             } catch (\Exception $e) {
                 $this->logger->log(sprintf('Could not convert class "%s" cause : %s ' . "\n", $fileName, $e->getMessage()));
                 $progress->advance();
@@ -118,9 +118,11 @@ class Engine
                 array(
                     'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
                     'fileName'  => $fileName,
-                    'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']) . '/' . $converted['class']) . '.zep'
+                    'fileDestination' => $converted['class'] . '.zep'
                 )
              );
+
+            $zephirCode[$phpFile]['fileDestination'] = strtolower(str_replace('\\', '/', $zephirCode[$phpFile]['fileDestination']));
 
             foreach ($converted['additionalClass'] as $aditionalClass) {
                 $zephirCode[$phpFile . $aditionalClass['name']] = array_merge(
@@ -151,13 +153,11 @@ class Engine
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
-        $converter = clone $this->converter;
-        $converted = $converter->prettyPrint($this->parser->parse($phpCode), $fileName, $classes);
+        $converted = $this->converter->nodeToZephir($this->parser->parse($phpCode), $fileName, $classes);
         $toReturn = array(
             'zephir'    => $converted['code'],
             'php'       => $phpCode,
             'namespace' => $converted['namespace'],
-            'class'     => $converted['class'],
             'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
             'additionalClass' => $converted['additionalClass']
         );
