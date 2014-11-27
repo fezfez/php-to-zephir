@@ -12,7 +12,7 @@ class Attribute
     protected static $protectedStaticAttr = array();
     private static $privateStaticAttr = array();
 
-    const MY_CONST = array();
+    const MY_CONST = array(); // @FIXME empty array not supported #188
 
     public function test()
     {

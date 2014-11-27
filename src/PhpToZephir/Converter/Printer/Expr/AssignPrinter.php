@@ -63,6 +63,7 @@ class AssignPrinter
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
         if ($rightNode instanceof Expr\Array_) {
+            $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
             $collect = $this->dispatcher->pExpr_Array($rightNode, true);
 
             return implode(";\n", $collect['extracted']) . "\n" .
@@ -78,29 +79,7 @@ class AssignPrinter
         } elseif ($node->var instanceof Expr\List_) {
             return $this->convertListStmtToAssign($node);
         } elseif ($leftNode instanceof Expr\ArrayDimFetch || $rightNode instanceof Expr\ArrayDimFetch) {
-
-            $head = '';
-
-            if ($rightNode instanceof ArrayDimFetch) {
-                if (false === $splitedArray = $this->arrayManipulator->arrayNeedToBeSplit($rightNode)) {
-                    $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
-                } else {
-                    $result = $this->dispatcher->pExpr_ArrayDimFetch($rightNode, true);
-                    $head .= $result['head'];
-                    $rightString = $result['lastExpr'];
-                }
-            } elseif ($this->isSomething($rightNode)) {
-                // @TODO add test case for each
-                $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
-            } else {
-                $head .= $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . ";\n";
-                $rightString = $this->dispatcher->p($rightNode->var);
-            }
-
-            return $head . 'let ' . $this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
-                . $operatorString
-                . $rightString;
-
+            return $this->arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity);
         } elseif($rightNode instanceof Expr\Assign) { // multiple assign
             $valueToAssign = ' = ' . $this->dispatcher->p($this->findValueToAssign($rightNode));
             $vars = array($this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1));
@@ -195,5 +174,42 @@ class AssignPrinter
         }
         $toAssign[] = $this->dispatcher->p($rightNode->var);
         return $toAssign;
+    }
+
+    private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity)
+    {
+        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $head = '';
+
+        if ($leftNode instanceof ArrayDimFetch) {
+            if (false === $splitedArray = $this->arrayManipulator->arrayNeedToBeSplit($leftNode)) {
+                $leftString = $this->dispatcher->pPrec($leftNode, $precedence, $associativity, 1);
+            } else {
+                $result = $this->dispatcher->pExpr_ArrayDimFetch($leftNode, true);
+                $head .= $result['head'];
+                $leftString = $result['lastExpr'];
+            }
+        } else {
+            $leftString = $this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1);
+        }
+
+        if ($rightNode instanceof ArrayDimFetch) {
+            if (false === $splitedArray = $this->arrayManipulator->arrayNeedToBeSplit($rightNode)) {
+                $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
+            } else {
+                $result = $this->dispatcher->pExpr_ArrayDimFetch($rightNode, true);
+                $head .= $result['head'];
+                $rightString = $result['lastExpr'];
+            }
+        } elseif ($this->isSomething($rightNode)) {
+            $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+            // @TODO add test case for each
+            $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
+        } else {
+            $head .= $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . ";\n";
+            $rightString = $this->dispatcher->p($rightNode->var);
+        }
+
+        return $head . 'let ' . $leftString . $operatorString . $rightString;
     }
 }

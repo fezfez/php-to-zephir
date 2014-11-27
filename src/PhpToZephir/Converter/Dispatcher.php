@@ -82,6 +82,7 @@ class Dispatcher
             return;
         }
 
+        $this->logger->trace('p' . $node->getType(), $node, $this->getMetadata()->getFullQualifiedNameClass());
         return $this->getClass('p' . $node->getType())->convert($node);
     }
 

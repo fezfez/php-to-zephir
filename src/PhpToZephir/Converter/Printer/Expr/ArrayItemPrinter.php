@@ -32,7 +32,8 @@ class ArrayItemPrinter
         return "pExpr_ArrayItem";
     }
 
-    public function convert(Expr\ArrayItem $node) {
+    public function convert(Expr\ArrayItem $node)
+    {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         return (null !== $node->key ? $this->dispatcher->p($node->key) . ' : ' : '')
              . ($node->byRef ? '&' : '') . $this->dispatcher->p($node->value);

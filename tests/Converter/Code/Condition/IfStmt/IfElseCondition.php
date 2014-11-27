@@ -8,27 +8,31 @@ class IfElseCondition
 
     public function test($toto)
     {
+        $toReturn = null;
+
 		if ($toto === 'tata') {
-			echo 'tata';
+			$toReturn ='tata';
 		} elseif ($toto === 'tutu') {
-			echo 'tutu';
+			$toReturn = 'tutu';
 		} else {
-			echo 'else';
+			$toReturn = 'else';
 		}
+
+		return $toReturn;
     }
 
     public static function imStatic()
     {
-
+        return null;
     }
 
     public function testFuncCallIncondition()
     {
-        if (isset($this->test('tata'))) {
+        if ($this->test('tata')) {
             echo 'tutu';
         }
 
-        if (isset(self::imStatic())) {
+        if (self::imStatic()) {
             echo 'static funcall!';
         }
 

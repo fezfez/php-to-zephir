@@ -5,13 +5,21 @@ namespace Code\Simple;
 class ArrayDim
 {
     private $targets = null;
+    private $name = 'toto';
+    private $literal = null;
+    private $value = 'tutu';
+    private $type = 'test';
+    private $typeMap = array();
+    private $namespaces = null;
+    private $imports = array();
+    private $annotationMetadata = array();
 
 	public function testArrayDimScalarWithAssignLet()
 	{
 		$number = 0;
 		$myArray = array(1 => 10);
 
-		$myArray[1] = $myNumber++;
+		$myArray[1] = $number++;
 	}
 
 	public function testArrayDimLetWithAssignScalar()
@@ -19,7 +27,7 @@ class ArrayDim
 	    $number = 0;
 	    $myArray = array(1 => 10);
 
-	    $myArray[$myNumber++] = 11;
+	    $myArray[$number++] = 11;
 	}
 
 	public function testArrayDimLeftWithScalarAssignScalar()
@@ -27,7 +35,7 @@ class ArrayDim
 	    $number = 0;
 	    $myArray = array(1 => array(2 => 10));
 
-	     $myArray[$first++][$second++]['fezfez'][$three++] = $equals++;
+	    $myArray[$number++][$number++]['fezfez'][$number++] = $number++;
 	}
 
 	public function testAssignLeftWithArrayDimLeftRight()
@@ -35,7 +43,7 @@ class ArrayDim
 	    $number = 0;
 	    $myArray = array(1 => array(2 => 10));
 
-	    $test = $myArray[$first++][$second++]['fezfez'][$three++];
+	    $test = $myArray[$number++][$number++]['fezfez'][$number++];
 	}
 
 	public function testArrayDimLeftAssignArrayDimLet()
@@ -43,7 +51,7 @@ class ArrayDim
 	    $number = 0;
 	    $myArray = array(1 => 10, 2 => 11);
 
-	    $myArray[$myNumber++] = $myArray[$myNumber++];
+	    $myArray[$number++] = $myArray[$number++];
 	}
 
 	private function getConstructor()
@@ -65,16 +73,18 @@ class ArrayDim
 	    $metadata['targets'] = $this->targets;
 	    $metadata['properties'][$this->name] = $this->name;
 
-	    $metadata['enum'][$property->name]['literal'] = ( ! empty($annotation->literal))
-	    ? $annotation->literal
-	    : $annotation->value;
+	    $metadata['enum'][$this->name]['literal'] = ( ! empty($this->literal))
+	    ? $this->literal
+	    : $this->value;
 
-	    $type = isset(self::$typeMap[$attribute->type])
-	    ? self::$typeMap[$attribute->type]
-	    : $attribute->type;
+	    $type = isset($this->typeMap[$this->type])
+	    ? $this->typeMap[$this->type]
+	    : $this->type;
 
 
-	   $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
+	    $name = "test";
+
+	    $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
 
 	    if ($this->namespaces) {
 	        echo 'toto';
@@ -82,10 +92,12 @@ class ArrayDim
 	        echo 'im converted !';
 	    }
 
-	    if ( ! $property = self::$annotationMetadata[$name]['default_property']) {
+	    if ( ! $property = $this->annotationMetadata[$name]['default_property']) {
 
 	    }
 
+	    $lineCnt = 0;
+	    $lineNumber = 1;
 	    if ($lineCnt++ == $lineNumber) {
 
 	    }

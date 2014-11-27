@@ -87,7 +87,9 @@ class Engine
             try {
                 $classes[$file] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)), $file);
             } catch (\Exception $e) {
-                $this->logger->log(sprintf('Could not convert file "%s" cause : %s ' . "\n", $file, $e->getMessage()));
+                $this->logger->log(
+                    sprintf('Could not convert file "%s" cause : %s %s %s' . "\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                );
             }
             $progress->advance();
         }
@@ -110,7 +112,9 @@ class Engine
                 $converted = $this->convertCode($phpCode, $phpFile, $classes);
                 $converted['class'] = $class;
             } catch (\Exception $e) {
-                $this->logger->log(sprintf('Could not convert class "%s" cause : %s ' . "\n", $fileName, $e->getMessage()));
+                $this->logger->log(
+                    sprintf('Could not convert file "%s" cause : %s %s %s' . "\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                );
                 $progress->advance();
                 continue;
             }

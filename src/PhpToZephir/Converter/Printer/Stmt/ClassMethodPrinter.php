@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr\Assign;
 use PhpToZephir\ReservedWordReplacer;
 use PhpToZephir\TypeFinder;
+use PhpToZephir\NodeFetcher;
 
 class ClassMethodPrinter
 {
@@ -28,22 +29,34 @@ class ClassMethodPrinter
      * @var TypeFinder
      */
     private $typeFinder = null;
+    /**
+     * @var NodeFetcher
+     */
+    private $nodeFetcher = null;
+    /**
+     * @var string
+     */
     private $lastMethod = null;
 
     /**
      * @param Dispatcher $dispatcher
      * @param Logger $logger
+     * @param ReservedWordReplacer $reservedWordReplacer
+     * @param TypeFinder $typeFinder
+     * @param NodeFetcher $nodeFetcher
      */
     public function __construct(
         Dispatcher $dispatcher,
         Logger $logger,
         ReservedWordReplacer $reservedWordReplacer,
-        TypeFinder $typeFinder
+        TypeFinder $typeFinder,
+        NodeFetcher $nodeFetcher
     ) {
         $this->dispatcher = $dispatcher;
         $this->logger     = $logger;
         $this->reservedWordReplacer = $reservedWordReplacer;
         $this->typeFinder = $typeFinder;
+        $this->nodeFetcher = $nodeFetcher;
     }
 
     public function setLastMethod($value)
@@ -103,8 +116,7 @@ class ClassMethodPrinter
     private function printReturn(Stmt\ClassMethod $node, array $types)
     {
         $stmt = '';
-        $hasReturn = $this->hasReturnStatement($node);
-        if (array_key_exists('return', $types) === false && $this->hasReturnStatement($node) === false && $hasReturn === false) {
+        if (array_key_exists('return', $types) === false && $this->hasReturnStatement($node) === false) {
             $stmt .= ' -> void';
         } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
             $stmt .= ' -> ' . $this->printType($types['return']);
@@ -116,27 +128,15 @@ class ClassMethodPrinter
     /**
      * @param Stmt\ClassMethod $node
      */
-    private function hasReturnStatement($node)
+    private function hasReturnStatement($nodes)
     {
-        $hasReturn = false;
-        if (is_array($node) === true) {
-            $nodes = $node;
-        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
-            $nodes = $node->getIterator();
-        } else {
-            return $hasReturn;
-        }
-
-        foreach ($nodes as $stmt) {
-            if ($stmt instanceof Stmt\Return_) {
-                $hasReturn = true;
-                return $hasReturn;
+        foreach ($this->nodeFetcher->foreachNodes($nodes) as $node) {
+            if ($node instanceof Stmt\Return_) {
+                return true;
             }
-
-            $hasReturn = $this->hasReturnStatement($stmt);
         }
 
-        return $hasReturn;
+        return false;
     }
 
     /**

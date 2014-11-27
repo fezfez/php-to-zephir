@@ -5,6 +5,7 @@ namespace PhpToZephir\Converter\Printer\Expr;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
+use PhpToZephir\converter\Manipulator\AssignManipulator;
 
 class TernaryPrinter
 {

@@ -40,55 +40,14 @@ class ArrayDimFetchPrinter
         return "pExpr_ArrayDimFetch";
     }
 
-    public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false) {
+    public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false)
+    {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $collected = $this->arrayManipulator->arrayNeedToBeSplit($node);
 
         if($collected !== false) {
-
-            $var = $collected[0];
-            unset($collected[0]);
-            $lastExpr = null;
-
-
-            $head = "var tmpArray;\n";
-            $lastSplitTable = true;
-            foreach ($collected as $expr) {
-                if ($expr['splitTab'] === true) {
-                    $head .= $expr['expr'];
-                    if ($expr !== end($collected)) {
-                        $head .= 'let tmpArray = ';
-                        $head .= $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
-                    } else {
-                        $lastExpr = $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
-                    }
-
-                    $lastSplitTable = true;
-                } else {
-                    if ($lastSplitTable === true) {
-                        if ($expr !== end($collected)) {
-                            $head .= 'let tmpArray = ';
-                            $head .= $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
-                        } else {
-                            $lastExpr = $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
-                        }
-                    }
-                }
-
-                if ($expr !== end($collected)) {
-                    $head .= ';' . "\n";
-                }
-            }
-
-            if ($returnAsArray === true) {
-                return array(
-                    'head' => $head,
-                    'lastExpr' => $lastExpr
-                );
-            } else {
-                return $head;
-            }
+            return $this->splitArray($collected, $returnAsArray);
         } else {
             $result = $this->dispatcher->pVarOrNewExpr($node->var)
                  . '[' . (null !== $node->dim ? $this->dispatcher->p($node->dim) : '') . ']';
@@ -101,6 +60,53 @@ class ArrayDimFetchPrinter
             } else {
                 return $result;
             }
+        }
+    }
+
+    private function splitArray(array $collected, $returnAsArray)
+    {
+        $var = $collected[0];
+        unset($collected[0]);
+        $lastExpr = null;
+
+        $head = "var tmpArray;\n";
+        $lastSplitTable = true;
+        foreach ($collected as $expr) {
+            if ($expr['splitTab'] === true) {
+                $head .= $expr['expr'];
+                if ($expr !== end($collected)) {
+                    $head .= 'let tmpArray = ';
+                    $head .= $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
+                } else {
+                    $lastExpr = $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
+                }
+
+                $lastSplitTable = true;
+            } else {
+                if ($lastSplitTable === true) {
+                    if ($expr !== end($collected)) {
+                        $head .= 'let tmpArray = ';
+                        $head .= $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
+                    } else {
+                        $lastExpr = $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
+                    }
+                }
+            }
+
+            if ($expr !== end($collected)) {
+                $head .= ';' . "\n";
+            }
+        }
+
+        var_dump($collected, $head, $lastExpr);
+
+        if ($returnAsArray === true) {
+            return array(
+                'head' => $head,
+                'lastExpr' => $lastExpr
+            );
+        } else {
+            return $head . $lastExpr;
         }
     }
 }

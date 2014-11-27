@@ -18,6 +18,8 @@ class IfWithAssignementArrayDimInCondition
         $i = 0;
         $toto = array(1 => true);
 
+
+        // @FIXME the i++ is extract twice
         if ($averylongvariable = $toto[$i++]) {
             echo 'tata';
         }

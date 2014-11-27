@@ -26,6 +26,7 @@ class ArrayPrinter
     /**
      * @param Dispatcher $dispatcher
      * @param Logger $logger
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -39,6 +40,11 @@ class ArrayPrinter
         return "pExpr_Array";
     }
 
+    /**
+     * @param Expr\Array_ $node
+     * @param boolean $returnAsArray
+     * @return string|array
+     */
     public function convert(Expr\Array_ $node, $returnAsArray = false)
     {
         $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());

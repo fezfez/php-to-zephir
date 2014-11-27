@@ -2,9 +2,11 @@
 
 namespace PhpToZephir\converter\Manipulator;
 
+use PhpParser\Node\Scalar;
 use PhpParser\Node\Expr;
 use PhpToZephir\NodeFetcher;
 use PhpToZephir\Converter\Dispatcher;
+use PhpParser\Node\Expr\BinaryOp;
 
 class AssignManipulator
 {
@@ -19,11 +21,12 @@ class AssignManipulator
 
     /**
      * @param NodeFetcher $nodeFetcher
+     * @param Dispatcher $dispatcher
      */
     public function __construct(NodeFetcher $nodeFetcher, Dispatcher $dispatcher)
     {
         $this->nodeFetcher = $nodeFetcher;
-        $this->dispatcher = $dispatcher;
+        $this->dispatcher  = $dispatcher;
     }
 
     public function collectAssignInCondition($node)
@@ -33,16 +36,25 @@ class AssignManipulator
         );
 
         foreach ($this->nodeFetcher->foreachNodes($node) as $key => $stmt) {
-            if ($stmt instanceof Expr\Assign) {
-                if ($stmt->expr instanceof Expr\BinaryOp) {
-                    $stmt->expr = $stmt->expr->left;
-                    $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
-                } else {
-                    $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
-                }
-            } elseif ($this->isVarModification($stmt)) {
-                $collected['extracted'][] = $this->dispatcher->p($stmt) . ";";
+            $collected = $this->extract($stmt, $collected);
+        }
+
+        $collected = $this->extract($node, $collected);
+
+        return $collected;
+    }
+
+    private function extract($stmt, array $collected)
+    {
+        if ($stmt instanceof Expr\Assign) {
+            if ($stmt->expr instanceof Expr\BinaryOp) {
+                $stmt->expr = $stmt->expr->left;
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
+            } else {
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
             }
+        } elseif ($this->isVarModification($stmt)) {
+            $collected['extracted'][] = $this->dispatcher->p($stmt) . ";";
         }
 
         return $collected;
@@ -50,6 +62,18 @@ class AssignManipulator
 
     public function transformAssignInConditionTest($primaryNode)
     {
+        if ($primaryNode instanceof BinaryOp) {
+            // this is yoda ! invert condition
+            if ($primaryNode->left instanceof Expr\ConstFetch ||
+                ($primaryNode->left instanceof Scalar) !== false ||
+                $primaryNode->left instanceof Expr\Array_
+            ) {
+                $left = $primaryNode->left;
+                $right = $primaryNode->right;
+                $primaryNode->left = $right;
+                $primaryNode->right = $left;
+            }
+        }
         if ($primaryNode instanceof Expr\Assign) {
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarModification($primaryNode)) {

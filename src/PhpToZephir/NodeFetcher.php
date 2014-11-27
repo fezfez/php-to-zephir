@@ -11,7 +11,6 @@ class NodeFetcher
         } elseif (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
             $nodesCollection = $nodesCollection->getIterator();
         } else {
-            $nodes[] = $nodesCollection;
             return $nodes;
         }
 

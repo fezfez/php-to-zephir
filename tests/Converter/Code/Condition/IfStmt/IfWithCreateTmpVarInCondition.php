@@ -6,6 +6,7 @@ class IfWithCreateTmpVarInCondition
 {
     public function test($toto)
     {
+        // @FIXME tmp array
         if (array() == $toto) {
             echo 'tata';
         }
