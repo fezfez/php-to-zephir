@@ -34,7 +34,11 @@ class BitwiseAndPrinter
     }
 
     public function convert(AssignOp\BitwiseAnd $node) {
-        $this->logger->logNode('(&=) BitwiseAnd does not exist in zephir, assign', $node, $this->fullClass);
+        $this->logger->logNode(
+            '(&=) BitwiseAnd does not exist in zephir, assign',
+            $node,
+            $this->dispatcher->getMetadata()->getClass()
+        );
         return 'let ' . $this->dispatcher->pInfixOp('Expr_AssignOp_BitwiseAnd', $node->var, ' = ', $node->expr);
     }
 }

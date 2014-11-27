@@ -33,7 +33,7 @@ class AssignRefPrinter
     }
 
     public function convert(Expr\AssignRef $node) {
-        $this->logger->logNode('(=&) AssignRef does not exist in zephir, assign', $node, $this->fullClass);
+        $this->logger->logNode('(=&) AssignRef does not exist in zephir, assign', $node, $this->dispatcher->getMetadata()->getClass());
         return 'let ' . $this->dispatcher->pInfixOp('Expr_AssignRef', $node->var, ' = ', $node->expr);
     }
 }

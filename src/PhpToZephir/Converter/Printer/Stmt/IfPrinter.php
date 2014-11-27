@@ -48,7 +48,7 @@ class IfPrinter
 
         if (empty($node->stmts)) {
             $node->stmts = array(new Stmt\Echo_(array(new Scalar\String("not allowed"))));
-            $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->fullClass);
+            $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
         }
 
         return implode(";\n", $collected['extracted']) . "\n" .

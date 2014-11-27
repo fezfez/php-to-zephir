@@ -53,6 +53,7 @@ class ClassInformation
      */
     public function build(array $nodes, ClassMetadata $classMetadata)
     {
+        $class = null;
         foreach ($this->nodeFetcher->foreachNodes($nodes) as $node) {
             if ($node instanceof Stmt\UseUse) {
                 $classMetadata->addUse($node);
@@ -70,7 +71,8 @@ class ClassInformation
                 if ($class !== null) {
                     throw new \Exception('Multiple class find in ' . $fileName);
                 }
-                $classMetadata->setClass($this->reservedWordReplacer->replace($node->name));
+                $class = $this->reservedWordReplacer->replace($node->name);
+                $classMetadata->setClass($class);
             }
         }
 

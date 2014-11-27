@@ -34,6 +34,6 @@ class AliasPrinter
 
     public function convert(Stmt\TraitUseAdaptation\Alias $node)
     {
-        $this->logger->logNode('trait does not exist in zephir', $node, $this->fullClass);
+        $this->logger->logNode('trait does not exist in zephir', $node, $this->dispatcher->getMetadata()->getClass());
     }
 }

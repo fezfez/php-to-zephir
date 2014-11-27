@@ -34,6 +34,6 @@ class TraitUsePrinter
 
     public function convert(Stmt\TraitUse $node)
     {
-        $this->logger->logNode('trait does not exist in zephir', $node, $this->fullClass);
+        $this->logger->logNode('trait does not exist in zephir', $node, $this->dispatcher->getMetadata()->getClass());
     }
 }

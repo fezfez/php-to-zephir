@@ -34,7 +34,7 @@ class UnsetPrinter
     }
 
     public function convert(Cast\Unset_ $node) {
-        $this->logger->logNode('(unset) does not exist in zephir, remove cast', $node, $this->fullClass);
+        $this->logger->logNode('(unset) does not exist in zephir, remove cast', $node, $this->dispatcher->getMetadata()->getClass());
         return $this->dispatcher->pPrefixOp('Expr_Cast_Unset', '', $node->expr);
     }
 }

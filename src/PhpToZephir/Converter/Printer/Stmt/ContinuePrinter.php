@@ -35,7 +35,7 @@ class ContinuePrinter
     public function convert(Stmt\Continue_ $node)
     {
         if ($node->num !== null) {
-            $this->logger->logNode('"continue $number;" no supported in zephir', $node, $this->fullClass);
+            $this->logger->logNode('"continue $number;" no supported in zephir', $node, $this->dispatcher->getMetadata()->getClass());
         }
         return 'continue;';
     }

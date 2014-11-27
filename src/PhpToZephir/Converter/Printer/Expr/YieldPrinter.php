@@ -33,7 +33,7 @@ class YieldPrinter
     }
 
     public function convert(Expr\Yield_ $node) {
-        $this->logger->logNode('Yield does not exist in zephir', $node, $this->fullClass);
+        $this->logger->logNode('Yield does not exist in zephir', $node, $this->dispatcher->getMetadata()->getClass());
 
         if ($node->value === null) {
             return 'yield';
