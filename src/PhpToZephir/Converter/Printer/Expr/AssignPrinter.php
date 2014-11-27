@@ -125,7 +125,7 @@ class AssignPrinter
                 . $rightString;
 
         } elseif($rightNode instanceof Expr\Assign) { // multiple assign
-            $valueToAssign = ' = ' . $this->dispatcher->p($this->dispatcher->findValueToAssign($rightNode));
+            $valueToAssign = ' = ' . $this->dispatcher->p($this->findValueToAssign($rightNode));
             $vars = array($this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1));
             foreach($this->findVarToAssign($rightNode) as $nodeAssigned) {
                 $vars[] = $nodeAssigned;
@@ -151,6 +151,15 @@ class AssignPrinter
         }
     }
 
+    private function findValueToAssign($rightNode)
+    {
+        if($rightNode->expr instanceof Expr\Assign) {
+            return $this->findValueToAssign($rightNode->expr);
+        } else {
+            return $rightNode->expr;
+        }
+    }
+
     private function convertListStmtToAssign($node)
     {
         $type = 'Expr_Assign';
@@ -159,12 +168,13 @@ class AssignPrinter
         $rightNode = $node->expr;
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
         $vars = array();
+        $pList = array();
         foreach ($node->var->vars as $count => $var) {
             if (null === $var) {
                 $pList[] = '';
             } else {
-                $vars[] = $this->p($var);
-                $pList[] = 'let ' . $this->p($var) . ' = ' . $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
+                $vars[] = $this->dispatcher->p($var);
+                $pList[] = 'let ' . $this->dispatcher->p($var) . ' = ' . $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . '[' . $count . '];';
             }
         }
         return 'var ' . implode(", ", $vars) . ";\n" . implode("\n", $pList);
@@ -175,7 +185,7 @@ class AssignPrinter
         if($rightNode->expr instanceof Expr\Assign) {
             $toAssign = $this->findVarToAssign($rightNode->expr);
         }
-        $toAssign[] = $this->p($rightNode->var);
+        $toAssign[] = $this->dispatcher->p($rightNode->var);
         return $toAssign;
     }
 }

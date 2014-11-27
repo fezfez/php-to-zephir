@@ -5,14 +5,19 @@ namespace PhpToZephir\Converter;
 use PhpToZephir\Logger;
 
 /**
- * @method string pExpr_Assign()
- * @method string pImplode()
- * @method string pVarOrNewExpr()
- * @method string pCommaSeparated()
- * @method string pInfixOp()
- * @method string pPrec()
- * @method string pExpr_Ternary()
- * @method string pStmts()
+ * @method string pExpr_Assign(\PhpParser\Node\Expr\Assign $node)
+ * @method string pImplode(array $nodes, string $glue = '')
+ * @method string pVarOrNewExpr(\PhpParser\Node $node)
+ * @method string pCommaSeparated(array $nodes)
+ * @method string pInfixOp(string $type, \PhpParser\Node $leftNode, string $operatorString, \PhpParser\Node $rightNode)
+ * @method string pPrec(\PhpParser\Node $node, integer $parentPrecedence, integer $parentAssociativity, integer $childPosition)
+ * @method string pExpr_Ternary(\PhpParser\Node\Expr\Ternary $node, boolean $returnAsArray = false)
+ * @method string pStmts(array $nodes, boolean $indent = true)
+ * @method string pModifiers(integer $modifiers)
+ * @method string pExpr_Array(\PhpParser\Node\Expr\Array_ $node, boolean $returnAsArray = false)
+ * @method string pExpr_ArrayDimFetch(\PhpParser\Node\Expr\ArrayDimFetch $node, $returnAsArray = false)
+ *
+ *
  */
 class Dispatcher
 {
