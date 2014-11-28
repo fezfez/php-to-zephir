@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpToZephir\converter\Manipulator;
+namespace PhpToZephir\Converter\Manipulator;
 
 use PhpParser\Node;
 use PhpToZephir\ReservedWordReplacer;
@@ -22,9 +22,9 @@ class ClassManipulator
     }
 
     /**
-     * @param Node\Name $node
-     * @param ClassMetadata $metadata
-     * @param array $classCollected
+     * @param  Node\Name     $node
+     * @param  ClassMetadata $metadata
+     * @param  array         $classCollected
      * @return string
      */
     public function findRightClass(Node\Name $node, ClassMetadata $metadata, array $classCollected = array())
@@ -35,15 +35,16 @@ class ClassManipulator
         $class = $this->reservedWordReplacer->replace($class);
 
         if (in_array($class, $classCollected)) {
-            return '\\' . $class;
+            return '\\'.$class;
         } elseif (array_key_exists($class, $metadata->getClassesAlias())) {
             $alias = $metadata->getClassesAlias();
             $classKey = array_keys($alias, $class);
-            return '\\' . $alias[$class];
+
+            return '\\'.$alias[$class];
         } elseif (false !== $key = array_search($class, $lastPartsClass)) {
-            return '\\' . $classCollected[$key];
-        } elseif (false !== $key = array_search($metadata->getNamespace() . '\\' . $class, $classCollected)) {
-            return '\\' . $classCollected[$key];
+            return '\\'.$classCollected[$key];
+        } elseif (false !== $key = array_search($metadata->getNamespace().'\\'.$class, $classCollected)) {
+            return '\\'.$classCollected[$key];
         } else {
             return $class;
         }

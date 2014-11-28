@@ -11,6 +11,7 @@ class EngineFactory
     public static function getInstance(Logger $logger)
     {
         $reservedWordReplacer = new ReservedWordReplacer();
+
         return new Engine(
             new Parser(new Emulative()),
             ConverterFactory::getInstance($logger),

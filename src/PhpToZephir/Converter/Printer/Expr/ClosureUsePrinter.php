@@ -23,8 +23,8 @@ class ClosureUsePrinter
     private $reservedWordReplacer = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
      * @param ReservedWordReplacer $reservedWordReplacer
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
@@ -41,7 +41,7 @@ class ClosureUsePrinter
 
     public function convert(Expr\ClosureUse $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         if ($node->byRef) {
             $this->logger->logNode(

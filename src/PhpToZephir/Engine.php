@@ -3,7 +3,6 @@
 namespace PhpToZephir;
 
 use PhpParser\Parser;
-use PhpToZephir\Converter;
 
 class Engine
 {
@@ -25,10 +24,10 @@ class Engine
     private $logger = null;
 
     /**
-     * @param Parser $parser
+     * @param Parser              $parser
      * @param Converter\Converter $converter
-     * @param ClassCollector $classCollector
-     * @param Logger $logger
+     * @param ClassCollector      $classCollector
+     * @param Logger              $logger
      */
     public function __construct(Parser $parser, \PhpToZephir\Converter\Converter $converter, ClassCollector $classCollector, Logger $logger)
     {
@@ -39,7 +38,7 @@ class Engine
     }
 
     /**
-     * @param string $class
+     * @param  string $class
      * @return string
      */
     public function convertClass($class)
@@ -68,7 +67,7 @@ class Engine
         return $regex;
     }
     /**
-     * @param string $dir
+     * @param  string $dir
      * @return array
      */
     public function convertDirectory($dir, $recursive = true, $filterFileName = null)
@@ -88,7 +87,7 @@ class Engine
                 $classes[$file] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)), $file);
             } catch (\Exception $e) {
                 $this->logger->log(
-                    sprintf('Could not convert file "%s" cause : %s %s %s' . "\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                    sprintf('Could not convert file "%s" cause : %s %s %s'."\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
                 );
             }
             $progress->advance();
@@ -113,7 +112,7 @@ class Engine
                 $converted['class'] = $class;
             } catch (\Exception $e) {
                 $this->logger->log(
-                    sprintf('Could not convert file "%s" cause : %s %s %s' . "\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                    sprintf('Could not convert file "%s" cause : %s %s %s'."\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
                 );
                 $progress->advance();
                 continue;
@@ -124,18 +123,18 @@ class Engine
                 array(
                     'phpPath'   => substr($phpFile, 0, strrpos($phpFile, '/')),
                     'fileName'  => $fileName,
-                    'fileDestination' => $converted['class'] . '.zep'
+                    'fileDestination' => $converted['class'].'.zep',
                 )
              );
 
             $zephirCode[$phpFile]['fileDestination'] = strtolower(str_replace('\\', '/', $zephirCode[$phpFile]['fileDestination']));
 
             foreach ($converted['additionalClass'] as $aditionalClass) {
-                $zephirCode[$phpFile . $aditionalClass['name']] = array_merge(
+                $zephirCode[$phpFile.$aditionalClass['name']] = array_merge(
                     array(
                         'fileName'  => $aditionalClass['name'],
                         'zephir' => $aditionalClass['code'],
-                        'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']) . '/' . $aditionalClass['name']) . '.zep'
+                        'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'.$aditionalClass['name']).'.zep',
                     )
                 );
             }
@@ -148,13 +147,13 @@ class Engine
         return $zephirCode;
     }
 
-    private function rstrstr($haystack,$needle)
+    private function rstrstr($haystack, $needle)
     {
         return substr($haystack, 0, strpos($haystack, $needle));
     }
 
     /**
-     * @param string $phpCode
+     * @param  string $phpCode
      * @return string
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())
@@ -164,8 +163,8 @@ class Engine
             'zephir'    => $converted['code'],
             'php'       => $phpCode,
             'namespace' => $converted['namespace'],
-            'destination' => str_replace('\\', '/', $converted['namespace']) . '/',
-            'additionalClass' => $converted['additionalClass']
+            'destination' => str_replace('\\', '/', $converted['namespace']).'/',
+            'additionalClass' => $converted['additionalClass'],
         );
 
         return $toReturn;

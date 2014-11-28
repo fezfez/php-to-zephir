@@ -24,8 +24,8 @@ class ArrayPrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
      * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
@@ -41,23 +41,23 @@ class ArrayPrinter
     }
 
     /**
-     * @param Expr\Array_ $node
-     * @param boolean $returnAsArray
+     * @param  Expr\Array_  $node
+     * @param  boolean      $returnAsArray
      * @return string|array
      */
     public function convert(Expr\Array_ $node, $returnAsArray = false)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $collected = $this->assignManipulator->collectAssignInCondition($node->items);
         $node->items = $this->assignManipulator->transformAssignInConditionTest($node->items);
 
-        $collected['expr'] = '[' . $this->dispatcher->pCommaSeparated($node->items) . ']';
+        $collected['expr'] = '['.$this->dispatcher->pCommaSeparated($node->items).']';
 
         if ($returnAsArray === true) {
             return $collected;
         } else {
-            return implode(";\n", $collected['extracted']) . "\n" . $collected['expr'];
+            return implode(";\n", $collected['extracted'])."\n".$collected['expr'];
         }
     }
 }

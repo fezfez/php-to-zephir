@@ -8,7 +8,7 @@ use PhpToZephir\NodeFetcher;
 class ConverterFactory
 {
     /**
-     * @param Logger $logger
+     * @param  Logger                           $logger
      * @return \PhpToZephir\Converter\Converter
      */
     public static function getInstance(Logger $logger)

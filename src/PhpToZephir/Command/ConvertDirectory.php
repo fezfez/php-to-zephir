@@ -23,7 +23,7 @@ use PhpToZephir\Logger;
  */
 class ConvertDirectory extends Command
 {
-	protected function configure()
+    protected function configure()
     {
         $this
             ->setName('phpToZephir:convertDir')
@@ -40,7 +40,7 @@ class ConvertDirectory extends Command
         $dir    = $input->getArgument('dir');
 
         if (is_dir($dir) === false) {
-        	throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
+            throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
         }
 
         foreach ($engine->convertDirectory($dir) as $file => $convertedCode) {

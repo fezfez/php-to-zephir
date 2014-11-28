@@ -23,8 +23,8 @@ class ReturnPrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
      * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
@@ -43,7 +43,7 @@ class ReturnPrinter
     }
 
     /**
-     * @param Stmt\Return_ $node
+     * @param  Stmt\Return_ $node
      * @return string
      */
     public function convert(Stmt\Return_ $node)
@@ -51,6 +51,6 @@ class ReturnPrinter
         $collected  = $this->assignManipulator->collectAssignInCondition($node->expr);
         $node->expr = $this->assignManipulator->transformAssignInConditionTest($node->expr);
 
-        return implode(";\n", $collected['extracted']) . "\n" .'return' . (null !== $node->expr ? ' ' . $this->dispatcher->p($node->expr) : '') . ';';
+        return implode(";\n", $collected['extracted'])."\n".'return'.(null !== $node->expr ? ' '.$this->dispatcher->p($node->expr) : '').';';
     }
 }

@@ -24,7 +24,7 @@ class MethodCallPrinter
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -40,14 +40,13 @@ class MethodCallPrinter
 
     public function convert(Expr\MethodCall $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $collected = $this->assignManipulator->collectAssignInCondition($node->args);
         $node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
 
-
-        return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted']) . "\n" : '') .
-                $this->dispatcher->pVarOrNewExpr($node->var) . '->' . $this->dispatcher->pObjectProperty($node->name)
-             . '(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
+        return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').
+                $this->dispatcher->pVarOrNewExpr($node->var).'->'.$this->dispatcher->pObjectProperty($node->name)
+             .'('.$this->dispatcher->pCommaSeparated($node->args).')';
     }
 }

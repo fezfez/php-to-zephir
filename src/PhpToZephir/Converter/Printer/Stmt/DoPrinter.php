@@ -23,7 +23,7 @@ class DoPrinter
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -37,13 +37,14 @@ class DoPrinter
         return "pStmt_Do";
     }
 
-    public function convert(Stmt\Do_ $node) {
+    public function convert(Stmt\Do_ $node)
+    {
         $condition = clone $node;
         $collected = $this->assignManipulator->collectAssignInCondition($condition->cond);
-        $collected = !empty($collected) ? "\n" . $collected : $collected;
+        $collected = !empty($collected) ? "\n".$collected : $collected;
         $node->cond = $this->assignManipulator->transformAssignInCondition($node->cond);
 
-        return 'do {' . $this->dispatcher->pStmts($node->stmts) . $collected . "\n"
-             . '} while (' . $this->dispatcher->p($node->cond) . ');';
+        return 'do {'.$this->dispatcher->pStmts($node->stmts).$collected."\n"
+             .'} while ('.$this->dispatcher->p($node->cond).');';
     }
 }

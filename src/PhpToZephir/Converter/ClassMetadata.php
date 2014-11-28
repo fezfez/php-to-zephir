@@ -64,6 +64,6 @@ class ClassMetadata
     }
     public function getFullQualifiedNameClass()
     {
-        return $this->namespace . '\\' . $this->class;
+        return $this->namespace.'\\'.$this->class;
     }
 }

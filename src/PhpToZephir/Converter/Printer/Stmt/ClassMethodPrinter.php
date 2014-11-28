@@ -39,11 +39,11 @@ class ClassMethodPrinter
     private $lastMethod = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
      * @param ReservedWordReplacer $reservedWordReplacer
-     * @param TypeFinder $typeFinder
-     * @param NodeFetcher $nodeFetcher
+     * @param TypeFinder           $typeFinder
+     * @param NodeFetcher          $nodeFetcher
      */
     public function __construct(
         Dispatcher $dispatcher,
@@ -70,7 +70,7 @@ class ClassMethodPrinter
 
     public function convert(Stmt\ClassMethod $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         $types = $this->typeFinder->getTypes(
             $node,
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass(),
@@ -79,7 +79,7 @@ class ClassMethodPrinter
         );
         $this->dispatcher->setLastMethod($node->name);
 
-        $stmt = $this->dispatcher->pModifiers($node->type) . 'function ' . ($node->byRef ? '&' : '') . $node->name . '(';
+        $stmt = $this->dispatcher->pModifiers($node->type).'function '.($node->byRef ? '&' : '').$node->name.'(';
         $varsInMethodSign = array();
 
         if (isset($types['params']) === true) {
@@ -87,7 +87,7 @@ class ClassMethodPrinter
             foreach ($types['params'] as $type) {
                 $varsInMethodSign[] = $type['name'];
                 $stringType = $this->printType($type);
-                $params[] = ((!empty($stringType)) ? $stringType . ' ' : '') . '' . $type['name'] . ( ($type['default'] === null) ? '' : ' = ' . $this->dispatcher->p($type['default']));
+                $params[] = ((!empty($stringType)) ? $stringType.' ' : '').''.$type['name'].(($type['default'] === null) ? '' : ' = '.$this->dispatcher->p($type['default']));
             }
 
             $stmt .= implode(', ', $params);
@@ -96,8 +96,8 @@ class ClassMethodPrinter
         $stmt .= ")";
         $stmt .= $this->printReturn($node, $types);
 
-        $stmt .= (null !== $node->stmts ? "\n{" . $this->printVars($node, $varsInMethodSign) .
-             $this->dispatcher->pStmts($node->stmts) . "\n}" : ';') . "\n";
+        $stmt .= (null !== $node->stmts ? "\n{".$this->printVars($node, $varsInMethodSign).
+             $this->dispatcher->pStmts($node->stmts)."\n}" : ';')."\n";
 
         return $stmt;
     }
@@ -107,7 +107,7 @@ class ClassMethodPrinter
         $var = '';
         $vars  = array_diff(array_unique(array_filter($this->collectVars($node))), $varsInMethodSign);
         if (!empty($vars)) {
-            $var .= "\n    var " . implode(', ', $vars) . ";\n";
+            $var .= "\n    var ".implode(', ', $vars).";\n";
         }
 
         return $var;
@@ -118,8 +118,8 @@ class ClassMethodPrinter
         $stmt = '';
         if (array_key_exists('return', $types) === false && $this->hasReturnStatement($node) === false) {
             $stmt .= ' -> void';
-        } elseif(array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
-            $stmt .= ' -> ' . $this->printType($types['return']);
+        } elseif (array_key_exists('return', $types) === true && empty($types['return']['type']['value']) === false) {
+            $stmt .= ' -> '.$this->printType($types['return']);
         }
 
         return $stmt;
@@ -165,7 +165,7 @@ class ClassMethodPrinter
                     $vars[] = $stmt->keyVar->name;
                 }
                 $vars[] = $stmt->valueVar->name;
-            }  elseif ($stmt instanceof Stmt\If_) {
+            } elseif ($stmt instanceof Stmt\If_) {
                 if ($stmt->right instanceof Expr\Assign) {
                     $vars[] = $stmt->right->var->name;
                 }
@@ -196,6 +196,7 @@ class ClassMethodPrinter
         if (isset($type['type']['value']) === false) {
             throw new \Exception('value not found');
         }
-        return ($type['type']['isClass'] === true) ? '<' . $type['type']['value'] . '>' : $type['type']['value'];
+
+        return ($type['type']['isClass'] === true) ? '<'.$type['type']['value'].'>' : $type['type']['value'];
     }
 }

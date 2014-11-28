@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpToZephir\converter\Manipulator;
+namespace PhpToZephir\Converter\Manipulator;
 
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Expr;
@@ -21,7 +21,7 @@ class AssignManipulator
 
     /**
      * @param NodeFetcher $nodeFetcher
-     * @param Dispatcher $dispatcher
+     * @param Dispatcher  $dispatcher
      */
     public function __construct(NodeFetcher $nodeFetcher, Dispatcher $dispatcher)
     {
@@ -32,7 +32,7 @@ class AssignManipulator
     public function collectAssignInCondition($node)
     {
         $collected = array(
-            'extracted' => array()
+            'extracted' => array(),
         );
 
         foreach ($this->nodeFetcher->foreachNodes($node) as $key => $stmt) {
@@ -49,12 +49,12 @@ class AssignManipulator
         if ($stmt instanceof Expr\Assign) {
             if ($stmt->expr instanceof Expr\BinaryOp) {
                 $stmt->expr = $stmt->expr->left;
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).";";
             } else {
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt) . ";";
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).";";
             }
         } elseif ($this->isVarModification($stmt)) {
-            $collected['extracted'][] = $this->dispatcher->p($stmt) . ";";
+            $collected['extracted'][] = $this->dispatcher->p($stmt).";";
         }
 
         return $collected;

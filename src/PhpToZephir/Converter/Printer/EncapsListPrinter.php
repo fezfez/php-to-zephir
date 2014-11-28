@@ -3,29 +3,10 @@
 namespace PhpToZephir\Converter\Printer;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
+use PhpToZephir\Converter\SimplePrinter;
 
-class EncapsListPrinter
+class EncapsListPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pEncapsList";
@@ -36,9 +17,9 @@ class EncapsListPrinter
         $return = '';
         foreach ($encapsList as $element) {
             if (is_string($element)) {
-                $return .= addcslashes($element, "\n\r\t\f\v$" . $quote . "\\");
+                $return .= addcslashes($element, "\n\r\t\f\v$".$quote."\\");
             } else {
-                $return .= '{' . $this->dispatcher->p($element) . '}';
+                $return .= '{'.$this->dispatcher->p($element).'}';
             }
         }
 

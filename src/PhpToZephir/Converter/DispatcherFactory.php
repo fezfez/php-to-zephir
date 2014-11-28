@@ -12,7 +12,7 @@ class DispatcherFactory
     private static $instance = null;
 
     /**
-     * @param Logger $logger
+     * @param  Logger                            $logger
      * @return \PhpToZephir\Converter\Dispatcher
      */
     public static function getInstance(Logger $logger)
@@ -25,22 +25,23 @@ class DispatcherFactory
     }
 
     /**
-     * @param Logger $logger
+     * @param  Logger                            $logger
      * @return \PhpToZephir\Converter\Dispatcher
      */
     private static function createInstance(Logger $logger)
     {
-        $dirName   = __DIR__ . '/Printer/';
-        $Directory = new \RecursiveDirectoryIterator($dirName);
-        $Iterator  = new \RecursiveIteratorIterator($Directory);
-        $Regex     = new \RegexIterator($Iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+        $dirName   = __DIR__.'/Printer/';
+        $directory = new \RecursiveDirectoryIterator($dirName);
+        $iterator  = new \RecursiveIteratorIterator($directory);
+        $regex     = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
         $classes   = new PrinterCollection(array());
+        include 'SimplePrinter.php';
 
-        foreach ($Regex as $fez) {
-            $tmp = get_declared_classes();
-            include $fez[0];
+        foreach ($regex as $fileInfo) {
+            $declaredClasses = get_declared_classes();
+            include $fileInfo[0];
 
-            $className = current(array_diff(get_declared_classes(), $tmp));
+            $className = current(array_diff(get_declared_classes(), $declaredClasses));
 
             $classes->offsetSet($className::getType(), $className);
         }
@@ -48,7 +49,7 @@ class DispatcherFactory
         return new Dispatcher(
             $classes,
             $logger,
-            include __DIR__ . '/PrecedenceMap.php'
+            include __DIR__.'/PrecedenceMap.php'
         );
     }
 }

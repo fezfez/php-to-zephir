@@ -25,8 +25,8 @@ class CliFactory
     /**
      * Create CLI instance
      *
-     * @param OutputInterface $output
-     * @param InputInterface $input
+     * @param  OutputInterface                        $output
+     * @param  InputInterface                         $input
      * @return \Symfony\Component\Console\Application
      */
     public static function getInstance(OutputInterface $output, InputInterface $input)

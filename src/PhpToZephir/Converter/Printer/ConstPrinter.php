@@ -5,28 +5,10 @@ namespace PhpToZephir\Converter\Printer;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node;
+use PhpToZephir\Converter\SimplePrinter;
 
-class ConstPrinter
+class ConstPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pConst";
@@ -34,7 +16,8 @@ class ConstPrinter
 
     public function convert(Node\Const_ $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-        return $node->name . ' = ' . $this->dispatcher->p($node->value);
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+
+        return $node->name.' = '.$this->dispatcher->p($node->value);
     }
 }

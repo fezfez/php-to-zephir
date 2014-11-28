@@ -1,7 +1,6 @@
 <?php
 namespace PhpToZephir;
 
-
 class ReservedWordReplacer
 {
     public function replace($string)
@@ -30,7 +29,7 @@ class ReservedWordReplacer
             'function' => 'functionn',
             'private' => 'privatee',
             'protected' => 'protectedd',
-            'public' => 'publicc'
+            'public' => 'publicc',
         );
 
         foreach ($reservedWord as $word => $replacement) {

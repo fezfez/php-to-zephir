@@ -3,30 +3,11 @@
 namespace PhpToZephir\Converter\Printer;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
+use PhpToZephir\Converter\SimplePrinter;
 
-class ObjectPropertyPrinter
+class ObjectPropertyPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pObjectProperty";
@@ -35,7 +16,7 @@ class ObjectPropertyPrinter
     public function convert($node)
     {
         if ($node instanceof Expr) {
-            return '{' . $this->dispatcher->p($node) . '}';
+            return '{'.$this->dispatcher->p($node).'}';
         } else {
             return $node;
         }

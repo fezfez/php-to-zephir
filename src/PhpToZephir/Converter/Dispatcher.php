@@ -59,8 +59,8 @@ class Dispatcher
 
     /**
      * @param PrinterCollection $printerCollection
-     * @param Logger $logger
-     * @param array $precedenceMap
+     * @param Logger            $logger
+     * @param array             $precedenceMap
      */
     public function __construct(PrinterCollection $printerCollection, Logger $logger, array $precedenceMap)
     {
@@ -78,12 +78,13 @@ class Dispatcher
      */
     public function p($node)
     {
-        if(null === $node) {
+        if (null === $node) {
             return;
         }
 
-        $this->logger->trace('p' . $node->getType(), $node, $this->getMetadata()->getFullQualifiedNameClass());
-        return $this->getClass('p' . $node->getType())->convert($node);
+        $this->logger->trace('p'.$node->getType(), $node, $this->getMetadata()->getFullQualifiedNameClass());
+
+        return $this->getClass('p'.$node->getType())->convert($node);
     }
 
     public function __call($method, $arguments)
@@ -123,7 +124,7 @@ class Dispatcher
         $reflectionClass = new \ReflectionClass($className);
 
         if ($reflectionClass->getConstructor() === null) {
-            return new $className;
+            return new $className();
         }
         $dependencies = array();
 
@@ -143,7 +144,7 @@ class Dispatcher
     }
 
     /**
-     * @param string $type
+     * @param  string $type
      * @return array
      */
     public function getPrecedenceMap($type)
@@ -152,7 +153,7 @@ class Dispatcher
     }
 
     /**
-     * @param string $type
+     * @param  string  $type
      * @return boolean
      */
     public function issetPrecedenceMap($type)
@@ -170,7 +171,8 @@ class Dispatcher
     public function convert(array $stmts, ClassMetadata $metadata)
     {
         $this->metadata = $metadata;
-        return ltrim(str_replace("\n" . self::noIndentToken, "\n", $this->pStmts($stmts, false)));
+
+        return ltrim(str_replace("\n".self::noIndentToken, "\n", $this->pStmts($stmts, false)));
     }
 
     /**

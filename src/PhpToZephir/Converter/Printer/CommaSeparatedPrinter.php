@@ -3,29 +3,10 @@
 namespace PhpToZephir\Converter\Printer;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
+use PhpToZephir\Converter\SimplePrinter;
 
-class CommaSeparatedPrinter
+class CommaSeparatedPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pCommaSeparated";

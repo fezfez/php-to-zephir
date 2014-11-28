@@ -6,27 +6,8 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Scalar;
 
-class DNumberPrinter
+class DNumberPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pScalar_DNumber";
@@ -34,7 +15,8 @@ class DNumberPrinter
 
     public function convert(Scalar\DNumber $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+
         return $node->value;
     }
 }

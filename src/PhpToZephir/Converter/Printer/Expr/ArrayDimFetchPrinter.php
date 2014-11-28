@@ -24,8 +24,8 @@ class ArrayDimFetchPrinter
     private $arrayManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher       $dispatcher
+     * @param Logger           $logger
      * @param ArrayManipulator $arrayManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ArrayManipulator $arrayManipulator)
@@ -42,20 +42,29 @@ class ArrayDimFetchPrinter
 
     public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $collected = $this->arrayManipulator->arrayNeedToBeSplit($node);
 
-        if($collected !== false) {
+        if ($node->var instanceof Expr\StaticPropertyFetch) {
+            if ($node->var->class->parts[0] === 'self') {
+                $node->var = new Expr\PropertyFetch(new Expr\Variable('this'), $node->var->name);
+                $this->logger->logNode("Change StaticProperty into PropertyFetch due to #188", $node);
+            } else {
+                $this->logger->logNode("StaticProperty on array not supported, see #188", $node);
+            }
+        }
+
+        if ($collected !== false) {
             return $this->splitArray($collected, $returnAsArray);
         } else {
             $result = $this->dispatcher->pVarOrNewExpr($node->var)
-                 . '[' . (null !== $node->dim ? $this->dispatcher->p($node->dim) : '') . ']';
+                 .'['.(null !== $node->dim ? $this->dispatcher->p($node->dim) : '').']';
 
             if ($returnAsArray === true) {
                 return array(
                     'head' => '',
-                    'lastExpr' => $result
+                    'lastExpr' => $result,
                 );
             } else {
                 return $result;
@@ -76,9 +85,9 @@ class ArrayDimFetchPrinter
                 $head .= $expr['expr'];
                 if ($expr !== end($collected)) {
                     $head .= 'let tmpArray = ';
-                    $head .= $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
+                    $head .= $this->dispatcher->p($var).'['.$expr['var'].']';
                 } else {
-                    $lastExpr = $this->dispatcher->p($var) . '[' . $expr['var'] . ']';
+                    $lastExpr = $this->dispatcher->p($var).'['.$expr['var'].']';
                 }
 
                 $lastSplitTable = true;
@@ -86,27 +95,25 @@ class ArrayDimFetchPrinter
                 if ($lastSplitTable === true) {
                     if ($expr !== end($collected)) {
                         $head .= 'let tmpArray = ';
-                        $head .= $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
+                        $head .= $this->dispatcher->p($var).'['.$expr['expr'].']';
                     } else {
-                        $lastExpr = $this->dispatcher->p($var) . '[' . $expr['expr'] . ']';
+                        $lastExpr = $this->dispatcher->p($var).'['.$expr['expr'].']';
                     }
                 }
             }
 
             if ($expr !== end($collected)) {
-                $head .= ';' . "\n";
+                $head .= ';'."\n";
             }
         }
-
-        var_dump($collected, $head, $lastExpr);
 
         if ($returnAsArray === true) {
             return array(
                 'head' => $head,
-                'lastExpr' => $lastExpr
+                'lastExpr' => $lastExpr,
             );
         } else {
-            return $head . $lastExpr;
+            return $head.$lastExpr;
         }
     }
 }

@@ -6,28 +6,10 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
+use PhpToZephir\Converter\SimplePrinter;
 
-class FuncCallPrinter
+class FuncCallPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pExpr_FuncCall";
@@ -35,12 +17,12 @@ class FuncCallPrinter
 
     public function convert(Expr\FuncCall $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
-        if($node->name instanceof Expr\Variable) {
-            return '{' . $this->dispatcher->p($node->name) . '}(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
+        if ($node->name instanceof Expr\Variable) {
+            return '{'.$this->dispatcher->p($node->name).'}('.$this->dispatcher->pCommaSeparated($node->args).')';
         } else {
-            return $this->dispatcher->p($node->name) . '(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
+            return $this->dispatcher->p($node->name).'('.$this->dispatcher->pCommaSeparated($node->args).')';
         }
     }
 }

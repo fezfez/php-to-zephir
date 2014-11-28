@@ -5,28 +5,10 @@ namespace PhpToZephir\Converter\Printer\Stmt;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Stmt;
+use PhpToZephir\Converter\SimplePrinter;
 
-class CasePrinter
+class CasePrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pStmt_Case";
@@ -34,8 +16,9 @@ class CasePrinter
 
     public function convert(Stmt\Case_ $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-        return (null !== $node->cond ? 'case ' . $this->dispatcher->p($node->cond) : 'default') . ':'
-             . $this->dispatcher->pStmts($node->stmts);
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+
+        return (null !== $node->cond ? 'case '.$this->dispatcher->p($node->cond) : 'default').':'
+             .$this->dispatcher->pStmts($node->stmts);
     }
 }

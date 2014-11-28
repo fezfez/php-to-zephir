@@ -19,7 +19,7 @@ class ClassInformation
 
     /**
      * @param ReservedWordReplacer $reservedWordReplacer
-     * @param NodeFetcher $nodeFetcher
+     * @param NodeFetcher          $nodeFetcher
      */
     public function __construct(ReservedWordReplacer $reservedWordReplacer, NodeFetcher $nodeFetcher)
     {
@@ -28,7 +28,7 @@ class ClassInformation
     }
 
     /**
-     * @param array $nodes
+     * @param  array                                $nodes
      * @return \PhpToZephir\Converter\ClassMetadata
      */
     public function getClassesMetdata(array $nodes)
@@ -47,8 +47,8 @@ class ClassInformation
     }
 
     /**
-     * @param array $nodes
-     * @param ClassMetadata $classMetadata
+     * @param  array         $nodes
+     * @param  ClassMetadata $classMetadata
      * @return ClassMetadata
      */
     public function build(array $nodes, ClassMetadata $classMetadata)
@@ -66,10 +66,11 @@ class ClassInformation
                 }
             } elseif ($node instanceof Stmt\Namespace_) {
                 $classMetadata->setNamespace(implode('\\', $node->name->parts));
+
                 return $classMetadata;
             } elseif ($node instanceof Stmt\Interface_ || $node instanceof Stmt\Class_) {
                 if ($class !== null) {
-                    throw new \Exception('Multiple class find in ' . $fileName);
+                    throw new \Exception('Multiple class find in '.$fileName);
                 }
                 $class = $this->reservedWordReplacer->replace($node->name);
                 $classMetadata->setClass($class);

@@ -24,7 +24,7 @@ class NamePrinter
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ClassManipulator $classManipulator)
     {
@@ -41,7 +41,7 @@ class NamePrinter
     public function convert(Name $node)
     {
         $this->logger->trace(
-            __METHOD__ . ' ' . __LINE__,
+            __METHOD__.' '.__LINE__,
             $node,
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
         );

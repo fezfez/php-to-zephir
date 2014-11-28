@@ -24,7 +24,7 @@ class WhilePrinter
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -40,12 +40,12 @@ class WhilePrinter
 
     public function convert(Stmt\While_ $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
-        return implode(";\n", $collected['extracted']) . "\n" . 'while (' . $this->dispatcher->p($node->cond) . ') {'
-             . $this->dispatcher->pStmts($node->stmts) . "\n" . implode(";\n", $collected['extracted']) . "\n" . '}';
+        return implode(";\n", $collected['extracted'])."\n".'while ('.$this->dispatcher->p($node->cond).') {'
+             .$this->dispatcher->pStmts($node->stmts)."\n".implode(";\n", $collected['extracted'])."\n".'}';
     }
 }

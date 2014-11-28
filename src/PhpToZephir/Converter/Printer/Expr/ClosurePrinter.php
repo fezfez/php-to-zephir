@@ -23,7 +23,7 @@ class ClosurePrinter
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger)
     {
@@ -38,16 +38,16 @@ class ClosurePrinter
 
     public function convert(Expr\Closure $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
-        $methodName = $this->dispatcher->getMetadata()->getClass() . $this->dispatcher->getLastMethod();
+        $methodName = $this->dispatcher->getMetadata()->getClass().$this->dispatcher->getLastMethod();
         if (isset(self::$converted[$methodName])) {
             self::$converted[$methodName]++;
         } else {
             self::$converted[$methodName] = 1;
         }
 
-        $name = $methodName . "Closure" . $this->N2L(count(self::$converted[$methodName]));
+        $name = $methodName."Closure".$this->N2L(count(self::$converted[$methodName]));
 
         $this->logger->logNode(
             sprintf('Closure does not exist in Zephir, class "%s" with __invoke is created', $name),
@@ -55,18 +55,18 @@ class ClosurePrinter
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
         );
 
-        return "new " . $name . '(' . $this->dispatcher->pCommaSeparated($node->uses) . ')';
+        return "new ".$name.'('.$this->dispatcher->pCommaSeparated($node->uses).')';
     }
 
     /**
      * @param null|string $lastMethod
-     * @param integer $number
+     * @param integer     $number
      */
     public function createClosureClass(Expr\Closure $node, $lastMethod, $number)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
-        $name = $this->dispatcher->getMetadata()->getClass() . $lastMethod . "Closure" . $this->N2L($number);
+        $name = $this->dispatcher->getMetadata()->getClass().$lastMethod."Closure".$this->N2L($number);
 
         $this->logger->logNode(
             sprintf('Closure does not exist in Zephir, class "%s" with __invoke is created', $name),
@@ -76,7 +76,7 @@ class ClosurePrinter
 
         return array(
          'name' => $name,
-         'code' => $this->createClass($name, $this->dispatcher->getMetadata()->getNamespace(), $node)
+         'code' => $this->createClass($name, $this->dispatcher->getMetadata()->getNamespace(), $node),
         );
     }
 
@@ -92,21 +92,21 @@ class $name
 ";
 
         foreach ($node->uses as $use) {
-        $class .= "    private " . $use->var . ";\n";
+            $class .= "    private ".$use->var.";\n";
         }
 
         $class .= "
-    public function __construct("  . (!empty($node->uses) ? '' . $this->dispatcher->pCommaSeparated($node->uses) : '') . ")
+    public function __construct(".(!empty($node->uses) ? ''.$this->dispatcher->pCommaSeparated($node->uses) : '').")
     {
         ";
         foreach ($node->uses as $use) {
-        $class .= "        let this->" . $use->var . " = " . $use->var . ";\n";
+            $class .= "        let this->".$use->var." = ".$use->var.";\n";
         }
-            $class .= "
+        $class .= "
     }
 
-    public function __invoke(" . $this->dispatcher->pCommaSeparated($node->params) . ")
-    {" . $this->dispatcher->pStmts($this->convertUseToMemberAttribute($node->stmts, $node->uses)) . "
+    public function __invoke(".$this->dispatcher->pCommaSeparated($node->params).")
+    {".$this->dispatcher->pStmts($this->convertUseToMemberAttribute($node->stmts, $node->uses))."
     }
 }
     ";
@@ -115,7 +115,7 @@ class $name
     }
 
     /**
-     * @param Node[] $node
+     * @param Node[]            $node
      * @param Expr\ClosureUse[] $uses
      */
     private function convertUseToMemberAttribute($node, $uses)
@@ -133,7 +133,7 @@ class $name
             if ($stmt instanceof Expr\Variable) {
                 foreach ($uses as $use) {
                     if ($use->var === $stmt->name) {
-                        $stmt->name = 'this->' . $stmt->name;
+                        $stmt->name = 'this->'.$stmt->name;
                     }
                 }
             }
@@ -150,29 +150,22 @@ class $name
         $tens = floor($number / 10);
         $units = $number % 10;
 
-        $words = array
-        (
+        $words = array(
             'units' => array('', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eightteen', 'Nineteen'),
-            'tens' => array('', '', 'Twenty', 'Thirty', 'Fourty', 'Fifty', 'Sixty', 'Seventy', 'Eigthy', 'Ninety')
+            'tens' => array('', '', 'Twenty', 'Thirty', 'Fourty', 'Fifty', 'Sixty', 'Seventy', 'Eigthy', 'Ninety'),
         );
 
-        if ($tens < 2)
-        {
+        if ($tens < 2) {
             $result[] = $words['units'][$tens * 10 + $units];
-        }
-
-        else
-        {
+        } else {
             $result[] = $words['tens'][$tens];
 
-            if ($units > 0)
-            {
-                $result[count($result) - 1] .= '-' . $words['units'][$units];
+            if ($units > 0) {
+                $result[count($result) - 1] .= '-'.$words['units'][$units];
             }
         }
 
-        if (empty($result[0]))
-        {
+        if (empty($result[0])) {
             $result[0] = 'Zero';
         }
 

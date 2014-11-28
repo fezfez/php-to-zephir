@@ -28,9 +28,9 @@ class InterfacePrinter
     private $reservedWordReplacer = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     * @param ClassManipulator $classManipulator
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
+     * @param ClassManipulator     $classManipulator
      * @param ReservedWordReplacer $reservedWordReplacer
      */
     public function __construct(
@@ -66,8 +66,8 @@ class InterfacePrinter
             $extendsStmt .= implode(', ', $extends);
         }
 
-        return 'interface ' . $node->name
-             . $extendsStmt
-             . "\n" . '{' . $this->dispatcher->pStmts($node->stmts) . "\n" . '}';
+        return 'interface '.$node->name
+             .$extendsStmt
+             ."\n".'{'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }
 }

@@ -3,37 +3,12 @@
 namespace PhpToZephir\Converter\Printer;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpToZephir\converter\Manipulator\ClassManipulator;
+use PhpToZephir\Converter\SimplePrinter;
 
-class StmtsPrinter
+class StmtsPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-    /**
-     * @var ClassManipulator
-     */
-    private $classManipulator = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger, ClassManipulator $classManipulator)
-    {
-        $this->dispatcher       = $dispatcher;
-        $this->logger           = $logger;
-        $this->classManipulator = $classManipulator;
-    }
-
     public static function getType()
     {
         return "pStmts";
@@ -52,27 +27,30 @@ class StmtsPrinter
         $result = '';
         foreach ($nodes as $node) {
             $result .= "\n"
-                    . $this->pComments($node->getAttribute('comments', array()))
-                    . $this->dispatcher->p($node)
-                    . ($node instanceof Expr ? ';' : '');
+                    .$this->pComments($node->getAttribute('comments', array()))
+                    .$this->dispatcher->p($node)
+                    .($node instanceof Expr ? ';' : '');
         }
 
         if ($indent) {
-            return preg_replace('~\n(?!$|' . Dispatcher::noIndentToken . ')~', "\n    ", $result);
+            return preg_replace('~\n(?!$|'.Dispatcher::noIndentToken.')~', "\n    ", $result);
         } else {
             return $result;
         }
     }
 
-    public function pComments(array $comments)
+    /**
+     * @param  array  $comments
+     * @return string
+     */
+    private function pComments(array $comments)
     {
         $result = '';
 
         foreach ($comments as $comment) {
-            $result .= $comment->getReformattedText() . "\n";
+            $result .= $comment->getReformattedText()."\n";
         }
 
         return $result;
     }
-
 }

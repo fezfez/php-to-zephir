@@ -3,30 +3,11 @@
 namespace PhpToZephir\Converter\Printer\Expr;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
+use PhpToZephir\Converter\SimplePrinter;
 
-class IssetPrinter
+class IssetPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pExpr_Isset";
@@ -34,6 +15,6 @@ class IssetPrinter
 
     public function convert(Expr\Isset_ $node)
     {
-        return 'isset ' . $this->dispatcher->pCommaSeparated($node->vars) . '';
+        return 'isset '.$this->dispatcher->pCommaSeparated($node->vars).'';
     }
 }

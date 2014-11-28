@@ -24,8 +24,8 @@ class Converter
     private $nodeFetcher = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Dispatcher  $dispatcher
+     * @param Logger      $logger
      * @param NodeFetcher $nodeFetcher
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, NodeFetcher $nodeFetcher)
@@ -43,7 +43,7 @@ class Converter
         return array(
             'code'            => $this->dispatcher->convert($stmts, $metadata),
             'namespace'       => $metadata->getNamespace(),
-            'additionalClass' => $this->findAdditionalClasses($stmts)
+            'additionalClass' => $this->findAdditionalClasses($stmts),
         );
     }
 

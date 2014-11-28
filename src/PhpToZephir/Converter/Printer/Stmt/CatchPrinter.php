@@ -5,28 +5,10 @@ namespace PhpToZephir\Converter\Printer\Stmt;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Stmt;
+use PhpToZephir\Converter\SimplePrinter;
 
-class CatchPrinter
+class CatchPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pStmt_Catch";
@@ -34,8 +16,9 @@ class CatchPrinter
 
     public function convert(Stmt\Catch_ $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-        return ' catch ' . $this->dispatcher->p($node->type) . ', ' . $node->var . ' {'
-             . $this->dispatcher->pStmts($node->stmts) . "\n" . '}';
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+
+        return ' catch '.$this->dispatcher->p($node->type).', '.$node->var.' {'
+             .$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }
 }

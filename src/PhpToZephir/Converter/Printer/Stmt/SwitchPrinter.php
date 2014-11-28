@@ -9,28 +9,10 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Scalar\String;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpToZephir\Converter\SimplePrinter;
 
-class SwitchPrinter
+class SwitchPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pStmt_Switch";
@@ -38,7 +20,7 @@ class SwitchPrinter
 
     public function convert(Stmt\Switch_ $node)
     {
-        $this->logger->trace(__METHOD__ . ' ' . __LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
         $transformToIf = false;
         foreach ($node->cases as $case) {
@@ -50,8 +32,8 @@ class SwitchPrinter
         if ($transformToIf === true) {
             return $this->convertSwitchToIfelse($node);
         } else {
-            return 'switch (' . $this->dispatcher->p($node->cond) . ') {'
-             . $this->dispatcher->pStmts($node->cases) . "\n" . '}';
+            return 'switch ('.$this->dispatcher->p($node->cond).') {'
+             .$this->dispatcher->pStmts($node->cases)."\n".'}';
         }
     }
 
@@ -64,6 +46,7 @@ class SwitchPrinter
                 unset($case->stmts[end($key)]);
             }
         }
+
         return $case;
     }
 
@@ -71,7 +54,7 @@ class SwitchPrinter
     {
         $stmt = array(
             'else' => null,
-            'elseifs' => array()
+            'elseifs' => array(),
         );
         $if = null;
         $ifDefined = false;
@@ -111,7 +94,7 @@ class SwitchPrinter
         $if = new \PhpParser\Node\Stmt\If_($if->cond, array(
             'stmts' => $if->stmts,
             'elseifs' => $elseifs,
-            'else' => $stmt['else']
+            'else' => $stmt['else'],
         ));
 
         return $this->dispatcher->pStmt_If($if);

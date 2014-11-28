@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpToZephir\converter\Manipulator;
+namespace PhpToZephir\Converter\Manipulator;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp;
@@ -21,7 +21,7 @@ class ArrayManipulator
 
     /**
      * @param Dispatcher $dispatcher
-     * @param Logger $logger
+     * @param Logger     $logger
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger)
     {
@@ -37,15 +37,15 @@ class ArrayManipulator
         if ($this->isInvalidInArrayDimFetch($node) === true) {
             if ($node->dim instanceof Expr\FuncCall) {
                 $this->logger->trace(
-                    __METHOD__ . ' ' . __LINE__ . ' Non supported funccall in array',
+                    __METHOD__.' '.__LINE__.' Non supported funccall in array',
                     $node,
                     $this->dispatcher->getMetadata()->getClass()
                 );
             } else {
                 $collected[] = array(
-                    'expr' => $this->dispatcher->p($node->dim) . ";\n",
+                    'expr' => $this->dispatcher->p($node->dim).";\n",
                     'splitTab' => true,
-                    'var' => $this->dispatcher->p($node->dim->var)
+                    'var' => $this->dispatcher->p($node->dim->var),
                 );
             }
         } else {

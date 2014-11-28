@@ -29,9 +29,9 @@ class ClassPrinter
     private $reservedWordReplacer = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     * @param ClassManipulator $classManipulator
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
+     * @param ClassManipulator     $classManipulator
      * @param ReservedWordReplacer $reservedWordReplacer
      */
     public function __construct(
@@ -56,10 +56,10 @@ class ClassPrinter
         $node->name = $this->reservedWordReplacer->replace($node->name);
 
         return $this->dispatcher->pModifiers($node->type)
-             . 'class ' . $node->name
-             . (null !== $node->extends ? ' extends ' . $this->dispatcher->p($node->extends) : '')
-             . (!empty($node->implements) ? ' implements ' . $this->dispatcher->pCommaSeparated($node->implements) : '')
-             . "\n" . '{' . $this->dispatcher->pStmts($node->stmts) . "\n" . '}';
+             .'class '.$node->name
+             .(null !== $node->extends ? ' extends '.$this->dispatcher->p($node->extends) : '')
+             .(!empty($node->implements) ? ' implements '.$this->dispatcher->pCommaSeparated($node->implements) : '')
+             ."\n".'{'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }
 
     /**

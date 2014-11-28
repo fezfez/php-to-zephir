@@ -7,7 +7,6 @@ use PhpParser\Node;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\ProgressHelper;
 
-
 class Logger
 {
     /**
@@ -26,7 +25,7 @@ class Logger
     /**
      * @param OutputInterface $output
      */
-    public function __construct(OutputInterface $output, $trace = false)
+    public function __construct(OutputInterface $output, $trace = true)
     {
         $this->output = $output;
         $this->trace  = $trace;
@@ -48,14 +47,14 @@ class Logger
     }
     /**
      * @param string $message
-     * @param Node $node
+     * @param Node   $node
      * @param string $class
      */
     public function logNode($message, Node $node, $class = null)
     {
         $this->cleanProgressbar();
         $this->output->writeln(
-            '<comment>' . $message . ' on line ' . $node->getLine() . ' in class "' . $class . '"</comment>'
+            '<comment>'.$message.' on line '.$node->getLine().' in class "'.$class.'"</comment>'
         );
         $this->reDrawProgressBar();
     }
@@ -67,7 +66,7 @@ class Logger
     {
         if ($this->trace === true) {
             $this->cleanProgressbar();
-            $this->output->writeln($message . ' on line ' . $node->getLine() . ' in class "' . $class . '"');
+            $this->output->writeln($message.' on line '.$node->getLine().' in class "'.$class.'"');
             $this->reDrawProgressBar();
         }
     }

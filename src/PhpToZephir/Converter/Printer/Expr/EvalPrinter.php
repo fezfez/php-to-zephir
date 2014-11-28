@@ -3,30 +3,11 @@
 namespace PhpToZephir\Converter\Printer\Expr;
 
 use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
+use PhpToZephir\Converter\SimplePrinter;
 
-class EvalPrinter
+class EvalPrinter extends SimplePrinter
 {
-    /**
-     * @var Dispatcher
-     */
-    private $dispatcher = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
-     * @param Dispatcher $dispatcher
-     * @param Logger $logger
-     */
-    public function __construct(Dispatcher $dispatcher, Logger $logger)
-    {
-        $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
-    }
-
     public static function getType()
     {
         return "pExpr_Eval";
@@ -34,6 +15,6 @@ class EvalPrinter
 
     public function convert(Expr\Eval_ $node)
     {
-        return 'eval(' . $this->dispatcher->p($node->expr) . ')';
+        return 'eval('.$this->dispatcher->p($node->expr).')';
     }
 }
