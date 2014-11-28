@@ -17,13 +17,19 @@ class TypeFinder
      * @var ReservedWordReplacer
      */
     private $reservedWordReplacer = null;
+    /**
+     * @var Logger
+     */
+    private $logger = null;
 
     /**
      * @param ReservedWordReplacer $reservedWordReplacer
+     * @param Logger               $logger
      */
-    public function __construct(ReservedWordReplacer $reservedWordReplacer)
+    public function __construct(ReservedWordReplacer $reservedWordReplacer, Logger $logger)
     {
         $this->reservedWordReplacer = $reservedWordReplacer;
+        $this->logger               = $logger;
     }
 
     /**
@@ -195,11 +201,9 @@ class TypeFinder
      * @param  Tag    $tag
      * @return string
      */
-    private function findType($tag, $actualNamespace, array $use, array $classes)
+    private function findType(Tag $tag, $actualNamespace, array $use, array $classes)
     {
-        // @TODO add ressource
-        $type           = array();
-        $rawType        = $tag->getType();
+        $rawType = $tag->getType();
 
         if ($rawType === 'integer') {
             $rawType = 'int';
@@ -230,6 +234,7 @@ class TypeFinder
         $arrayOfPrimitiveTypes = array_map(function ($val) { return $val.'[]'; }, $primitiveTypes);
 
         if (preg_match("/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/", $rawType) === 0) { // this is a typo
+            $this->logger->log(sprintf('Type "%s" does not exist in docblock', $rawType));
             $type = array('value' => '', 'isClass' => false);
         } elseif (in_array(strtolower($rawType), $primitiveTypes)) {
             $type = array('value' => strtolower($rawType), 'isClass' => false);

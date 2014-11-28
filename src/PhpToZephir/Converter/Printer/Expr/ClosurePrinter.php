@@ -121,7 +121,6 @@ class $name
      */
     private function convertUseToMemberAttribute($node, $uses)
     {
-        $vars = array();
         if (is_array($node) === true) {
             $nodes = $node;
         } elseif (method_exists($node, 'getIterator') === true) {

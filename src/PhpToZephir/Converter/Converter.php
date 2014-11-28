@@ -35,6 +35,12 @@ class Converter
         $this->nodeFetcher = $nodeFetcher;
     }
 
+    /**
+     * @param  array  $stmts
+     * @param  string $fileName
+     * @param  array  $classCollected
+     * @return array
+     */
     public function nodeToZephir(array $stmts, $fileName = null, array $classCollected = array())
     {
         $classInformation = ClassInformationFactory::getInstance();
@@ -47,6 +53,10 @@ class Converter
         );
     }
 
+    /**
+     * @param  array $stmts
+     * @return array
+     */
     private function findAdditionalClasses(array $stmts)
     {
         $closurePrinter = new ClosurePrinter($this->dispatcher, $this->logger);

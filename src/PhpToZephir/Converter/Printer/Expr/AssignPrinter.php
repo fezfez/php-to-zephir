@@ -110,37 +110,37 @@ class AssignPrinter
     private function isSomething($rightNode)
     {
         $node = 'PhpParser\Node\\';
-        $expr = $node . 'Expr\\';
-        $binaryOp = $expr. 'BinaryOp\\';
+        $expr = $node.'Expr\\';
+        $binaryOp = $expr.'BinaryOp\\';
 
         $somethingList = array(
-            $node . 'Scalar',
-            $expr . 'Variable',
-            $expr . 'Array_',
-            $expr . 'UnaryMinus',
-            $expr . 'StaticCall',
-            $expr . 'FuncCall',
-            $expr . 'ConstFetch',
-            $expr . 'Clone_',
-            $expr . 'New_',
-            $expr . 'ClassConstFetch',
-            $expr . 'Ternary',
-            $expr . 'BooleanNot',
-            $expr . 'Cast',
-            $expr . 'MethodCall',
-            $expr . 'Isset_',
-            $expr . 'Empty_',
-            $expr . 'Closure',
-            $expr . 'ArrayDimFetch',
-            $expr . 'Include_',
-            $expr . 'PropertyFetch',
-            $binaryOp . 'Concat',
-            $binaryOp . 'BooleanOr',
-            $binaryOp . 'Minus',
-            $binaryOp . 'Plus',
-            $binaryOp . 'BitwiseOr',
-            $binaryOp . 'BitwiseAnd',
-            $binaryOp . 'Mul'
+            $node.'Scalar',
+            $expr.'Variable',
+            $expr.'Array_',
+            $expr.'UnaryMinus',
+            $expr.'StaticCall',
+            $expr.'FuncCall',
+            $expr.'ConstFetch',
+            $expr.'Clone_',
+            $expr.'New_',
+            $expr.'ClassConstFetch',
+            $expr.'Ternary',
+            $expr.'BooleanNot',
+            $expr.'Cast',
+            $expr.'MethodCall',
+            $expr.'Isset_',
+            $expr.'Empty_',
+            $expr.'Closure',
+            $expr.'ArrayDimFetch',
+            $expr.'Include_',
+            $expr.'PropertyFetch',
+            $binaryOp.'Concat',
+            $binaryOp.'BooleanOr',
+            $binaryOp.'Minus',
+            $binaryOp.'Plus',
+            $binaryOp.'BitwiseOr',
+            $binaryOp.'BitwiseAnd',
+            $binaryOp.'Mul',
         );
 
         foreach ($somethingList as $something) {
@@ -165,17 +165,18 @@ class AssignPrinter
     }
 
     /**
-     * @param Assign $node
+     * @param  Assign $node
+     * @return string
      */
     private function convertListStmtToAssign($node)
     {
-        $type = 'Expr_Assign';
-        $leftNode = $node->var;
-        $operatorString = ' = ';
+        $type      = 'Expr_Assign';
         $rightNode = $node->expr;
+        $vars      = array();
+        $pList     = array();
+
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
-        $vars = array();
-        $pList = array();
+
         foreach ($node->var->vars as $count => $var) {
             if (null === $var) {
                 $pList[] = '';

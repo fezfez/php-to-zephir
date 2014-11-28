@@ -61,18 +61,4 @@ class ClassPrinter
              .(!empty($node->implements) ? ' implements '.$this->dispatcher->pCommaSeparated($node->implements) : '')
              ."\n".'{'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }
-
-    /**
-     * @param Name[] $nodes
-     */
-    private function p_implements($nodes)
-    {
-        $classes = array();
-
-        foreach ($nodes as $node) {
-            $classes[] = $this->classManipulator->findRightClass($node, $this->dispatcher->getMetadata());
-        }
-
-        return implode(', ', $classes);
-    }
 }

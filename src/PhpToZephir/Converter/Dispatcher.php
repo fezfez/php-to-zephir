@@ -88,8 +88,8 @@ class Dispatcher
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
+     * @param  string $method
+     * @param  array  $arguments
      * @return string
      */
     public function __call($method, $arguments)
@@ -98,7 +98,7 @@ class Dispatcher
     }
 
     /**
-     * @param string $type
+     * @param  string     $type
      * @throws \Exception
      * @return object
      */
@@ -133,7 +133,7 @@ class Dispatcher
     }
 
     /**
-     * @param string $className
+     * @param  string $className
      * @return object
      */
     private function dynamicConstruct($className)

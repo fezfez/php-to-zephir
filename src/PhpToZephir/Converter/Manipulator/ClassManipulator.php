@@ -38,7 +38,6 @@ class ClassManipulator
             return '\\'.$class;
         } elseif (array_key_exists($class, $metadata->getClassesAlias())) {
             $alias = $metadata->getClassesAlias();
-            $classKey = array_keys($alias, $class);
 
             return '\\'.$alias[$class];
         } elseif (false !== $key = array_search($class, $lastPartsClass)) {
