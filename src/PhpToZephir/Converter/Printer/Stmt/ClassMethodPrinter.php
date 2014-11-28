@@ -126,7 +126,7 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param Stmt\ClassMethod $node
+     * @param Stmt\ClassMethod $nodes
      */
     private function hasReturnStatement($nodes)
     {

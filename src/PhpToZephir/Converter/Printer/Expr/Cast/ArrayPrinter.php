@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Expr\Cast;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast;
 use PhpParser\Node\Expr\Array_;

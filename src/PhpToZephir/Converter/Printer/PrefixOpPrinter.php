@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node;
 use PhpToZephir\Converter\SimplePrinter;
 
@@ -16,7 +15,7 @@ class PrefixOpPrinter extends SimplePrinter
     /**
      * Pretty prints an array of nodes (statements) and indents them optionally.
      *
-     * @param Node[] $node Array of nodes
+     * @param Node $node Array of nodes
      *
      * @return string Pretty printed statements
      */

@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Stmt\TraitUseAdaptation;
 
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Stmt;
 use PhpToZephir\Converter\SimplePrinter;
 
