@@ -4,6 +4,7 @@ namespace PhpToZephir\Converter\Printer\Expr\BinaryOp;
 
 use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node\Expr\BinaryOp;
+use PhpToZephir\Converter\SimplePrinter;
 
 class BitwiseOrPrinter extends SimplePrinter
 {

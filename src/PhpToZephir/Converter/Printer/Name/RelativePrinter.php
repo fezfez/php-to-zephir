@@ -3,6 +3,7 @@
 namespace PhpToZephir\Converter\Printer\Name;
 
 use PhpParser\Node\Name;
+use PhpToZephir\Converter\SimplePrinter;
 
 class RelativePrinter extends SimplePrinter
 {

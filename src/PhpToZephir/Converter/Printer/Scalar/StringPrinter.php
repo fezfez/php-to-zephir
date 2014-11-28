@@ -6,6 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\String;
+use PhpToZephir\Converter\SimplePrinter;
 
 class StringPrinter extends SimplePrinter
 {

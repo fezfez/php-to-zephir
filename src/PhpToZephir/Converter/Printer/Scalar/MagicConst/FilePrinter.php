@@ -3,6 +3,7 @@
 namespace PhpToZephir\Converter\Printer\Scalar\MagicConst;
 
 use PhpParser\Node\Scalar\MagicConst;
+use PhpToZephir\Converter\SimplePrinter;
 
 class FilePrinter extends SimplePrinter
 {
