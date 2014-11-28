@@ -6,7 +6,6 @@ class IfWithCreateTmpVarInCondition
 {
     public function test($toto)
     {
-        // @FIXME tmp array
         if (array() == $toto) {
             echo 'tata';
         }
@@ -19,7 +18,7 @@ class IfWithCreateTmpVarInCondition
             echo 'tata';
         }
 
-        if ($toto === true && $toto === array()) {
+        if ($toto === true && $toto === array(10)) {
             echo 'tata';
         }
 

@@ -4,7 +4,7 @@ namespace Code\Condition\IfStmt;
 
 class IfElseCondition
 {
-    private static $staticArray;
+    private static $staticArray = array();
 
     public function test($toto)
     {

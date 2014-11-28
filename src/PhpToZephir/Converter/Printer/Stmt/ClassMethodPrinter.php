@@ -164,9 +164,8 @@ class ClassMethodPrinter
      * @param  Stmt\ClassMethod $node
      * @return array
      */
-    private function collectVars($node)
+    private function collectVars($node, array $vars = array())
     {
-        $vars = array();
         if (is_array($node) === true) {
             $nodes = $node;
         } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
@@ -188,12 +187,12 @@ class ClassMethodPrinter
                 }
                 $vars[] = $stmt->valueVar->name;
             } elseif ($stmt instanceof Stmt\If_) {
-                if ($stmt->right instanceof Expr\Assign) {
-                    $vars[] = $stmt->right->var->name;
-                }
-
-                if ($stmt->left instanceof Expr\Assign) {
-                    $vars[] = $stmt->left->var->name;
+                foreach ($this->nodeFetcher->foreachNodes($stmt) as $node) {
+                    if ($node instanceof Expr\Assign) {
+                        $vars[] = $node->var->name;
+                    } elseif ($node instanceof Expr\Array_) {
+                        $vars[] = 'tmpArray'.md5(serialize($node->items));
+                    }
                 }
             } elseif ($stmt instanceof Stmt\Catch_) {
                 $vars[] = $stmt->var;

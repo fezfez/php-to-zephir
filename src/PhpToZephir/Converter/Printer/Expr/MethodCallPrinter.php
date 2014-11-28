@@ -23,8 +23,9 @@ class MethodCallPrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -47,7 +48,7 @@ class MethodCallPrinter
      */
     public function convert(Expr\MethodCall $node)
     {
-        $collected = $this->assignManipulator->collectAssignInCondition($node->args);
+        $collected  = $this->assignManipulator->collectAssignInCondition($node->args);
         $node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
 
         return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').

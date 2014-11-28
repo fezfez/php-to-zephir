@@ -55,7 +55,8 @@ class ArrayPrinter
         if ($returnAsArray === true) {
             return $collected;
         } else {
-            return implode(";\n", $collected['extracted'])."\n".$collected['expr'];
+            return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '')
+                   .$collected['expr'];
         }
     }
 }

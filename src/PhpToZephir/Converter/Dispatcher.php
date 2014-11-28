@@ -14,7 +14,7 @@ use PhpToZephir\Logger;
  * @method string pExpr_Ternary(\PhpParser\Node\Expr\Ternary $node, boolean $returnAsArray = false)
  * @method string pStmts(array $nodes, boolean $indent = true)
  * @method string pModifiers(integer $modifiers)
- * @method string pExpr_Array(\PhpParser\Node\Expr\Array_ $node, boolean $returnAsArray = false)
+ * @method string|array pExpr_Array(\PhpParser\Node\Expr\Array_ $node, boolean $returnAsArray = false)
  * @method string pExpr_ArrayDimFetch(\PhpParser\Node\Expr\ArrayDimFetch $node, $returnAsArray = false)
  * @method string pObjectProperty($node)
  * @method string pPrefixOp(string $type, string $operatorString, \PhpParser\Node $node)

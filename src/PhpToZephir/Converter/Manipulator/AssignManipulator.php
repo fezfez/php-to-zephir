@@ -29,6 +29,10 @@ class AssignManipulator
         $this->dispatcher  = $dispatcher;
     }
 
+    /**
+     * @param  mixed $node
+     * @return array
+     */
     public function collectAssignInCondition($node)
     {
         $collected = array(
@@ -44,6 +48,11 @@ class AssignManipulator
         return $collected;
     }
 
+    /**
+     * @param  mixed $stmt
+     * @param  array $collected
+     * @return array
+     */
     private function extract($stmt, array $collected)
     {
         if ($stmt instanceof Expr\Assign) {
@@ -55,11 +64,17 @@ class AssignManipulator
             }
         } elseif ($this->isVarModification($stmt)) {
             $collected['extracted'][] = $this->dispatcher->p($stmt).";";
+        } elseif ($this->isVarCreation($stmt)) {
+            $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).";";
         }
 
         return $collected;
     }
 
+    /**
+     * @param  mixed $primaryNode
+     * @return mixed
+     */
     public function transformAssignInConditionTest($primaryNode)
     {
         if ($primaryNode instanceof BinaryOp) {
@@ -74,10 +89,13 @@ class AssignManipulator
                 $primaryNode->right = $left;
             }
         }
+
         if ($primaryNode instanceof Expr\Assign) {
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarModification($primaryNode)) {
             $primaryNode = $primaryNode->var;
+        } elseif ($this->isVarCreation($primaryNode)) {
+            $primaryNode = new Expr\Variable('tmpArray'.md5(serialize($primaryNode->items)));
         } else {
             if (is_array($primaryNode) === true) {
                 foreach ($primaryNode as $key => $node) {
@@ -93,6 +111,19 @@ class AssignManipulator
         return $primaryNode;
     }
 
+    /**
+     * @param  mixed   $stmt
+     * @return boolean
+     */
+    private function isVarCreation($stmt)
+    {
+        return $stmt instanceof Expr\Array_;
+    }
+
+    /**
+     * @param  mixed   $stmt
+     * @return boolean
+     */
     private function isVarModification($stmt)
     {
         return $stmt instanceof Expr\PostDec ||

@@ -68,7 +68,7 @@ class Logger
         if ($this->trace === true) {
             $this->cleanProgressbar();
 
-            $space             = 25 - strlen($message);
+            $space             = 35 - strlen($message);
             $spaceAfterMessage = str_repeat(' ', (($space <= 1) ? 1 : $space));
             $spaceAfterLine    = str_repeat(' ', (5 - strlen($node->getLine())));
 
