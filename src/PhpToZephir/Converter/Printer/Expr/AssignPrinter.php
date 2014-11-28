@@ -63,7 +63,11 @@ class AssignPrinter
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
         if ($rightNode instanceof Expr\Array_) {
-            $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+            $this->logger->trace(
+                self::getType().' '.__LINE__,
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
             $collect = $this->dispatcher->pExpr_Array($rightNode, true);
 
             return implode(";\n", $collect['extracted'])."\n".
@@ -94,13 +98,21 @@ class AssignPrinter
 
             return $toReturn;
         } elseif ($rightNode instanceof Variable || $rightNode instanceof Scalar || $rightNode instanceof Array_) {
-            $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+            $this->logger->trace(
+                self::getType().' '.__LINE__,
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
 
             return 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
             .$operatorString
             .$this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
         } else {
-            $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+            $this->logger->trace(
+                self::getType().' '.__LINE__,
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
 
             return 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                    .$operatorString.' '.$this->dispatcher->p($rightNode);
@@ -210,7 +222,11 @@ class AssignPrinter
      */
     private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+        $this->logger->trace(
+            self::getType().' '.__LINE__,
+            $node,
+            $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+        );
         $head = '';
 
         if ($leftNode instanceof ArrayDimFetch) {
@@ -234,7 +250,11 @@ class AssignPrinter
                 $rightString = $result['lastExpr'];
             }
         } elseif ($this->isSomething($rightNode)) {
-            $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
+            $this->logger->trace(
+                self::getType().' '.__LINE__,
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
             // @TODO add test case for each
             $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
         } else {

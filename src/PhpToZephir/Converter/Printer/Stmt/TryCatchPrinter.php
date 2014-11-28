@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class TryCatchPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_TryCatch";
     }
 
+    /**
+     * @param  Stmt\TryCatch $node
+     * @return string
+     */
     public function convert(Stmt\TryCatch $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return 'try {'.$this->dispatcher->pStmts($node->stmts)."\n".'}'
              .$this->dispatcher->pImplode($node->catches)
              .($node->finallyStmts !== null

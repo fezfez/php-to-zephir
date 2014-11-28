@@ -8,6 +8,10 @@ use PhpToZephir\Converter\ConverterFactory;
 
 class EngineFactory
 {
+    /**
+     * @param  Logger              $logger
+     * @return \PhpToZephir\Engine
+     */
     public static function getInstance(Logger $logger)
     {
         return new Engine(

@@ -11,15 +11,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class SwitchPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_Switch";
     }
 
+    /**
+     * @param  Stmt\Switch_ $node
+     * @return string
+     */
     public function convert(Stmt\Switch_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         $transformToIf = false;
         foreach ($node->cases as $case) {
             if (($case->cond instanceof \PhpParser\Node\Scalar\String) === false && $case->cond !== null) {
@@ -51,6 +56,10 @@ class SwitchPrinter extends SimplePrinter
         return $case;
     }
 
+    /**
+     * @param  Stmt\Switch_ $node
+     * @return string
+     */
     private function convertSwitchToIfelse(Stmt\Switch_ $node)
     {
         $stmt = array(

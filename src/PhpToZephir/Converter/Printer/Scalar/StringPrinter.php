@@ -9,15 +9,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class StringPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pScalar_String";
     }
 
+    /**
+     * @param  Scalar\String $node
+     * @return string
+     */
     public function convert(Scalar\String $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return '"'.$this->pNoIndent(addcslashes($node->value, '\"\\')).'"';
     }
 

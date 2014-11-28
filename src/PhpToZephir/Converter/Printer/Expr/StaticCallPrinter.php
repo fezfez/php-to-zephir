@@ -9,15 +9,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class StaticCallPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_StaticCall";
     }
 
+    /**
+     * @param  Expr\StaticCall $node
+     * @return string
+     */
     public function convert(Expr\StaticCall $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return (($node->class instanceof Expr\Variable) ? '{'.$this->dispatcher->p($node->class).'}' : $this->dispatcher->p($node->class)).'::'
              .($node->name instanceof Expr
                 ? ($node->name instanceof Expr\Variable

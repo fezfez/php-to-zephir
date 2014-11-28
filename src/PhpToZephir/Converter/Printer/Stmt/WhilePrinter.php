@@ -23,8 +23,9 @@ class WhilePrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -33,16 +34,21 @@ class WhilePrinter
         $this->assignManipulator = $assignManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_While";
     }
 
+    /**
+     * @param  Stmt\While_ $node
+     * @return string
+     */
     public function convert(Stmt\While_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
-        $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
+        $collected  = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
         return implode(";\n", $collected['extracted'])."\n".'while ('.$this->dispatcher->p($node->cond).') {'

@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class DNumberPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pScalar_DNumber";
     }
 
+    /**
+     * @param  Scalar\DNumber $node
+     * @return string
+     */
     public function convert(Scalar\DNumber $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return $node->value;
     }
 }

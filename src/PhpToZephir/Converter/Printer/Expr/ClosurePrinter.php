@@ -31,15 +31,20 @@ class ClosurePrinter
         $this->logger     = $logger;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_Closure";
     }
 
+    /**
+     * @param  Expr\Closure $node
+     * @return string
+     */
     public function convert(Expr\Closure $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         $methodName = $this->dispatcher->getMetadata()->getClass().$this->dispatcher->getLastMethod();
         if (isset(self::$converted[$methodName])) {
             self::$converted[$methodName]++;

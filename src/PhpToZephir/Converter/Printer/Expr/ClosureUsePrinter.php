@@ -39,10 +39,12 @@ class ClosureUsePrinter
         return "pExpr_ClosureUse";
     }
 
+    /**
+     * @param  Expr\ClosureUse $node
+     * @return string
+     */
     public function convert(Expr\ClosureUse $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         if ($node->byRef) {
             $this->logger->logNode(
                 "Zephir not support reference parameters for now. Stay tuned for https://github.com/phalcon/zephir/issues/203",

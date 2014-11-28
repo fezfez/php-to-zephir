@@ -23,8 +23,9 @@ class TernaryPrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -33,14 +34,21 @@ class TernaryPrinter
         $this->assignManipulator = $assignManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_Ternary";
     }
 
+    /**
+     * @param  Expr\Ternary $node
+     * @param  string       $returnAsArray
+     * @return string
+     */
     public function convert(Expr\Ternary $node, $returnAsArray = false)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         // a bit of cheating: we treat the ternary as a binary op where the ?...: part is the operator.
         // this is okay because the part between ? and : never needs parentheses.
 

@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class EncapsedPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pScalar_Encapsed";
     }
 
+    /**
+     * @param  Scalar\Encapsed $node
+     * @return string
+     */
     public function convert(Scalar\Encapsed $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return '"'.$this->dispatcher->pEncapsList($node->parts, '"').'"';
     }
 }

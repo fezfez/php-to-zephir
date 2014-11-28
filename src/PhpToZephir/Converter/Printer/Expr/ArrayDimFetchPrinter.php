@@ -42,8 +42,6 @@ class ArrayDimFetchPrinter
 
     public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         $collected = $this->arrayManipulator->arrayNeedToBeSplit($node);
 
         if ($node->var instanceof Expr\StaticPropertyFetch) {

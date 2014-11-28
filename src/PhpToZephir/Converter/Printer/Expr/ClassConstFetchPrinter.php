@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class ClassConstFetchPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_ClassConstFetch";
     }
 
+    /**
+     * @param  Expr\ClassConstFetch $node
+     * @return string
+     */
     public function convert(Expr\ClassConstFetch $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return $this->dispatcher->p($node->class).'::'.$node->name;
     }
 }

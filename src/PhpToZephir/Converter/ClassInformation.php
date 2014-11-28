@@ -66,8 +66,6 @@ class ClassInformation
                 }
             } elseif ($node instanceof Stmt\Namespace_) {
                 $classMetadata->setNamespace(implode('\\', $node->name->parts));
-
-                return $classMetadata;
             } elseif ($node instanceof Stmt\Interface_ || $node instanceof Stmt\Class_) {
                 if ($class !== null) {
                     throw new \Exception('Multiple class find in '.$fileName);

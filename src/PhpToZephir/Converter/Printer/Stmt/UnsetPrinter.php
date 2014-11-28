@@ -7,14 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class UnsetPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_Unset";
     }
 
+    /**
+     * @param  Stmt\Unset_ $node
+     * @return string
+     */
     public function convert(Stmt\Unset_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         $unset = '';
         foreach ($node->vars as $var) {
             $unset .= 'unset('.$this->dispatcher->p($var).');'."\n";

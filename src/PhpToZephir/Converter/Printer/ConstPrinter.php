@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class ConstPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pConst";
     }
 
+    /**
+     * @param  Node\Const_ $node
+     * @return string
+     */
     public function convert(Node\Const_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return $node->name.' = '.$this->dispatcher->p($node->value);
     }
 }

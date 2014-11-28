@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class StaticVarPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_StaticVar";
     }
 
+    /**
+     * @param  Stmt\StaticVar $node
+     * @return string
+     */
     public function convert(Stmt\StaticVar $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return '$'.$node->name
              .(null !== $node->default ? ' = '.$this->dispatcher->p($node->default) : '');
     }

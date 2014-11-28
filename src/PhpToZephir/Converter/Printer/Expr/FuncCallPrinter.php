@@ -8,15 +8,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class FuncCallPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_FuncCall";
     }
 
+    /**
+     * @param  Expr\FuncCall $node
+     * @return string
+     */
     public function convert(Expr\FuncCall $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         if ($node->name instanceof Expr\Variable) {
             return '{'.$this->dispatcher->p($node->name).'}('.$this->dispatcher->pCommaSeparated($node->args).')';
         } else {

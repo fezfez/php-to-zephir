@@ -24,8 +24,9 @@ class Logger
 
     /**
      * @param OutputInterface $output
+     * @param boolean         $trace
      */
-    public function __construct(OutputInterface $output, $trace = true)
+    public function __construct(OutputInterface $output, $trace)
     {
         $this->output = $output;
         $this->trace  = $trace;
@@ -66,7 +67,21 @@ class Logger
     {
         if ($this->trace === true) {
             $this->cleanProgressbar();
-            $this->output->writeln($message.' on line '.$node->getLine().' in class "'.$class.'"');
+
+            $space             = 25 - strlen($message);
+            $spaceAfterMessage = str_repeat(' ', (($space <= 1) ? 1 : $space));
+            $spaceAfterLine    = str_repeat(' ', (5 - strlen($node->getLine())));
+
+            $this->output->writeln(
+                sprintf(
+                    '[%s]%s line "%s"%s class "%s"',
+                    $message,
+                    $spaceAfterMessage,
+                    $node->getLine(),
+                    $spaceAfterLine,
+                    $class
+                )
+            );
             $this->reDrawProgressBar();
         }
     }

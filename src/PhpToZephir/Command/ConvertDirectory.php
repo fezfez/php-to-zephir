@@ -28,7 +28,8 @@ class ConvertDirectory extends Command
         $this
             ->setName('phpToZephir:convertDir')
             ->setDescription('Convert a php directory to Zephir')
-            ->addArgument('dir', InputArgument::REQUIRED, 'Directory to convert');
+            ->addArgument('dir', InputArgument::REQUIRED, 'Directory to convert')
+            ->addOption('debug');
     }
 
     /* (non-PHPdoc)
@@ -36,7 +37,7 @@ class ConvertDirectory extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $engine = EngineFactory::getInstance(new Logger($output));
+        $engine = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
         $dir    = $input->getArgument('dir');
 
         if (is_dir($dir) === false) {

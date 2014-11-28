@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class BreakPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_Break";
     }
 
+    /**
+     * @param  Stmt\Break_ $node
+     * @return string
+     */
     public function convert(Stmt\Break_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return 'break'.($node->num !== null ? ' '.$this->dispatcher->p($node->num) : '').';';
     }
 }

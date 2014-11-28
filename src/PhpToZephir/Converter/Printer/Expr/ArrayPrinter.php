@@ -47,8 +47,6 @@ class ArrayPrinter
      */
     public function convert(Expr\Array_ $node, $returnAsArray = false)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         $collected = $this->assignManipulator->collectAssignInCondition($node->items);
         $node->items = $this->assignManipulator->transformAssignInConditionTest($node->items);
 

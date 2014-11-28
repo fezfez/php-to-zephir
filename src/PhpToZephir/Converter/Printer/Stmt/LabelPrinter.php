@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class LabelPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_Label";
     }
 
+    /**
+     * @param  Stmt\Label $node
+     * @return string
+     */
     public function convert(Stmt\Label $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return $node->name.':';
     }
 }

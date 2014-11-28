@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class ArrayItemPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_ArrayItem";
     }
 
+    /**
+     * @param  Expr\ArrayItem $node
+     * @return string
+     */
     public function convert(Expr\ArrayItem $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return (null !== $node->key ? $this->dispatcher->p($node->key).' : ' : '')
              .($node->byRef ? '&' : '').$this->dispatcher->p($node->value);
     }

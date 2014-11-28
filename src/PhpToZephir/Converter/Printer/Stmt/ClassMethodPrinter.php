@@ -59,18 +59,28 @@ class ClassMethodPrinter
         $this->nodeFetcher = $nodeFetcher;
     }
 
+    /**
+     * @param string $value
+     */
     public function setLastMethod($value)
     {
         $this->lastMethod = $value;
     }
+
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_ClassMethod";
     }
 
+    /**
+     * @param  Stmt\ClassMethod $node
+     * @return string
+     */
     public function convert(Stmt\ClassMethod $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         $types = $this->typeFinder->getTypes(
             $node,
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass(),
@@ -102,6 +112,11 @@ class ClassMethodPrinter
         return $stmt;
     }
 
+    /**
+     * @param  Stmt\ClassMethod $node
+     * @param  array            $varsInMethodSign
+     * @return string
+     */
     private function printVars(Stmt\ClassMethod $node, array $varsInMethodSign)
     {
         $var = '';
@@ -113,6 +128,11 @@ class ClassMethodPrinter
         return $var;
     }
 
+    /**
+     * @param  Stmt\ClassMethod $node
+     * @param  array            $types
+     * @return string
+     */
     private function printReturn(Stmt\ClassMethod $node, array $types)
     {
         $stmt = '';
@@ -126,7 +146,8 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param Stmt\ClassMethod $nodes
+     * @param  Stmt\ClassMethod $nodes
+     * @return boolean
      */
     private function hasReturnStatement($nodes)
     {
@@ -140,7 +161,8 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param Stmt\ClassMethod $node
+     * @param  Stmt\ClassMethod $node
+     * @return array
      */
     private function collectVars($node)
     {
@@ -185,6 +207,11 @@ class ClassMethodPrinter
         return $vars;
     }
 
+    /**
+     * @param  array      $type
+     * @throws \Exception
+     * @return string
+     */
     private function printType($type)
     {
         if (isset($type['type']) === false) {

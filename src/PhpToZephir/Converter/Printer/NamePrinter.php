@@ -23,8 +23,9 @@ class NamePrinter
     private $classManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher       $dispatcher
+     * @param Logger           $logger
+     * @param ClassManipulator $classManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ClassManipulator $classManipulator)
     {
@@ -33,19 +34,20 @@ class NamePrinter
         $this->classManipulator = $classManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pName";
     }
 
+    /**
+     * @param  Name     $node
+     * @return Ambigous <string, unknown>
+     */
     public function convert(Name $node)
     {
-        $this->logger->trace(
-            __METHOD__.' '.__LINE__,
-            $node,
-            $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
-        );
-
         return $this->classManipulator->findRightClass($node, $this->dispatcher->getMetadata());
     }
 }

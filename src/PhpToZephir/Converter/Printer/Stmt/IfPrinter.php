@@ -25,8 +25,9 @@ class IfPrinter
     private $assignManipulator = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
@@ -35,6 +36,9 @@ class IfPrinter
         $this->assignManipulator = $assignManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_If";
@@ -46,7 +50,6 @@ class IfPrinter
      */
     public function convert(Stmt\If_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 

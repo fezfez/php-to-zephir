@@ -8,15 +8,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class VarOrNewExprPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pVarOrNewExpr";
     }
 
+    /**
+     * @param  Node   $node
+     * @return string
+     */
     public function convert(Node $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         if ($node instanceof Expr\New_) {
             return '('.$this->dispatcher->p($node).')';
         } else {

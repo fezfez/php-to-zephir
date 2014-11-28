@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class ElsePrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pStmt_Else";
     }
 
+    /**
+     * @param  Stmt\Else_ $node
+     * @return string
+     */
     public function convert(Stmt\Else_ $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return ' else {'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }
 }

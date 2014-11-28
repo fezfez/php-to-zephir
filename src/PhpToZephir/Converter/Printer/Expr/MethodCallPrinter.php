@@ -33,15 +33,20 @@ class MethodCallPrinter
         $this->assignManipulator = $assignManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_MethodCall";
     }
 
+    /**
+     * @param  Expr\MethodCall $node
+     * @return string
+     */
     public function convert(Expr\MethodCall $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         $collected = $this->assignManipulator->collectAssignInCondition($node->args);
         $node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
 

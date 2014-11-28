@@ -24,8 +24,9 @@ class VariablePrinter
     private $reservedWordReplacer = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
+     * @param ReservedWordReplacer $reservedWordReplacer
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
@@ -34,14 +35,20 @@ class VariablePrinter
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_Variable";
     }
 
+    /**
+     * @param  Expr\Variable $node
+     * @return string
+     */
     public function convert(Expr\Variable $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
         if ($node->name instanceof Expr) {
             return '{'.$this->dispatcher->p($node->name).'}';
         } else {

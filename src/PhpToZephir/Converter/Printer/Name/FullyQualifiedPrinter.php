@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class FullyQualifiedPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pName_FullyQualified";
     }
 
+    /**
+     * @param  Name\FullyQualified $node
+     * @return string
+     */
     public function convert(Name\FullyQualified $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return '\\'.implode('\\', $node->parts);
     }
 }

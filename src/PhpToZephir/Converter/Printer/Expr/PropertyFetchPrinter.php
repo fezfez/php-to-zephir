@@ -7,15 +7,20 @@ use PhpToZephir\Converter\SimplePrinter;
 
 class PropertyFetchPrinter extends SimplePrinter
 {
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_PropertyFetch";
     }
 
+    /**
+     * @param  Expr\PropertyFetch $node
+     * @return string
+     */
     public function convert(Expr\PropertyFetch $node)
     {
-        $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
-
         return $this->dispatcher->pVarOrNewExpr($node->var).'->'.$this->dispatcher->pObjectProperty($node->name);
     }
 }

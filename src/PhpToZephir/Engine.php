@@ -96,7 +96,7 @@ class Engine
 
         $progress->finish();
 
-        $this->logger->log("\nConvert php to zep");
+        $this->logger->log("\nConvert php to zephir");
         $progress = $this->logger->progress(count($classes));
 
         foreach ($classes as $phpFile => $class) {
