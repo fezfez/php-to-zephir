@@ -4,7 +4,7 @@ namespace PhpToZephir\Converter;
 
 use PhpToZephir\Logger;
 
-class SimplePrinter
+abstract class SimplePrinter
 {
     /**
      * @var Dispatcher
@@ -24,4 +24,9 @@ class SimplePrinter
         $this->dispatcher = $dispatcher;
         $this->logger     = $logger;
     }
+
+    /**
+     * @return string
+     */
+    abstract public static function getType();
 }
