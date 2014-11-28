@@ -109,33 +109,47 @@ class AssignPrinter
 
     private function isSomething($rightNode)
     {
-        return  $rightNode instanceof Variable ||
-                $rightNode instanceof Scalar ||
-                $rightNode instanceof Array_ ||
-                $rightNode instanceof BinaryOp\Concat ||
-                $rightNode instanceof BinaryOp\BooleanOr ||
-                $rightNode instanceof BinaryOp\Minus ||
-                $rightNode instanceof BinaryOp\Plus ||
-                $rightNode instanceof BinaryOp\BitwiseOr ||
-                $rightNode instanceof BinaryOp\BitwiseAnd ||
-                $rightNode instanceof Expr\UnaryMinus ||
-                $rightNode instanceof BinaryOp\Mul ||
-                $rightNode instanceof Expr\StaticCall ||
-                $rightNode instanceof Expr\FuncCall ||
-                $rightNode instanceof Expr\ConstFetch ||
-                $rightNode instanceof Expr\Clone_ ||
-                $rightNode instanceof Expr\New_ ||
-                $rightNode instanceof Expr\ClassConstFetch ||
-                $rightNode instanceof Expr\Ternary ||
-                $rightNode instanceof Expr\BooleanNot ||
-                $rightNode instanceof Expr\Cast ||
-                $rightNode instanceof Expr\MethodCall ||
-                $rightNode instanceof Expr\Isset_ ||
-                $rightNode instanceof Expr\Empty_ ||
-                $rightNode instanceof Expr\Closure ||
-                $rightNode instanceof Expr\ArrayDimFetch ||
-                $rightNode instanceof Expr\Include_ ||
-                $rightNode instanceof Expr\PropertyFetch;
+        $node = 'PhpParser\Node\\';
+        $expr = $node . 'Expr\\';
+        $binaryOp = $expr. 'BinaryOp\\';
+
+        $somethingList = array(
+            $node . 'Scalar',
+            $expr . 'Variable',
+            $expr . 'Array_',
+            $expr . 'UnaryMinus',
+            $expr . 'StaticCall',
+            $expr . 'FuncCall',
+            $expr . 'ConstFetch',
+            $expr . 'Clone_',
+            $expr . 'New_',
+            $expr . 'ClassConstFetch',
+            $expr . 'Ternary',
+            $expr . 'BooleanNot',
+            $expr . 'Cast',
+            $expr . 'MethodCall',
+            $expr . 'Isset_',
+            $expr . 'Empty_',
+            $expr . 'Closure',
+            $expr . 'ArrayDimFetch',
+            $expr . 'Include_',
+            $expr . 'PropertyFetch',
+            $binaryOp . 'Concat',
+            $binaryOp . 'BooleanOr',
+            $binaryOp . 'Minus',
+            $binaryOp . 'Plus',
+            $binaryOp . 'BitwiseOr',
+            $binaryOp . 'BitwiseAnd',
+            $binaryOp . 'Mul'
+        );
+
+        foreach ($somethingList as $something) {
+            if ($rightNode instanceof $something) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
