@@ -24,9 +24,4 @@ abstract class SimplePrinter
         $this->dispatcher = $dispatcher;
         $this->logger     = $logger;
     }
-
-    /**
-     * @return string
-     */
-    abstract public static function getType();
 }

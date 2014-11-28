@@ -12,7 +12,7 @@ class ArrayDim
     private $typeMap = array();
     private $namespaces = null;
     private $imports = array();
-    private $annotationMetadata = array();
+    private static $annotationMetadata = array('test');
 
 	public function testArrayDimScalarWithAssignLet()
 	{
@@ -92,7 +92,7 @@ class ArrayDim
 	        echo 'im converted !';
 	    }
 
-	    if ( ! $property = $this->annotationMetadata[$name]['default_property']) {
+	    if ( ! $property = self::$annotationMetadata[$name]['default_property']) {
 
 	    }
 

@@ -189,8 +189,8 @@ class AssignPrinter
 
     /**
      * @param Assign $node
-     * @param Expr $leftNode
-     * @param Expr $rightNode
+     * @param Expr   $leftNode
+     * @param Expr   $rightNode
      * @param string $operatorString
      */
     private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity)

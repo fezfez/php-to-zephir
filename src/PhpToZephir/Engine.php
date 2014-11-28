@@ -3,6 +3,7 @@
 namespace PhpToZephir;
 
 use PhpParser\Parser;
+use PhpToZephir\Converter\Converter;
 
 class Engine
 {
@@ -29,7 +30,7 @@ class Engine
      * @param ClassCollector      $classCollector
      * @param Logger              $logger
      */
-    public function __construct(Parser $parser, \PhpToZephir\Converter\Converter $converter, ClassCollector $classCollector, Logger $logger)
+    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector, Logger $logger)
     {
         $this->parser = $parser;
         $this->converter = $converter;
@@ -112,7 +113,13 @@ class Engine
                 $converted['class'] = $class;
             } catch (\Exception $e) {
                 $this->logger->log(
-                    sprintf('Could not convert file "%s" cause : %s %s %s'."\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                    sprintf(
+                        'Could not convert file "%s" cause : %s %s %s'."\n",
+                        $phpFile,
+                        $e->getMessage(),
+                        $e->getFile(),
+                        $e->getLine()
+                    )
                 );
                 $progress->advance();
                 continue;

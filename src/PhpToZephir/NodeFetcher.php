@@ -4,13 +4,16 @@ namespace PhpToZephir;
 
 class NodeFetcher
 {
+    /**
+     * @param  mixed $nodesCollection
+     * @param  array $nodes
+     * @return array
+     */
     public function foreachNodes($nodesCollection, array $nodes = array())
     {
-        if (is_array($nodesCollection) === true) {
-            $nodesCollection = $nodesCollection;
-        } elseif (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
+        if (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
             $nodesCollection = $nodesCollection->getIterator();
-        } else {
+        } elseif (is_array($nodesCollection) === false) {
             return $nodes;
         }
 

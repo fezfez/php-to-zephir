@@ -72,7 +72,7 @@ class Dispatcher
     /**
      * Pretty prints a node.
      *
-     * @param Node $node Node to be pretty printed
+     * @param \PhpParser\Node $node Node to be pretty printed
      *
      * @return string Pretty printed node
      */
@@ -87,11 +87,21 @@ class Dispatcher
         return $this->getClass('p'.$node->getType())->convert($node);
     }
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return string
+     */
     public function __call($method, $arguments)
     {
         return call_user_func_array(array($this->getClass($method), 'convert'), $arguments);
     }
 
+    /**
+     * @param string $type
+     * @throws \Exception
+     * @return object
+     */
     private function getClass($type)
     {
         if (isset($this->classes[$type]) === false) {
@@ -114,11 +124,18 @@ class Dispatcher
         $this->lastMethod = $value;
     }
 
+    /**
+     * @return string
+     */
     public function getLastMethod()
     {
         return $this->lastMethod;
     }
 
+    /**
+     * @param string $className
+     * @return object
+     */
     private function dynamicConstruct($className)
     {
         $reflectionClass = new \ReflectionClass($className);
@@ -164,7 +181,7 @@ class Dispatcher
     /**
      * Pretty prints an array of statements.
      *
-     * @param Node[] $stmts Array of statements
+     * @param \PhpParser\Node[] $stmts Array of statements
      *
      * @return string Pretty printed statements
      */
