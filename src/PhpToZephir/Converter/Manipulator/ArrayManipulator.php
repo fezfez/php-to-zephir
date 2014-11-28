@@ -30,7 +30,7 @@ class ArrayManipulator
     }
 
     /**
-     * @param ArrayDimFetch $node
+     * @param Expr\ArrayDimFetch $node
      */
     private function findComplexArrayDimFetch($node, $collected = array())
     {

@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Converter\SimplePrinter;
 
 class ImplodePrinter extends SimplePrinter

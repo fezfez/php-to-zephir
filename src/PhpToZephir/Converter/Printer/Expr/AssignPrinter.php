@@ -138,6 +138,9 @@ class AssignPrinter
                 $rightNode instanceof Expr\PropertyFetch;
     }
 
+    /**
+     * @param Assign $rightNode
+     */
     private function findValueToAssign($rightNode)
     {
         if ($rightNode->expr instanceof Expr\Assign) {
@@ -147,6 +150,9 @@ class AssignPrinter
         }
     }
 
+    /**
+     * @param Assign $node
+     */
     private function convertListStmtToAssign($node)
     {
         $type = 'Expr_Assign';
@@ -168,6 +174,9 @@ class AssignPrinter
         return 'var '.implode(", ", $vars).";\n".implode("\n", $pList);
     }
 
+    /**
+     * @param Assign $rightNode
+     */
     private function findVarToAssign($rightNode, array $toAssign = array())
     {
         if ($rightNode->expr instanceof Expr\Assign) {
@@ -178,6 +187,12 @@ class AssignPrinter
         return $toAssign;
     }
 
+    /**
+     * @param Assign $node
+     * @param Expr $leftNode
+     * @param Expr $rightNode
+     * @param string $operatorString
+     */
     private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity)
     {
         $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());

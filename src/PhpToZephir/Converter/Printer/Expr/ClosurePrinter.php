@@ -82,6 +82,7 @@ class ClosurePrinter
 
     /**
      * @param string $name
+     * @param string $namespace
      */
     private function createClass($name, $namespace, Expr\Closure $node)
     {
@@ -144,6 +145,9 @@ class $name
         return $node;
     }
 
+    /**
+     * @param integer $number
+     */
     private function N2L($number)
     {
         $result = array();

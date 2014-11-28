@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Stmt;
 
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
@@ -37,6 +35,9 @@ class SwitchPrinter extends SimplePrinter
         }
     }
 
+    /**
+     * @return Node\Expr
+     */
     private function removeBreakStmt($case)
     {
         if (is_array($case->stmts) && !empty($case->stmts)) {

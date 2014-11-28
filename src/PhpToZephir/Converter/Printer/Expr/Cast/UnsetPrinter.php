@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Expr\Cast;
 
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast;
 use PhpToZephir\Converter\SimplePrinter;

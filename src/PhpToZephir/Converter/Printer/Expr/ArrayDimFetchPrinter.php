@@ -72,6 +72,9 @@ class ArrayDimFetchPrinter
         }
     }
 
+    /**
+     * @param boolean $returnAsArray
+     */
     private function splitArray(array $collected, $returnAsArray)
     {
         $var = $collected[0];

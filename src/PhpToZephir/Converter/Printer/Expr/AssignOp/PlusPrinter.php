@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Expr\AssignOp;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\AssignOp;
 use PhpToZephir\Converter\SimplePrinter;

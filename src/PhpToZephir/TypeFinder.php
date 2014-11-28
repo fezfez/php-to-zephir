@@ -192,6 +192,7 @@ class TypeFinder
 
     /**
      * @param  string $actualNamespace
+     * @param Tag $tag
      * @return string
      */
     private function findType($tag, $actualNamespace, array $use, array $classes)
@@ -254,6 +255,7 @@ class TypeFinder
 
     /**
      * @param  string     $classReference
+     * @param string $actualNamespace
      * @throws \Exception
      * @return string
      */

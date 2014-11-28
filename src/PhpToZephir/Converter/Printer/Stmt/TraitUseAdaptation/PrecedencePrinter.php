@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Stmt\TraitUseAdaptation;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node\Stmt;
 use PhpToZephir\Converter\SimplePrinter;
 

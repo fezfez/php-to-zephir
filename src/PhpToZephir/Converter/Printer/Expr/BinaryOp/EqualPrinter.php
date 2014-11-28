@@ -2,7 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer\Expr\BinaryOp;
 
-use PhpToZephir\Converter\Dispatcher;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\Equal;
 use PhpToZephir\Converter\SimplePrinter;

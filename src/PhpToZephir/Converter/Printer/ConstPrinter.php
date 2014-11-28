@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter\Printer;
 
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node;
 use PhpToZephir\Converter\SimplePrinter;
 
