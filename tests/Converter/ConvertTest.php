@@ -13,9 +13,9 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
 
     private function convert($dir)
     {
-        $engine = EngineFactory::getInstance(new Logger(new ConsoleOutput(), true));
+        $engine = EngineFactory::getInstance(new Logger(new ConsoleOutput(), false));
 
-        foreach ($engine->convertDirectory($dir, true, 'IfWithCreateTmpVarInCondition') as $file) {
+        foreach ($engine->convertDirectory($dir, true) as $file) {
             @mkdir(strtolower($file['destination']), 0777, true);
             file_put_contents(
                 $file['fileDestination'],
