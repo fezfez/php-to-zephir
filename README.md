@@ -1,7 +1,11 @@
-php-to-zephir
+Php to Zephir
 =============
 
 Convert PHP to Zephir builded on top of nikic/PHP-Parser
+[![Build Status](https://travis-ci.org/fezfez/php-to-zephir.svg?branch=master)](https://travis-ci.org/fezfez/php-to-zephir)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/?branch=master)
+
 
 
 Install
