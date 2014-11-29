@@ -8,7 +8,7 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
 {
     public function testConvertCode()
     {
-        $this->convert(__DIR__ . '/code/');
+        $this->convert(__DIR__ . '/Code/');
     }
 
     private function convert($dir)
