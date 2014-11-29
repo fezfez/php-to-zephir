@@ -6,7 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Name;
-use PhpToZephir\converter\Manipulator\ClassManipulator;
+use PhpToZephir\Converter\Manipulator\ClassManipulator;
 use PhpToZephir\ReservedWordReplacer;
 
 class ClassPrinter

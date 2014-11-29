@@ -7,7 +7,7 @@ use PhpToZephir\Logger;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Scalar\String;
-use PhpToZephir\converter\Manipulator\AssignManipulator;
+use PhpToZephir\Converter\Manipulator\AssignManipulator;
 
 class IfPrinter
 {

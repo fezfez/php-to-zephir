@@ -6,7 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpToZephir\converter\Manipulator\ArrayManipulator;
+use PhpToZephir\Converter\Manipulator\ArrayManipulator;
 
 class ArrayDimFetchPrinter
 {

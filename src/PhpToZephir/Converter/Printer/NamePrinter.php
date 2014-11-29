@@ -5,7 +5,7 @@ namespace PhpToZephir\Converter\Printer;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Name;
-use PhpToZephir\converter\Manipulator\ClassManipulator;
+use PhpToZephir\Converter\Manipulator\ClassManipulator;
 
 class NamePrinter
 {

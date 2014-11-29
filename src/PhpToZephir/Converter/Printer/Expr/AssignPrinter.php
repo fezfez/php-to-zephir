@@ -12,7 +12,7 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpToZephir\converter\Manipulator\ArrayManipulator;
+use PhpToZephir\Converter\Manipulator\ArrayManipulator;
 
 class AssignPrinter
 {

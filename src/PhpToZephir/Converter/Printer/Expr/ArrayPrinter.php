@@ -6,7 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
-use PhpToZephir\converter\Manipulator\AssignManipulator;
+use PhpToZephir\Converter\Manipulator\AssignManipulator;
 
 class ArrayPrinter
 {
