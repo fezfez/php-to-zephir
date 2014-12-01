@@ -44,7 +44,8 @@ class ClassCollector
         $namespace = null;
         $class = null;
 
-        foreach ($this->nodeFetcher->foreachNodes($stmts) as $node) {
+        foreach ($this->nodeFetcher->foreachNodes($stmts) as $nodeData) {
+            $node = $nodeData['node'];
             if ($node instanceof Expr\Include_) {
                 throw new \Exception('Include not supported in '.$fileName.' on line '.$node->getLine());
             } elseif ($node instanceof Stmt\Goto_) {

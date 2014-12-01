@@ -5,6 +5,7 @@ namespace PhpToZephir\Converter\Printer\Stmt;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Stmt;
+use PhpToZephir\Converter\Manipulator\AssignManipulator;
 
 class DoPrinter
 {
@@ -39,10 +40,10 @@ class DoPrinter
 
     public function convert(Stmt\Do_ $node)
     {
-        $condition = clone $node;
-        $collected = $this->assignManipulator->collectAssignInCondition($condition->cond);
-        $collected = !empty($collected) ? "\n".$collected : $collected;
-        $node->cond = $this->assignManipulator->transformAssignInCondition($node->cond);
+        $condition  = clone $node;
+        $collected  = $this->assignManipulator->collectAssignInCondition($condition->cond);
+        $collected  = !empty($collected['extracted']) ? "\n".implode("\n", $collected['extracted']) : '';
+        $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
         return 'do {'.$this->dispatcher->pStmts($node->stmts).$collected."\n"
              .'} while ('.$this->dispatcher->p($node->cond).');';

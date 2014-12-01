@@ -35,6 +35,9 @@ class ArrayPrinter
         $this->assignManipulator = $assignManipulator;
     }
 
+    /**
+     * @return string
+     */
     public static function getType()
     {
         return "pExpr_Array";

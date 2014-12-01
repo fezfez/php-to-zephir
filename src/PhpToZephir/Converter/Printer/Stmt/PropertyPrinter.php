@@ -4,10 +4,36 @@ namespace PhpToZephir\Converter\Printer\Stmt;
 
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr;
-use PhpToZephir\Converter\SimplePrinter;
+use PhpToZephir\Converter\Dispatcher;
+use PhpToZephir\Logger;
+use PhpToZephir\ReservedWordReplacer;
 
-class PropertyPrinter extends SimplePrinter
+class PropertyPrinter
 {
+    /**
+     * @var Dispatcher
+     */
+    private $dispatcher = null;
+    /**
+     * @var Logger
+     */
+    private $logger = null;
+    /**
+     * @var ReservedWordReplacer
+     */
+    private $reservedWordReplacer = null;
+
+    /**
+     * @param Dispatcher $dispatcher
+     * @param Logger     $logger
+     * @param ReservedWordReplacer     $reservedWordReplacer
+     */
+    public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
+    {
+        $this->dispatcher = $dispatcher;
+        $this->logger     = $logger;
+        $this->reservedWordReplacer     = $reservedWordReplacer;
+    }
     /**
      * @return string
      */
@@ -22,14 +48,14 @@ class PropertyPrinter extends SimplePrinter
      */
     public function convert(Stmt\Property $node)
     {
-        $staticProperties = array(
-            Stmt\Class_::MODIFIER_PUBLIC + Stmt\Class_::MODIFIER_STATIC,
-            Stmt\Class_::MODIFIER_PROTECTED + Stmt\Class_::MODIFIER_STATIC,
-            Stmt\Class_::MODIFIER_PRIVATE + Stmt\Class_::MODIFIER_STATIC,
-        );
+        foreach ($node->props as $key => $prop) {
+            $prop->name = $this->reservedWordReplacer->replace($prop->name);
+            $node->props[$key] = $prop;
+        }
 
-        if ($node->props[0]->default instanceof Expr\Array_ && in_array($node->type, $staticProperties) === true) {
+        if ($node->props[0]->default instanceof Expr\Array_ && $node->isStatic() === true) {
             $node->type = $node->type - Stmt\Class_::MODIFIER_STATIC;
+            $this->dispatcher->moveToNonStaticVar($node->props[0]->name);
             $this->logger->logNode(
                 "Static attribute default array not supported in zephir, (see #188). Changed into non static. ",
                 $node,
@@ -37,6 +63,6 @@ class PropertyPrinter extends SimplePrinter
             );
         }
 
-        return $this->dispatcher->pModifiers($node->type).$this->dispatcher->pCommaSeparated($node->props).';';
+        return $this->dispatcher->pModifiers($node->type) . $this->dispatcher->pCommaSeparated($node->props) . ';';
     }
 }

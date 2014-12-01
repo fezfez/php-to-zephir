@@ -64,7 +64,8 @@ class Converter
         $aditionalClass = array();
         $number         = 0;
 
-        foreach ($this->nodeFetcher->foreachNodes($stmts) as $node) {
+        foreach ($this->nodeFetcher->foreachNodes($stmts) as $nodeData) {
+            $node = $nodeData['node'];
             if ($node instanceof Stmt\ClassMethod) {
                 $lastMethod = $node->name;
             } elseif ($node instanceof Expr\Closure) {

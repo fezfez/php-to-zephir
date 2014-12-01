@@ -88,6 +88,7 @@ class ClassMethodPrinter
             $this->dispatcher->getMetadata()->getClasses()
         );
         $this->dispatcher->setLastMethod($node->name);
+        $node->stmts = $this->findModifiedToNonStaticVar($node->stmts);
 
         $stmt = $this->dispatcher->pModifiers($node->type).'function '.($node->byRef ? '&' : '').$node->name.'(';
         $varsInMethodSign = array();
@@ -110,6 +111,45 @@ class ClassMethodPrinter
              $this->dispatcher->pStmts($node->stmts)."\n}" : ';')."\n";
 
         return $stmt;
+    }
+
+    /**
+     * @param array|\ArrayIterator $node
+     * @return array|\ArrayIterator
+     */
+    private function findModifiedToNonStaticVar($node)
+    {
+        if (is_array($node) === true) {
+            $nodes = $node;
+        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
+            $nodes = $node->getIterator();
+        } else {
+            return $node;
+        }
+
+        foreach ($nodes as $key => &$stmt) {
+            if ($stmt instanceof Expr\ClassConstFetch) {
+                $isMovedToNonStatic = $this->dispatcher->isMovedToNonStaticVar($stmt->name);
+                if ($isMovedToNonStatic === true) {
+                    $var = new Expr\Variable('this->'.$stmt->name);
+                    if (is_array($node) === true) {
+                        $node[$key] = $var;
+                    } else {
+                        $node->$key = $var;
+                    }
+                }
+            } else {
+
+                $stmt = $this->findModifiedToNonStaticVar($stmt);
+                if (is_array($node) === true) {
+                    $node[$key] = $stmt;
+                } else {
+                    $node->$key = $stmt;
+                }
+            }
+        }
+
+        return $node;
     }
 
     /**
@@ -151,7 +191,8 @@ class ClassMethodPrinter
      */
     private function hasReturnStatement($nodes)
     {
-        foreach ($this->nodeFetcher->foreachNodes($nodes) as $node) {
+        foreach ($this->nodeFetcher->foreachNodes($nodes) as $nodeData) {
+            $node = $nodeData['node'];
             if ($node instanceof Stmt\Return_) {
                 return true;
             }
@@ -161,8 +202,9 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  Stmt\ClassMethod $node
-     * @return array
+     * @param \ArrayIterator|array $node
+     * @param array $vars
+     * @return \ArrayIterator|array
      */
     private function collectVars($node, array $vars = array())
     {
@@ -187,11 +229,12 @@ class ClassMethodPrinter
                 }
                 $vars[] = $stmt->valueVar->name;
             } elseif ($stmt instanceof Stmt\If_) {
-                foreach ($this->nodeFetcher->foreachNodes($stmt) as $node) {
+                foreach ($this->nodeFetcher->foreachNodes($stmt) as $nodeData) {
+                    $node = $nodeData['node'];
                     if ($node instanceof Expr\Assign) {
                         $vars[] = $node->var->name;
                     } elseif ($node instanceof Expr\Array_) {
-                        $vars[] = 'tmpArray'.md5(serialize($node->items));
+                        $vars[] = 'tmpArray' . md5(serialize($node->items));
                     }
                 }
             } elseif ($stmt instanceof Stmt\Catch_) {

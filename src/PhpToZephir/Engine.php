@@ -88,7 +88,13 @@ class Engine
                 $classes[$file] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)), $file);
             } catch (\Exception $e) {
                 $this->logger->log(
-                    sprintf('Could not convert file "%s" cause : %s %s %s'."\n", $file, $e->getMessage(), $e->getFile(), $e->getLine())
+                    sprintf(
+                        '<error>Could not convert file' ."\n" . '"%s"' ."\n" . 'cause : %s %s %s</error>'."\n",
+                        $file,
+                        $e->getMessage(),
+                        $e->getFile(),
+                        $e->getLine()
+                    )
                 );
             }
             $progress->advance();

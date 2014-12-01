@@ -75,6 +75,10 @@ class ArrayManipulator
         }
     }
 
+    /**
+     * @param \PhpParser\Node $node
+     * @return boolean
+     */
     private function isInvalidIn($node)
     {
         return ($node instanceof Expr\Variable) === false
@@ -90,6 +94,10 @@ class ArrayManipulator
         && $node !== null;
     }
 
+    /**
+     * @param Expr\ArrayDimFetch $node
+     * @return array|boolean
+     */
     public function arrayNeedToBeSplit(Expr\ArrayDimFetch $node)
     {
         $collected = array_reverse($this->findComplexArrayDimFetch($node));

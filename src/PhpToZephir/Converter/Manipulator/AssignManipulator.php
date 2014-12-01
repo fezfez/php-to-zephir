@@ -39,8 +39,9 @@ class AssignManipulator
             'extracted' => array(),
         );
 
-        foreach ($this->nodeFetcher->foreachNodes($node) as $key => $stmt) {
-            $collected = $this->extract($stmt, $collected);
+        foreach ($this->nodeFetcher->foreachNodes($node) as $key => $stmtData) {
+            $stmt = $stmtData['node'];
+            $collected = $this->extract($stmt, $collected, $stmtData['parentClass']);
         }
 
         $collected = $this->extract($node, $collected);
@@ -51,9 +52,10 @@ class AssignManipulator
     /**
      * @param  mixed $stmt
      * @param  array $collected
+     * @param  string $parentClass
      * @return array
      */
-    private function extract($stmt, array $collected)
+    private function extract($stmt, array $collected, $parentClass = '')
     {
         if ($stmt instanceof Expr\Assign) {
             if ($stmt->expr instanceof Expr\BinaryOp) {
@@ -64,7 +66,7 @@ class AssignManipulator
             }
         } elseif ($this->isVarModification($stmt)) {
             $collected['extracted'][] = $this->dispatcher->p($stmt).";";
-        } elseif ($this->isVarCreation($stmt)) {
+        } elseif ($this->isVarCreation($stmt) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
             $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).";";
         }
 
@@ -73,9 +75,10 @@ class AssignManipulator
 
     /**
      * @param  mixed $primaryNode
+     * @param  string $parentClass
      * @return mixed
      */
-    public function transformAssignInConditionTest($primaryNode)
+    public function transformAssignInConditionTest($primaryNode, $parentClass = '')
     {
         if ($primaryNode instanceof BinaryOp) {
             // this is yoda ! invert condition
@@ -94,7 +97,7 @@ class AssignManipulator
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarModification($primaryNode)) {
             $primaryNode = $primaryNode->var;
-        } elseif ($this->isVarCreation($primaryNode)) {
+        } elseif ($this->isVarCreation($primaryNode) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
             $primaryNode = new Expr\Variable('tmpArray'.md5(serialize($primaryNode->items)));
         } else {
             if (is_array($primaryNode) === true) {
@@ -103,7 +106,7 @@ class AssignManipulator
                 }
             } elseif (is_string($primaryNode) === false && method_exists($primaryNode, 'getIterator') === true) {
                 foreach ($primaryNode->getIterator() as $key => $node) {
-                    $primaryNode->{$key} = $this->transformAssignInConditionTest($node);
+                    $primaryNode->{$key} = $this->transformAssignInConditionTest($node, get_class($primaryNode));
                 }
             }
         }

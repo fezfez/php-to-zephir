@@ -29,7 +29,8 @@ class ConvertDirectory extends Command
             ->setName('phpToZephir:convertDir')
             ->setDescription('Convert a php directory to Zephir')
             ->addArgument('dir', InputArgument::REQUIRED, 'Directory to convert')
-            ->addOption('debug');
+            ->addOption('debug')
+            ->addArgument('file', InputArgument::OPTIONAL, 'file');
     }
 
     /* (non-PHPdoc)
@@ -44,7 +45,7 @@ class ConvertDirectory extends Command
             throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
         }
 
-        foreach ($engine->convertDirectory($dir) as $file => $convertedCode) {
+        foreach ($engine->convertDirectory($dir, true, $input->getArgument('file')) as $file => $convertedCode) {
             $output->writeln(
                 sprintf(
                     '<info>Converted %s</info>',

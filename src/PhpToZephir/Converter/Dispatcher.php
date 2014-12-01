@@ -56,6 +56,10 @@ class Dispatcher
      * @var ClassMetadata
      */
     private $metadata = null;
+    /**
+     * @var array
+     */
+    private $moveToNonStatic = array();
 
     /**
      * @param PrinterCollection $printerCollection
@@ -130,6 +134,16 @@ class Dispatcher
     public function getLastMethod()
     {
         return $this->lastMethod;
+    }
+
+    public function moveToNonStaticVar($value)
+    {
+        $this->moveToNonStatic[] = $value;
+    }
+
+    public function isMovedToNonStaticVar($value)
+    {
+        return in_array($value, $this->moveToNonStatic) ? true : false;
     }
 
     /**

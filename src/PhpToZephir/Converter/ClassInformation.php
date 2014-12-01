@@ -54,7 +54,8 @@ class ClassInformation
     public function build(array $nodes, ClassMetadata $classMetadata)
     {
         $class = null;
-        foreach ($this->nodeFetcher->foreachNodes($nodes) as $node) {
+        foreach ($this->nodeFetcher->foreachNodes($nodes) as $nodeData) {
+            $node = $nodeData['node'];
             if ($node instanceof Stmt\UseUse) {
                 $classMetadata->addUse($node);
                 $classMetadata->addClasses($this->reservedWordReplacer->replace(implode('\\', $node->name->parts)));
