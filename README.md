@@ -5,23 +5,29 @@ Php to Zephir
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/fezfez/php-to-zephir/?branch=master)
 
-Convert PHP to Zephir builded on top of nikic/PHP-Parser
+> Convert PHP to Zephir.
+
+This project is builded on top of nikic/PHP-Parser
 
 
 Install
 =======
 
-    composer require fezfez/php-to-zephir
+```bash
+composer require fezfez/php-to-zephir
+```
 
 
 How to use
 ====
 
-    vendor/bin/php-to-zephir phpToZephir:convertDir myDirToConvert 
+```bash
+vendor/bin/php-to-zephir phpToZephir:convertDir myDirToConvert 
+```
     
-It convert all file recursivly to zephir
+It converts all files recursivly to [Zephir](https://github.com/phalcon/zephir) language.
 
 Issue
 =====
 
-If you see issue please, please open new issue and publish your php code and the error
+If you find a bug, please report it by new issue (with tested php code to see error).
