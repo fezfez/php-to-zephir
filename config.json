@@ -30,8 +30,8 @@
         "static-constant-class-folding": true,
         "private-internal-methods": true
     },
-    "namespace": "code",
-    "name": "code",
+    "namespace": "doctrine",
+    "name": "doctrine",
     "description": "Code converted",
     "author": "Stéphane Demonchaux",
     "version": "0.0.1",
