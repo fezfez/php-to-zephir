@@ -28,7 +28,8 @@ class PrecPrinter extends SimplePrinter
     {
         $type = $node->getType();
         if ($this->dispatcher->issetPrecedenceMap($type) === true) {
-            $childPrecedence = $this->dispatcher->getPrecedenceMap($type)[0];
+            $childPrecedences = $this->dispatcher->getPrecedenceMap($type);
+            $childPrecedence  = $childPrecedences[0];
             if ($childPrecedence > $parentPrecedence
                 || ($parentPrecedence == $childPrecedence && $parentAssociativity != $childPosition)
             ) {
