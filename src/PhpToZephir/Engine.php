@@ -148,6 +148,7 @@ class Engine
                         'fileName'  => $aditionalClass['name'],
                         'zephir' => $aditionalClass['code'],
                         'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'.$aditionalClass['name']).'.zep',
+                        'destination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/')
                     )
                 );
             }

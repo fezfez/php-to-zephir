@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
+use PhpToZephir\FileWriter;
 
 /**
  * Generator command
@@ -38,8 +39,9 @@ class ConvertDirectory extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $engine = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
-        $dir    = $input->getArgument('dir');
+        $engine     = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
+        $dir        = $input->getArgument('dir');
+        $fileWriter = new FileWriter();
 
         if (is_dir($dir) === false) {
             throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
@@ -53,11 +55,7 @@ class ConvertDirectory extends Command
                 )
             );
 
-            @mkdir(strtolower($convertedCode['destination']), 0777, true);
-            file_put_contents(
-                $convertedCode['fileDestination'],
-                $convertedCode['zephir']
-            );
+            $fileWriter->write($convertedCode);
         }
     }
 }
