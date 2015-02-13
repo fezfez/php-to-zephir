@@ -9,4 +9,9 @@ class ReturnStmt
         // return $this->classExists[$fqcn] = AnnotationRegistry::loadAnnotationClass($fqcn);
         return $test = 'fez';
     }
+
+    public function testReturnArray()
+    {
+        return ["foo" => "bar"];
+    }
 }
