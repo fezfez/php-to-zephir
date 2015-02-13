@@ -17,8 +17,16 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
         $engine     = EngineFactory::getInstance(new Logger(new NullOutput(), false));
         $fileWriter = new FileWriter();
 
-        foreach ($engine->convertDirectory($dir, true) as $file) {
+        foreach ($engine->convertDirectory($dir, true) as $filePath => $file) {
+            $zephirFile = file_get_contents(str_replace('.php', '.zep', $filePath));
+
             $fileWriter->write($file);
+
+            $this->assertEquals(
+                $zephirFile,
+                $file['zephir'],
+                'test failed on file ' . $filePath
+            );
         }
     }
 }

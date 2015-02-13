@@ -2,14 +2,46 @@ namespace Code\Condition\IfStmt;
 
 class IfElseCondition
 {
-    public function test($toto) -> void
+    protected staticArray = [];
+    public function test(toto)
     {
+        var toReturn;
+    
+        let toReturn =  null;
+        
         if toto === "tata" {
-            echo "tata";
-        } elseif toto === "tutu" {
+            let toReturn = "tata";
+        } else { 
+        
+        if toto === "tutu" {
+            let toReturn = "tutu";
+        }
+         else {
+            let toReturn = "else";
+        }}
+        
+        return toReturn;
+    }
+    
+    public static function imStatic()
+    {
+        
+        return null;
+    }
+    
+    public function testFuncCallIncondition() -> void
+    {
+        
+        if this->test("tata") {
             echo "tutu";
-        } else {
-            echo "else";
+        }
+        
+        if self::imStatic() {
+            echo "static funcall!";
+        }
+        
+        if isset this->staticArray["test"] {
+            echo "static array !";
         }
     }
 
