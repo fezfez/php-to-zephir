@@ -9,7 +9,7 @@ before_install:
 
 # TODO: fix the Zephir version via Composer
 install:
-  - php -i | grep
+  - php -i | grep xdebug
   - cd /tmp
   - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
   - unzip -q json-c
