@@ -1,46 +1,42 @@
 {
-    "name": "fezfez/php-to-zephir",
-    "description": "Transform php code to zephir",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Stéphane Demonchaux",
-            "email": "demonchaux.stephane@gmail.com"
+    "name" : "fezfez/php-to-zephir",
+    "description" : "Transform php code to zephir",
+    "type" : "library",
+    "authors" : [{
+            "name" : "Stéphane Demonchaux",
+            "email" : "demonchaux.stephane@gmail.com"
         }
     ],
-    "keywords": [
+    "keywords" : [
         "convert php",
         "zephir",
         "php to zephir",
         "code conversion"
     ],
-    "homepage": "https://github.com/fezfez/php-to-zephir",
-    "require": {
-        "nikic/PHP-Parser": "1.0.*",
-        "phpdocumentor/reflection-docblock": "dev-master",
-        "phalcon/zephir": "dev-master",
-        "symfony/console": "2.5.*",
-        "symfony/event-dispatcher": "~3.0@dev",
-        "symfony/dependency-injection": "~3.0@dev",
-        "doctrine/annotations": "~1.3@dev"
+    "homepage" : "https://github.com/fezfez/php-to-zephir",
+    "require" : {
+        "nikic/PHP-Parser" : "1.0.*",
+        "phpdocumentor/reflection-docblock" : "2.0.*",
+        "phalcon/zephir" : "dev-master",
+        "symfony/console" : "2.6.*"
     },
-    "require-dev": {
-        "phpunit/phpunit": "4.3.*"
+    "require-dev" : {
+        "phpunit/phpunit" : "4.5.*"
     },
-    "autoload": {
-        "psr-0": {
-            "PhpToZephir": "src/"
+    "autoload" : {
+        "psr-0" : {
+            "PhpToZephir" : "src/"
         }
     },
-    "support": {
-        "source": "https://github.com/fezfez/php-to-zephir",
-        "email": "demonchaux.stephane@gmail.com",
-        "issues": "https://github.com/fezfez/php-to-zephir/issues",
-        "wiki": "https://github.com/fezfez/php-to-zephir/blob/master/README.md"
+    "support" : {
+        "source" : "https://github.com/fezfez/php-to-zephir",
+        "email" : "demonchaux.stephane@gmail.com",
+        "issues" : "https://github.com/fezfez/php-to-zephir/issues",
+        "wiki" : "https://github.com/fezfez/php-to-zephir/blob/master/README.md"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "bin": [
+    "minimum-stability" : "dev",
+    "prefer-stable" : true,
+    "bin" : [
         "bin/php-to-zephir"
     ]
 }
