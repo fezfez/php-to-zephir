@@ -16,7 +16,8 @@ class ClassConstFetchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Expr\ClassConstFetch $node
+     * @param Expr\ClassConstFetch $node
+     *
      * @return string
      */
     public function convert(Expr\ClassConstFetch $node)

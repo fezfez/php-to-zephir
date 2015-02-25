@@ -16,7 +16,8 @@ class PreIncPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Expr\PreInc $node
+     * @param Expr\PreInc $node
+     *
      * @return string
      */
     public function convert(Expr\PreInc $node)

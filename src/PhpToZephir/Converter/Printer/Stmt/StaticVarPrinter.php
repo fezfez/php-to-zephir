@@ -16,7 +16,8 @@ class StaticVarPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\StaticVar $node
+     * @param Stmt\StaticVar $node
+     *
      * @return string
      */
     public function convert(Stmt\StaticVar $node)

@@ -43,7 +43,8 @@ class ReturnPrinter
     }
 
     /**
-     * @param  Stmt\Return_ $node
+     * @param Stmt\Return_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Return_ $node)

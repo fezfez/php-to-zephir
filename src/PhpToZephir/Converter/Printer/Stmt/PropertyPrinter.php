@@ -24,9 +24,9 @@ class PropertyPrinter
     private $reservedWordReplacer = null;
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param Logger     $logger
-     * @param ReservedWordReplacer     $reservedWordReplacer
+     * @param Dispatcher           $dispatcher
+     * @param Logger               $logger
+     * @param ReservedWordReplacer $reservedWordReplacer
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
@@ -43,7 +43,8 @@ class PropertyPrinter
     }
 
     /**
-     * @param  Stmt\Property $node
+     * @param Stmt\Property $node
+     *
      * @return string
      */
     public function convert(Stmt\Property $node)
@@ -63,6 +64,6 @@ class PropertyPrinter
             );
         }
 
-        return $this->dispatcher->pModifiers($node->type) . $this->dispatcher->pCommaSeparated($node->props) . ';';
+        return $this->dispatcher->pModifiers($node->type).$this->dispatcher->pCommaSeparated($node->props).';';
     }
 }

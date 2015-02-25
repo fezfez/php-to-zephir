@@ -39,7 +39,8 @@ class Engine
     }
 
     /**
-     * @param  string $class
+     * @param string $class
+     *
      * @return string
      */
     public function convertClass($class)
@@ -68,7 +69,8 @@ class Engine
         return $regex;
     }
     /**
-     * @param  string $dir
+     * @param string $dir
+     *
      * @return array
      */
     public function convertDirectory($dir, $recursive = true, $filterFileName = null)
@@ -89,7 +91,7 @@ class Engine
             } catch (\Exception $e) {
                 $this->logger->log(
                     sprintf(
-                        '<error>Could not convert file' ."\n" . '"%s"' ."\n" . 'cause : %s %s %s</error>'."\n",
+                        '<error>Could not convert file'."\n".'"%s"'."\n".'cause : %s %s %s</error>'."\n",
                         $file,
                         $e->getMessage(),
                         $e->getFile(),
@@ -148,7 +150,7 @@ class Engine
                         'fileName'  => $aditionalClass['name'],
                         'zephir' => $aditionalClass['code'],
                         'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'.$aditionalClass['name']).'.zep',
-                        'destination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/')
+                        'destination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'),
                     )
                 );
             }
@@ -167,7 +169,8 @@ class Engine
     }
 
     /**
-     * @param  string $phpCode
+     * @param string $phpCode
+     *
      * @return string
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())

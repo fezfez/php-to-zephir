@@ -9,7 +9,8 @@ use PhpToZephir\Converter\ConverterFactory;
 class EngineFactory
 {
     /**
-     * @param  Logger              $logger
+     * @param Logger $logger
+     *
      * @return \PhpToZephir\Engine
      */
     public static function getInstance(Logger $logger)

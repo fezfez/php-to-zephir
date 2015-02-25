@@ -16,7 +16,8 @@ class EncapsedPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Scalar\Encapsed $node
+     * @param Scalar\Encapsed $node
+     *
      * @return string
      */
     public function convert(Scalar\Encapsed $node)

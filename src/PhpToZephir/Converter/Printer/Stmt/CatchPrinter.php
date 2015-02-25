@@ -16,7 +16,8 @@ class CatchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Catch_ $node
+     * @param Stmt\Catch_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Catch_ $node)

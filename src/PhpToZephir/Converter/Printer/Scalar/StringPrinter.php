@@ -18,7 +18,8 @@ class StringPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Scalar\String $node
+     * @param Scalar\String $node
+     *
      * @return string
      */
     public function convert(Scalar\String $node)

@@ -33,11 +33,12 @@ class TypeFinder
     }
 
     /**
-     * @param  ClassMethod $node
-     * @param  string      $actualNamespace
-     * @param  array       $use
-     * @param  array       $classes
-     * @param  array       $definition
+     * @param ClassMethod $node
+     * @param string      $actualNamespace
+     * @param array       $use
+     * @param array       $classes
+     * @param array       $definition
+     *
      * @return array
      */
     private function parseParam(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition)
@@ -82,7 +83,8 @@ class TypeFinder
     }
 
     /**
-     * @param  ClassMethod                             $node
+     * @param ClassMethod $node
+     *
      * @return NULL|\phpDocumentor\Reflection\DocBlock
      */
     private function nodeToDocBlock(ClassMethod $node)
@@ -90,7 +92,7 @@ class TypeFinder
         $attribute = $node->getAttributes();
 
         if (isset($attribute['comments']) === false || isset($attribute['comments'][0]) === false) {
-            return null;
+            return;
         }
 
         $docBlock = $attribute['comments'][0]->getText();
@@ -99,11 +101,12 @@ class TypeFinder
     }
 
     /**
-     * @param  DocBlock   $phpdoc
-     * @param  Param      $param
-     * @param  string     $actualNamespace
-     * @param  array      $use
-     * @param  array      $classes
+     * @param DocBlock $phpdoc
+     * @param Param    $param
+     * @param string   $actualNamespace
+     * @param array    $use
+     * @param array    $classes
+     *
      * @return null|array
      */
     private function foundTypeInCommentForVar(DocBlock $phpdoc, Param $param, $actualNamespace, array $use, array $classes)
@@ -129,7 +132,7 @@ class TypeFinder
            }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -154,11 +157,12 @@ class TypeFinder
     }
 
     /**
-     * @param  string   $actualNamespace
-     * @param  array    $definition
-     * @param  array    $use
-     * @param  array    $classes
-     * @param  DocBlock $phpdoc
+     * @param string   $actualNamespace
+     * @param array    $definition
+     * @param array    $use
+     * @param array    $classes
+     * @param DocBlock $phpdoc
+     *
      * @return array
      */
     private function findReturnTag($phpdoc, $actualNamespace, array $definition, array $use, array $classes)
@@ -184,7 +188,8 @@ class TypeFinder
     }
 
     /**
-     * @param  Tag     $tag
+     * @param Tag $tag
+     *
      * @return boolean
      */
     private function isReturnTag(Tag $tag)
@@ -197,8 +202,9 @@ class TypeFinder
     }
 
     /**
-     * @param  string $actualNamespace
-     * @param  Tag    $tag
+     * @param string $actualNamespace
+     * @param Tag    $tag
+     *
      * @return string
      */
     private function findType(Tag $tag, $actualNamespace, array $use, array $classes)
@@ -247,6 +253,11 @@ class TypeFinder
         return $type;
     }
 
+    /**
+     * @param string $class
+     *
+     * @return string
+     */
     private function cleanClass($class)
     {
         $class = str_replace('\\\\', '\\', $class);
@@ -259,9 +270,11 @@ class TypeFinder
     }
 
     /**
-     * @param  string     $classReference
-     * @param  string     $actualNamespace
+     * @param string $classReference
+     * @param string $actualNamespace
+     *
      * @throws \Exception
+     *
      * @return string
      */
     private function searchClass($classReference, $actualNamespace, array $uses, array $classes)
@@ -323,8 +336,9 @@ class TypeFinder
         return substr($haystack, 0, strrpos($haystack, $needle));
     }
     /**
-     * @param  Tag        $tag
-     * @param  string     $actualNamespace
+     * @param Tag    $tag
+     * @param string $actualNamespace
+     *
      * @throws \Exception
      */
     private function findSeeDocBlock(SeeTag $tag, $actualNamespace, array $use, array $classes)
@@ -343,7 +357,8 @@ class TypeFinder
     }
 
     /**
-     * @param  string  $class
+     * @param string $class
+     *
      * @return boolean
      */
     private function loadClass($class)

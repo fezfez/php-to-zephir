@@ -35,8 +35,9 @@ class ClassCollector
     }
 
     /**
-     * @param  Node[]  $stmts
-     * @param  unknown $fileName
+     * @param Node[]  $stmts
+     * @param unknown $fileName
+     *
      * @return string
      */
     public function collect(array $stmts, $fileName)

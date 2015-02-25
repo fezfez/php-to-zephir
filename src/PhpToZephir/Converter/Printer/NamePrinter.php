@@ -43,7 +43,8 @@ class NamePrinter
     }
 
     /**
-     * @param  Name     $node
+     * @param Name $node
+     *
      * @return Ambigous <string, unknown>
      */
     public function convert(Name $node)

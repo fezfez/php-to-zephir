@@ -16,7 +16,8 @@ class ThrowPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Throw_ $node
+     * @param Stmt\Throw_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Throw_ $node)

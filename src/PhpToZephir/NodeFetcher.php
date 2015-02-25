@@ -5,9 +5,10 @@ namespace PhpToZephir;
 class NodeFetcher
 {
     /**
-     * @param  mixed $nodesCollection
-     * @param  array $nodes
-     * @param  string $parentClass
+     * @param mixed  $nodesCollection
+     * @param array  $nodes
+     * @param string $parentClass
+     *
      * @return array
      */
     public function foreachNodes($nodesCollection, array $nodes = array(), $parentClass = "")

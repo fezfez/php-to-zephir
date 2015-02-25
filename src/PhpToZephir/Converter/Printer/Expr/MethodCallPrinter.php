@@ -43,7 +43,8 @@ class MethodCallPrinter
     }
 
     /**
-     * @param  Expr\MethodCall $node
+     * @param Expr\MethodCall $node
+     *
      * @return string
      */
     public function convert(Expr\MethodCall $node)

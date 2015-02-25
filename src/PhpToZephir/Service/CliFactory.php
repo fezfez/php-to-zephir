@@ -7,21 +7,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace PhpToZephir\Service;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use PhpToZephir\Command\ConvertDirectory;
+
 /**
- * Create CLI instance
+ * Create CLI instance.
  *
  * @author St�phane Demonchaux
  */
 class CliFactory
 {
     /**
-     * Create CLI instance
+     * Create CLI instance.
      *
      * @return \Symfony\Component\Console\Application
      */

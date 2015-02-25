@@ -44,7 +44,8 @@ class VariablePrinter
     }
 
     /**
-     * @param  Expr\Variable $node
+     * @param Expr\Variable $node
+     *
      * @return string
      */
     public function convert(Expr\Variable $node)

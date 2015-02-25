@@ -16,7 +16,8 @@ class FullyQualifiedPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Name\FullyQualified $node
+     * @param Name\FullyQualified $node
+     *
      * @return string
      */
     public function convert(Name\FullyQualified $node)

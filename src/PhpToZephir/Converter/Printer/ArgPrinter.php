@@ -16,7 +16,8 @@ class ArgPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Node\Arg $node
+     * @param Node\Arg $node
+     *
      * @return string
      */
     public function convert(Node\Arg $node)

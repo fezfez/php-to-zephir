@@ -16,7 +16,8 @@ class ConstPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Node\Const_ $node
+     * @param Node\Const_ $node
+     *
      * @return string
      */
     public function convert(Node\Const_ $node)

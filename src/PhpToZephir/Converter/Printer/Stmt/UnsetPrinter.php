@@ -16,7 +16,8 @@ class UnsetPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Unset_ $node
+     * @param Stmt\Unset_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Unset_ $node)

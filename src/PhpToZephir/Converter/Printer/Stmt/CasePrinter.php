@@ -16,7 +16,8 @@ class CasePrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Case_ $node
+     * @param Stmt\Case_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Case_ $node)

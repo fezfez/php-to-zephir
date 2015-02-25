@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace PhpToZephir\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -18,7 +19,7 @@ use PhpToZephir\Logger;
 use PhpToZephir\FileWriter;
 
 /**
- * Generator command
+ * Generator command.
  *
  * @author St�phane Demonchaux
  */

@@ -40,7 +40,8 @@ class StmtsPrinter extends SimplePrinter
     }
 
     /**
-     * @param  array  $comments
+     * @param array $comments
+     *
      * @return string
      */
     private function pComments(array $comments)

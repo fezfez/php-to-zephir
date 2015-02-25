@@ -30,7 +30,7 @@ class ReservedWordReplacer
             'private' => 'privatee',
             'protected' => 'protectedd',
             'public' => 'publicc',
-            'boolean' => 'booleann'
+            'boolean' => 'booleann',
         );
 
         foreach ($reservedWord as $word => $replacement) {

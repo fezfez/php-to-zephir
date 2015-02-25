@@ -17,7 +17,8 @@ class VarOrNewExprPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Node   $node
+     * @param Node $node
+     *
      * @return string
      */
     public function convert(Node $node)

@@ -30,7 +30,8 @@ class AssignManipulator
     }
 
     /**
-     * @param  mixed $node
+     * @param mixed $node
+     *
      * @return array
      */
     public function collectAssignInCondition($node)
@@ -50,9 +51,10 @@ class AssignManipulator
     }
 
     /**
-     * @param  mixed $stmt
-     * @param  array $collected
-     * @param  string $parentClass
+     * @param mixed  $stmt
+     * @param array  $collected
+     * @param string $parentClass
+     *
      * @return array
      */
     private function extract($stmt, array $collected, $parentClass = '')
@@ -74,8 +76,9 @@ class AssignManipulator
     }
 
     /**
-     * @param  mixed $primaryNode
-     * @param  string $parentClass
+     * @param mixed  $primaryNode
+     * @param string $parentClass
+     *
      * @return mixed
      */
     public function transformAssignInConditionTest($primaryNode, $parentClass = '')
@@ -115,7 +118,8 @@ class AssignManipulator
     }
 
     /**
-     * @param  mixed   $stmt
+     * @param mixed $stmt
+     *
      * @return boolean
      */
     private function isVarCreation($stmt)
@@ -124,7 +128,8 @@ class AssignManipulator
     }
 
     /**
-     * @param  mixed   $stmt
+     * @param mixed $stmt
+     *
      * @return boolean
      */
     private function isVarModification($stmt)

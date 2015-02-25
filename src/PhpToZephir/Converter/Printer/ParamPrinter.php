@@ -16,7 +16,8 @@ class ParamPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Node\Param $node
+     * @param Node\Param $node
+     *
      * @return string
      */
     public function convert(Node\Param $node)

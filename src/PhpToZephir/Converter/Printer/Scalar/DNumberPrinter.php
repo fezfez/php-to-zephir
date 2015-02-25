@@ -16,7 +16,8 @@ class DNumberPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Scalar\DNumber $node
+     * @param Scalar\DNumber $node
+     *
      * @return string
      */
     public function convert(Scalar\DNumber $node)

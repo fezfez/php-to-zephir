@@ -16,7 +16,8 @@ class PropertyFetchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Expr\PropertyFetch $node
+     * @param Expr\PropertyFetch $node
+     *
      * @return string
      */
     public function convert(Expr\PropertyFetch $node)

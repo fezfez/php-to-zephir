@@ -16,7 +16,8 @@ class LabelPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Label $node
+     * @param Stmt\Label $node
+     *
      * @return string
      */
     public function convert(Stmt\Label $node)

@@ -76,7 +76,8 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  Stmt\ClassMethod $node
+     * @param Stmt\ClassMethod $node
+     *
      * @return string
      */
     public function convert(Stmt\ClassMethod $node)
@@ -115,6 +116,7 @@ class ClassMethodPrinter
 
     /**
      * @param array|\ArrayIterator $node
+     *
      * @return array|\ArrayIterator
      */
     private function findModifiedToNonStaticVar($node)
@@ -139,7 +141,6 @@ class ClassMethodPrinter
                     }
                 }
             } else {
-
                 $stmt = $this->findModifiedToNonStaticVar($stmt);
                 if (is_array($node) === true) {
                     $node[$key] = $stmt;
@@ -153,8 +154,9 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  Stmt\ClassMethod $node
-     * @param  array            $varsInMethodSign
+     * @param Stmt\ClassMethod $node
+     * @param array            $varsInMethodSign
+     *
      * @return string
      */
     private function printVars(Stmt\ClassMethod $node, array $varsInMethodSign)
@@ -169,8 +171,9 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  Stmt\ClassMethod $node
-     * @param  array            $types
+     * @param Stmt\ClassMethod $node
+     * @param array            $types
+     *
      * @return string
      */
     private function printReturn(Stmt\ClassMethod $node, array $types)
@@ -186,7 +189,8 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  Stmt\ClassMethod $nodes
+     * @param Stmt\ClassMethod $nodes
+     *
      * @return boolean
      */
     private function hasReturnStatement($nodes)
@@ -203,7 +207,8 @@ class ClassMethodPrinter
 
     /**
      * @param \ArrayIterator|array $node
-     * @param array $vars
+     * @param array                $vars
+     *
      * @return \ArrayIterator|array
      */
     private function collectVars($node, array $vars = array())
@@ -234,7 +239,7 @@ class ClassMethodPrinter
                     if ($node instanceof Expr\Assign) {
                         $vars[] = $node->var->name;
                     } elseif ($node instanceof Expr\Array_) {
-                        $vars[] = 'tmpArray' . md5(serialize($node->items));
+                        $vars[] = 'tmpArray'.md5(serialize($node->items));
                     }
                 }
             } elseif ($stmt instanceof Stmt\Catch_) {
@@ -250,8 +255,10 @@ class ClassMethodPrinter
     }
 
     /**
-     * @param  array      $type
+     * @param array $type
+     *
      * @throws \Exception
+     *
      * @return string
      */
     private function printType($type)

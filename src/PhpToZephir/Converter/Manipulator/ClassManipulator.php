@@ -22,9 +22,10 @@ class ClassManipulator
     }
 
     /**
-     * @param  Node\Name     $node
-     * @param  ClassMetadata $metadata
-     * @param  array         $classCollected
+     * @param Node\Name     $node
+     * @param ClassMetadata $metadata
+     * @param array         $classCollected
+     *
      * @return string
      */
     public function findRightClass(Node\Name $node, ClassMetadata $metadata, array $classCollected = array())

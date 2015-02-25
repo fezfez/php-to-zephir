@@ -16,7 +16,8 @@ class ForPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\For_ $node
+     * @param Stmt\For_ $node
+     *
      * @return string
      */
     public function convert(Stmt\For_ $node)

@@ -16,7 +16,8 @@ class AssignRefPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Expr\AssignRef $node
+     * @param Expr\AssignRef $node
+     *
      * @return string
      */
     public function convert(Expr\AssignRef $node)

@@ -45,7 +45,8 @@ class IfPrinter
     }
 
     /**
-     * @param  Stmt\If_ $node
+     * @param Stmt\If_ $node
+     *
      * @return string
      */
     public function convert(Stmt\If_ $node)
@@ -65,7 +66,8 @@ class IfPrinter
     }
 
     /**
-     * @param  Stmt\If_ $node
+     * @param Stmt\If_ $node
+     *
      * @return string
      */
     private function implodeElseIfs(Stmt\If_ $node)

@@ -36,9 +36,10 @@ class Converter
     }
 
     /**
-     * @param  array  $stmts
-     * @param  string $fileName
-     * @param  array  $classCollected
+     * @param array  $stmts
+     * @param string $fileName
+     * @param array  $classCollected
+     *
      * @return array
      */
     public function nodeToZephir(array $stmts, $fileName = null, array $classCollected = array())
@@ -54,7 +55,8 @@ class Converter
     }
 
     /**
-     * @param  array $stmts
+     * @param array $stmts
+     *
      * @return array
      */
     private function findAdditionalClasses(array $stmts)

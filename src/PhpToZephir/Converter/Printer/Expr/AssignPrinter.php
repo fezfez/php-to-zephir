@@ -50,7 +50,8 @@ class AssignPrinter
     }
 
     /**
-     * @param  Expr\Assign $node
+     * @param Expr\Assign $node
+     *
      * @return string
      */
     public function convert(Expr\Assign $node)
@@ -177,7 +178,8 @@ class AssignPrinter
     }
 
     /**
-     * @param  Assign $node
+     * @param Assign $node
+     *
      * @return string
      */
     private function convertListStmtToAssign($node)

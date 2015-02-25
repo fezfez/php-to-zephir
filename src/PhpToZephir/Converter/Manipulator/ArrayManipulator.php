@@ -65,6 +65,11 @@ class ArrayManipulator
         return $collected;
     }
 
+    /**
+     * @param unknown $node
+     *
+     * @return boolean
+     */
     private function isInvalidInArrayDimFetch($node)
     {
         if ($node->dim instanceof BinaryOp\Concat) {
@@ -77,6 +82,7 @@ class ArrayManipulator
 
     /**
      * @param \PhpParser\Node $node
+     *
      * @return boolean
      */
     private function isInvalidIn($node)
@@ -96,6 +102,7 @@ class ArrayManipulator
 
     /**
      * @param Expr\ArrayDimFetch $node
+     *
      * @return array|boolean
      */
     public function arrayNeedToBeSplit(Expr\ArrayDimFetch $node)

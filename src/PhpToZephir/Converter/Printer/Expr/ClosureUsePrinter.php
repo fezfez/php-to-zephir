@@ -40,7 +40,8 @@ class ClosureUsePrinter
     }
 
     /**
-     * @param  Expr\ClosureUse $node
+     * @param Expr\ClosureUse $node
+     *
      * @return string
      */
     public function convert(Expr\ClosureUse $node)

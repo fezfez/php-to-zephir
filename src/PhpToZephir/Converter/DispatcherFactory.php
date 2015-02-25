@@ -12,7 +12,8 @@ class DispatcherFactory
     private static $instance = null;
 
     /**
-     * @param  Logger                            $logger
+     * @param Logger $logger
+     *
      * @return \PhpToZephir\Converter\Dispatcher
      */
     public static function getInstance(Logger $logger)
@@ -25,7 +26,8 @@ class DispatcherFactory
     }
 
     /**
-     * @param  Logger                            $logger
+     * @param Logger $logger
+     *
      * @return \PhpToZephir\Converter\Dispatcher
      */
     private static function createInstance(Logger $logger)

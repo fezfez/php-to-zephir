@@ -4,10 +4,25 @@ namespace PhpToZephir\Converter;
 
 class ClassMetadata
 {
+    /**
+     * @var string
+     */
     private $namespace = null;
+    /**
+     * @var string
+     */
     private $class = null;
+    /**
+     * @var array
+     */
     private $use = array();
+    /**
+     * @var array
+     */
     private $classes = array();
+    /**
+     * @var array
+     */
     private $classesAlias = array();
 
     /**
@@ -17,6 +32,9 @@ class ClassMetadata
     {
         $this->namespace = $value;
     }
+    /**
+     * @param string $value
+     */
     public function setClass($value)
     {
         $this->class = $value;
@@ -29,6 +47,9 @@ class ClassMetadata
     {
         $this->use[] = $value;
     }
+    /**
+     * @param string $value
+     */
     public function addClasses($value)
     {
         $this->classes[] = $value;
@@ -42,26 +63,44 @@ class ClassMetadata
         $this->classesAlias[$key] = $value;
     }
 
+    /**
+     * @return string
+     */
     public function getNamespace()
     {
         return $this->namespace;
     }
+    /**
+     * @return string
+     */
     public function getClass()
     {
         return $this->class;
     }
+    /**
+     * @return array
+     */
     public function getClasses()
     {
         return $this->classes;
     }
+    /**
+     * @return array
+     */
     public function getUse()
     {
         return $this->use;
     }
+    /**
+     * @return string
+     */
     public function getClassesAlias()
     {
         return $this->classesAlias;
     }
+    /**
+     * @return string
+     */
     public function getFullQualifiedNameClass()
     {
         return $this->namespace.'\\'.$this->class;

@@ -16,7 +16,8 @@ class ModifiersPrinter extends SimplePrinter
     }
 
     /**
-     * @param  integer $modifiers
+     * @param integer $modifiers
+     *
      * @return string
      */
     public function convert($modifiers)

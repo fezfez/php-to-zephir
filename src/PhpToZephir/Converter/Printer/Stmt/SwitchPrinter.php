@@ -20,7 +20,8 @@ class SwitchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Switch_ $node
+     * @param Stmt\Switch_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Switch_ $node)
@@ -57,7 +58,8 @@ class SwitchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Switch_ $node
+     * @param Stmt\Switch_ $node
+     *
      * @return string
      */
     private function convertSwitchToIfelse(Stmt\Switch_ $node)

@@ -16,7 +16,8 @@ class LNumberPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Scalar\LNumber $node
+     * @param Scalar\LNumber $node
+     *
      * @return string
      */
     public function convert(Scalar\LNumber $node)

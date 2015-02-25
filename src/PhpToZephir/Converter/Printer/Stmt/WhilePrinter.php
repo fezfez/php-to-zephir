@@ -43,7 +43,8 @@ class WhilePrinter
     }
 
     /**
-     * @param  Stmt\While_ $node
+     * @param Stmt\While_ $node
+     *
      * @return string
      */
     public function convert(Stmt\While_ $node)

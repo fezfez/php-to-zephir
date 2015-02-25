@@ -15,7 +15,8 @@ class CommaSeparatedPrinter extends SimplePrinter
     }
 
     /**
-     * @param  array  $nodes
+     * @param array $nodes
+     *
      * @return string
      */
     public function convert(array $nodes)

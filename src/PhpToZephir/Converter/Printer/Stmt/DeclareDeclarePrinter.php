@@ -16,7 +16,8 @@ class DeclareDeclarePrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\DeclareDeclare $node
+     * @param Stmt\DeclareDeclare $node
+     *
      * @return string
      */
     public function convert(Stmt\DeclareDeclare $node)

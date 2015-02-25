@@ -16,7 +16,8 @@ class TryCatchPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\TryCatch $node
+     * @param Stmt\TryCatch $node
+     *
      * @return string
      */
     public function convert(Stmt\TryCatch $node)

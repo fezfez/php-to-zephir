@@ -22,9 +22,6 @@ use PhpToZephir\Logger;
  * @method string pPostfixOp(string $type, \PhpParser\Node $node, string $operatorString)
  * @method string pStmt_ElseIf(\PhpParser\Node\Stmt\ElseIf_ $node)
  * @method string pStmt_If(\PhpParser\Node\Stmt\If_ $node)
- *
- *
- *
  */
 class Dispatcher
 {
@@ -42,7 +39,7 @@ class Dispatcher
     private $classes = array();
     /**
      * @var PrinterCollection
-    */
+     */
     private $printerCollection = null;
     /**
      * @var Logger
@@ -92,8 +89,9 @@ class Dispatcher
     }
 
     /**
-     * @param  string $method
-     * @param  array  $arguments
+     * @param string $method
+     * @param array  $arguments
+     *
      * @return string
      */
     public function __call($method, $arguments)
@@ -102,8 +100,10 @@ class Dispatcher
     }
 
     /**
-     * @param  string     $type
+     * @param string $type
+     *
      * @throws \Exception
+     *
      * @return object
      */
     private function getClass($type)
@@ -136,18 +136,27 @@ class Dispatcher
         return $this->lastMethod;
     }
 
+    /**
+     * @param string $value
+     */
     public function moveToNonStaticVar($value)
     {
         $this->moveToNonStatic[] = $value;
     }
 
+    /**
+     * @param string $value
+     *
+     * @return boolean
+     */
     public function isMovedToNonStaticVar($value)
     {
         return in_array($value, $this->moveToNonStatic) ? true : false;
     }
 
     /**
-     * @param  string $className
+     * @param string $className
+     *
      * @return object
      */
     private function dynamicConstruct($className)
@@ -175,7 +184,8 @@ class Dispatcher
     }
 
     /**
-     * @param  string $type
+     * @param string $type
+     *
      * @return array
      */
     public function getPrecedenceMap($type)
@@ -184,7 +194,8 @@ class Dispatcher
     }
 
     /**
-     * @param  string  $type
+     * @param string $type
+     *
      * @return boolean
      */
     public function issetPrecedenceMap($type)

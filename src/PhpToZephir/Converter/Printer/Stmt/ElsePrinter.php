@@ -16,7 +16,8 @@ class ElsePrinter extends SimplePrinter
     }
 
     /**
-     * @param  Stmt\Else_ $node
+     * @param Stmt\Else_ $node
+     *
      * @return string
      */
     public function convert(Stmt\Else_ $node)

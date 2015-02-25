@@ -15,8 +15,9 @@ class ImplodePrinter extends SimplePrinter
     }
 
     /**
-     * @param  array  $nodes
-     * @param  string $glue
+     * @param array  $nodes
+     * @param string $glue
+     *
      * @return string
      */
     public function convert(array $nodes, $glue = '')

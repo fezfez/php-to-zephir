@@ -17,7 +17,8 @@ class FuncCallPrinter extends SimplePrinter
     }
 
     /**
-     * @param  Expr\FuncCall $node
+     * @param Expr\FuncCall $node
+     *
      * @return string
      */
     public function convert(Expr\FuncCall $node)

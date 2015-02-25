@@ -40,7 +40,8 @@ class ClosurePrinter
     }
 
     /**
-     * @param  Expr\Closure $node
+     * @param Expr\Closure $node
+     *
      * @return string
      */
     public function convert(Expr\Closure $node)
