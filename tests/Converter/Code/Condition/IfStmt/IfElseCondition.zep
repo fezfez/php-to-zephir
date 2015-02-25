@@ -26,7 +26,7 @@ class IfElseCondition
     public static function imStatic()
     {
         
-        return null;
+        return;
     }
     
     public function testFuncCallIncondition() -> void

@@ -14,101 +14,97 @@ class ArrayDim
     private $imports = array();
     private static $annotationMetadata = array('test');
 
-	public function testArrayDimScalarWithAssignLet()
-	{
-		$number = 0;
-		$myArray = array(1 => 10);
+    public function testArrayDimScalarWithAssignLet()
+    {
+        $number = 0;
+        $myArray = array(1 => 10);
 
-		$myArray[1] = $number++;
-	}
+        $myArray[1] = $number++;
+    }
 
-	public function testArrayDimLetWithAssignScalar()
-	{
-	    $number = 0;
-	    $myArray = array(1 => 10);
+    public function testArrayDimLetWithAssignScalar()
+    {
+        $number = 0;
+        $myArray = array(1 => 10);
 
-	    $myArray[$number++] = 11;
-	}
+        $myArray[$number++] = 11;
+    }
 
-	public function testArrayDimLeftWithScalarAssignScalar()
-	{
-	    $number = 0;
-	    $myArray = array(1 => array(2 => 10));
+    public function testArrayDimLeftWithScalarAssignScalar()
+    {
+        $number = 0;
+        $myArray = array(1 => array(2 => 10));
 
-	    $myArray[$number++][$number++]['fezfez'][$number++] = $number++;
-	}
+        $myArray[$number++][$number++]['fezfez'][$number++] = $number++;
+    }
 
-	public function testAssignLeftWithArrayDimLeftRight()
-	{
-	    $number = 0;
-	    $myArray = array(1 => array(2 => 10));
+    public function testAssignLeftWithArrayDimLeftRight()
+    {
+        $number = 0;
+        $myArray = array(1 => array(2 => 10));
 
-	    $test = $myArray[$number++][$number++]['fezfez'][$number++];
-	}
+        $test = $myArray[$number++][$number++]['fezfez'][$number++];
+    }
 
-	public function testArrayDimLeftAssignArrayDimLet()
-	{
-	    $number = 0;
-	    $myArray = array(1 => 10, 2 => 11);
+    public function testArrayDimLeftAssignArrayDimLet()
+    {
+        $number = 0;
+        $myArray = array(1 => 10, 2 => 11);
 
-	    $myArray[$number++] = $myArray[$number++];
-	}
+        $myArray[$number++] = $myArray[$number++];
+    }
 
-	private function getConstructor()
-	{
-	    return null;
-	}
+    private function getConstructor()
+    {
+        return;
+    }
 
-	private function getNumberOfParameters()
-	{
-	    return 5;
-	}
+    private function getNumberOfParameters()
+    {
+        return 5;
+    }
 
-	public function arrayDimAssignObjectPropertie()
-	{
-	    $metadata = array();
-	    $test = true;
+    public function arrayDimAssignObjectPropertie()
+    {
+        $metadata = array();
+        $test = true;
 
-	    $metadata['tutu'] = $test;
-	    $metadata['targets'] = $this->targets;
-	    $metadata['properties'][$this->name] = $this->name;
+        $metadata['tutu'] = $test;
+        $metadata['targets'] = $this->targets;
+        $metadata['properties'][$this->name] = $this->name;
 
-	    $metadata['enum'][$this->name]['literal'] = ( ! empty($this->literal))
-	    ? $this->literal
-	    : $this->value;
+        $metadata['enum'][$this->name]['literal'] = (! empty($this->literal))
+        ? $this->literal
+        : $this->value;
 
-	    $type = isset($this->typeMap[$this->type])
-	    ? $this->typeMap[$this->type]
-	    : $this->type;
+        $type = isset($this->typeMap[$this->type])
+        ? $this->typeMap[$this->type]
+        : $this->type;
 
+        $name = "test";
 
-	    $name = "test";
+        $alias = (false === $pos = strpos($name, '\\')) ? $name : substr($name, 0, $pos);
 
-	    $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
+        if ($this->namespaces) {
+            echo 'toto';
+        } elseif (isset($this->imports[$loweredAlias = strtolower($alias)])) {
+            echo 'im converted !';
+        }
 
-	    if ($this->namespaces) {
-	        echo 'toto';
-	    } elseif (isset($this->imports[$loweredAlias = strtolower($alias)])) {
-	        echo 'im converted !';
-	    }
+        if (! $property = self::$annotationMetadata[$name]['default_property']) {
+        }
 
-	    if ( ! $property = self::$annotationMetadata[$name]['default_property']) {
+        $lineCnt = 0;
+        $lineNumber = 1;
+        if ($lineCnt++ == $lineNumber) {
+        }
+    }
 
-	    }
-
-	    $lineCnt = 0;
-	    $lineNumber = 1;
-	    if ($lineCnt++ == $lineNumber) {
-
-	    }
-	}
-
-	public function declareArrayWithAssignInTernaryOperation()
-	{
-	    $metadata = array(
-	        'default_property' => null,
-	        'has_constructor'  => (null !== $constructor = $this->getConstructor()) && $this->getNumberOfParameters() > 0,
-	    );
-	}
-
+    public function declareArrayWithAssignInTernaryOperation()
+    {
+        $metadata = array(
+            'default_property' => null,
+            'has_constructor'  => (null !== $constructor = $this->getConstructor()) && $this->getNumberOfParameters() > 0,
+        );
+    }
 }

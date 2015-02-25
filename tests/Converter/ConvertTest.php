@@ -9,7 +9,7 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
 {
     public function testConvertCode()
     {
-        $this->convert(__DIR__ . '/Code/');
+        $this->convert(__DIR__.'/Code/');
     }
 
     private function convert($dir)
@@ -18,15 +18,16 @@ class ConvertTest extends \PHPUnit_Framework_TestCase
         $fileWriter = new FileWriter();
 
         foreach ($engine->convertDirectory($dir, true) as $filePath => $file) {
-            $zephirFile = file_get_contents(str_replace('.php', '.zep', $filePath));
+            $zepFile = str_replace('.php', '.zep', $filePath);
+            $zephirFile = file_get_contents($zepFile);
 
             $fileWriter->write($file);
 
-            $this->assertEquals(
-                $zephirFile,
-                $file['zephir'],
-                'test failed on file ' . $filePath
-            );
+                $this->assertEquals(
+                    $zephirFile,
+                    $file['zephir'],
+                    'test failed on file '.$filePath
+                );
         }
     }
 }

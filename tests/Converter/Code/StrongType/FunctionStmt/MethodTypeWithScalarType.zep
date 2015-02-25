@@ -3,13 +3,13 @@ namespace Code\StrongType\FunctionStmt;
 class MethodTypeWithScalarType
 {
     /**
-     * @param string $toto
+     * @param string  $toto
      * @param boolean $titi
-     * @param float $tata
-     * @param array $tutu
-     * @param double $foo
+     * @param float   $tata
+     * @param array   $tutu
+     * @param double  $foo
      */
-    public function test(string $toto, boolean $titi, float $tata, array $tutu, double $foo, $bar) -> void
+    public function test(string toto, boolean titi, float tata, array tutu, double foo, bar) -> void
     {
     }
 

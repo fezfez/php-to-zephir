@@ -8,16 +8,16 @@ class IfWithAssignementInCondition
 
     public function test($toto)
     {
-		if ($averylongvariable = $toto) {
-			echo 'tata';
-		}
+        if ($averylongvariable = $toto) {
+            echo 'tata';
+        }
     }
 
     public function testWithConditionAndAssign($toto, $twoAssignedVariable, $treeAssignedVariable)
     {
-    	if ($toto === true && $twoAssignVariable = $twoAssignedVariable && $treeAssignVariable = $treeAssignedVariable) {
-    		echo 'tata';
-    	}
+        if ($toto === true && $twoAssignVariable = $twoAssignedVariable && $treeAssignVariable = $treeAssignedVariable) {
+            echo 'tata';
+        }
     }
 
     private function getName()

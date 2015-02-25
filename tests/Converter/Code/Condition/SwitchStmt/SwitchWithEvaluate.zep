@@ -2,7 +2,7 @@ namespace Code\Condition\SwitchStmt;
 
 class SwitchWithEvaluate
 {
-    public function test($toto) -> void
+    public function test(toto) -> void
     {
         switch (toto) {
             case "{":

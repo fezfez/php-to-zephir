@@ -10,20 +10,20 @@ class IfElseCondition
     {
         $toReturn = null;
 
-		if ($toto === 'tata') {
-			$toReturn ='tata';
-		} elseif ($toto === 'tutu') {
-			$toReturn = 'tutu';
-		} else {
-			$toReturn = 'else';
-		}
+        if ($toto === 'tata') {
+            $toReturn = 'tata';
+        } elseif ($toto === 'tutu') {
+            $toReturn = 'tutu';
+        } else {
+            $toReturn = 'else';
+        }
 
-		return $toReturn;
+        return $toReturn;
     }
 
     public static function imStatic()
     {
-        return null;
+        return;
     }
 
     public function testFuncCallIncondition()

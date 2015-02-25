@@ -2,8 +2,9 @@ namespace Code\StrongType\ReturnStmt;
 
 class UndefinedTypeReturn
 {
-    public function test($toto)
+    public function test(toto)
     {
+        
         return toto;
     }
 

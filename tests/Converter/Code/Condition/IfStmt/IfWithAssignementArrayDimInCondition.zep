@@ -21,6 +21,9 @@ class IfWithAssignementArrayDimInCondition
         let i = 0;
         
         let toto =  [1 : true];
+        // @FIXME the i++ is extract twice
+        let i++;;
+        var tmpArray;
         let i++;
         let averylongvariable = toto[i];
         if averylongvariable {

@@ -9,6 +9,6 @@ class DefinedTypeReturn
      */
     public function test($toto)
     {
-		return $toto;
+        return $toto;
     }
 }

@@ -6,8 +6,8 @@ class IsWithYodaCondition
 {
     public function test($toto)
     {
-		if ('tata' === $toto) {
-			echo 'tata';
-		}
+        if ('tata' === $toto) {
+            echo 'tata';
+        }
     }
 }

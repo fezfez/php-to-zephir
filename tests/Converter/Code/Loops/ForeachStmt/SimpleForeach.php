@@ -3,16 +3,14 @@ namespace Code\Loops\ForeachStmt;
 
 class SimpleForeach
 {
-	public function test()
-	{
-		$myArray = array('test', '2');
+    public function test()
+    {
+        $myArray = array('test', '2');
 
-		foreach ($myArray as $myValue) {
+        foreach ($myArray as $myValue) {
+        }
 
-		}
-
-		foreach ($myArray as $myKey => $myValue) {
-
-		}
-	}
+        foreach ($myArray as $myKey => $myValue) {
+        }
+    }
 }

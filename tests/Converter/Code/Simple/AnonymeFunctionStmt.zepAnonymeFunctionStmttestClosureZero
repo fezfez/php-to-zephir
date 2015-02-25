@@ -1,0 +1,18 @@
+namespace Code\Simple;
+
+class AnonymeFunctionStmttestClosureZero
+{
+    private test;
+
+    public function __construct(test)
+    {
+                let this->test = test;
+
+    }
+
+    public function __invoke(tutu)
+    {
+    echo tutu . this->test;
+    }
+}
+    

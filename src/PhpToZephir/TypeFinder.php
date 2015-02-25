@@ -176,14 +176,6 @@ class TypeFinder
             }
         }
 
-        /* foreach ($phpdoc->getTags() as $tag) {
-            /* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
-            /*if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
-                $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
-                return ($this->findReturnTag($seeDocBlock, $actualNamespace, $definition, $use, $classes));
-            }
-        }*/
-
         return $definition;
     }
 
