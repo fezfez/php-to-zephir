@@ -22,7 +22,7 @@ install:
   - unzip -q zephir
   - cd zephir-master
   - sudo ./install -c
-  - phpize -v
+  - phpize -v 
   - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
