@@ -162,6 +162,17 @@ class Engine
 
         return $zephirCode;
     }
+    
+    /**
+     * @param string $phpCode
+     * @return string
+     */
+    public function convertString($phpCode)
+    {
+    	$result = $this->convertCode($phpCode);
+    	
+    	return $result['zephir'];
+    }
 
     private function rstrstr($haystack, $needle)
     {
@@ -176,14 +187,13 @@ class Engine
     private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
         $converted = $this->converter->nodeToZephir($this->parser->parse($phpCode), $fileName, $classes);
-        $toReturn = array(
+        
+        return array(
             'zephir'    => $converted['code'],
             'php'       => $phpCode,
             'namespace' => $converted['namespace'],
             'destination' => str_replace('\\', '/', $converted['namespace']).'/',
             'additionalClass' => $converted['additionalClass'],
         );
-
-        return $toReturn;
     }
 }
