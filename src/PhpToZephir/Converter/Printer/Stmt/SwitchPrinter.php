@@ -5,7 +5,6 @@ namespace PhpToZephir\Converter\Printer\Stmt;
 use PhpParser\Node;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
-use PhpParser\Node\Scalar\String;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpToZephir\Converter\SimplePrinter;
 
@@ -28,7 +27,7 @@ class SwitchPrinter extends SimplePrinter
     {
         $transformToIf = false;
         foreach ($node->cases as $case) {
-            if (($case->cond instanceof \PhpParser\Node\Scalar\String) === false && $case->cond !== null) {
+            if (($case->cond instanceof Scalar\String) === false && $case->cond !== null) {
                 $transformToIf = true;
             }
         }
@@ -49,7 +48,7 @@ class SwitchPrinter extends SimplePrinter
         if (is_array($case->stmts) && !empty($case->stmts)) {
             $key = array_keys($case->stmts);
             $breakStmt = $case->stmts[end($key)];
-            if ($breakStmt instanceof \PhpParser\Node\Stmt\Break_) {
+            if ($breakStmt instanceof Stmt\Break_) {
                 unset($case->stmts[end($key)]);
             }
         }
@@ -74,7 +73,7 @@ class SwitchPrinter extends SimplePrinter
         foreach ($node->cases as $case) {
             $case = $this->removeBreakStmt($case);
             if (end($node->cases) === $case) {
-                $stmt['else'] = new \PhpParser\Node\Stmt\Else_($case->stmts);
+                $stmt['else'] = new Stmt\Else_($case->stmts);
             } else {
                 if (empty($case->stmts)) { // concatene empty statement
                     if ($left !== null) {
@@ -85,25 +84,25 @@ class SwitchPrinter extends SimplePrinter
                 } elseif ($ifDefined === false) {
                     if ($left !== null) {
                         $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                        $if = new \PhpParser\Node\Stmt\If_($lastLeft, array('stmts' => $case->stmts));
+                        $if = new Stmt\If_($lastLeft, array('stmts' => $case->stmts));
                         $left = null;
                     } else {
-                        $if = new \PhpParser\Node\Stmt\If_($case->cond, array('stmts' => $case->stmts));
+                        $if = new Stmt\If_($case->cond, array('stmts' => $case->stmts));
                     }
                     $ifDefined = true;
                 } else {
                     if ($left !== null) {
                         $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                        $stmt['elseifs'][] = new \PhpParser\Node\Stmt\Elseif_($lastLeft, $case->stmts);
+                        $stmt['elseifs'][] = new Stmt\Elseif_($lastLeft, $case->stmts);
                         $left = null;
                     } else {
-                        $stmt['elseifs'][] = new \PhpParser\Node\Stmt\Elseif_($case->cond, $case->stmts);
+                        $stmt['elseifs'][] = new Stmt\Elseif_($case->cond, $case->stmts);
                     }
                 }
             }
         }
         $elseifs = array_reverse($stmt['elseifs']);
-        $if = new \PhpParser\Node\Stmt\If_($if->cond, array(
+        $if = new Stmt\If_($if->cond, array(
             'stmts' => $if->stmts,
             'elseifs' => $elseifs,
             'else' => $stmt['else'],
