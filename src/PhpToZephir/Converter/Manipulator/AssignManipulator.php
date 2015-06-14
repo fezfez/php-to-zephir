@@ -83,10 +83,10 @@ class AssignManipulator
      */
     public function transformAssignInConditionTest($primaryNode, $parentClass = '')
     {
-        if ($primaryNode instanceof BinaryOp) {
+        if ($primaryNode instanceof BinaryOp && ($primaryNode instanceof BinaryOp\Concat === false)) {
             // this is yoda ! invert condition
             if ($primaryNode->left instanceof Expr\ConstFetch ||
-                ($primaryNode->left instanceof Scalar) !== false ||
+                $primaryNode->left instanceof Scalar\String ||
                 $primaryNode->left instanceof Expr\Array_
             ) {
                 $left = $primaryNode->left;

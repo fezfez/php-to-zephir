@@ -48,7 +48,7 @@ class StringConcat
         let foo = "foo";
         let works =  "bar" . foo . "bar";
         
-        return foo . "bar" . "bar";
+        return "bar" . foo . "bar";
     }
     
     public function testConcatAndReturn()
