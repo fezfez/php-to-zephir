@@ -54,6 +54,7 @@ class IfPrinter
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
+        
         if (empty($node->stmts)) {
             $node->stmts = array(new Stmt\Echo_(array(new Scalar\String("not allowed"))));
             $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
@@ -76,9 +77,9 @@ class IfPrinter
         $toReturn = '';
         foreach ($node->elseifs as $elseIf) {
             $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
-            if (!empty($collected)) {
+            if (!empty($collected['extracted'])) {
                 $elseCount++;
-                $toReturn .= ' else { '."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, (array) $elseIf->getIterator()))."\n";
+                $toReturn .= ' else { '."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, (array) $elseIf->stmts))."\n";
             } else {
                 $toReturn .= $this->dispatcher->pStmt_ElseIf($elseIf);
             }

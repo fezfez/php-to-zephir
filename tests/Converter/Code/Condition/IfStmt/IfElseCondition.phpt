@@ -74,14 +74,11 @@ class IfElseCondition
         
         if toto === "tata" {
             let toReturn = "tata";
-        } else { 
-        
-        if toto === "tutu" {
+        } elseif toto === "tutu" {
             let toReturn = "tutu";
-        }
-         else {
+        } else {
             let toReturn = "else";
-        }}
+        }
         
         return toReturn;
     }
