@@ -93,10 +93,10 @@ class SwitchPrinter extends SimplePrinter
                 } else {
                     if ($left !== null) {
                         $lastLeft = new BinaryOp\BooleanOr($left, $case->cond);
-                        $stmt['elseifs'][] = new Stmt\Elseif_($lastLeft, $case->stmts);
+                        $stmt['elseifs'][] = new Stmt\ElseIf_($lastLeft, $case->stmts);
                         $left = null;
                     } else {
-                        $stmt['elseifs'][] = new Stmt\Elseif_($case->cond, $case->stmts);
+                        $stmt['elseifs'][] = new Stmt\ElseIf_($case->cond, $case->stmts);
                     }
                 }
             }
