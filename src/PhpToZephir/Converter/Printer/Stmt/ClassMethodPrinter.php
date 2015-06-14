@@ -223,7 +223,7 @@ class ClassMethodPrinter
 
         foreach ($nodes as $stmt) {
             if ($stmt instanceof Expr\Assign) {
-                if (($stmt->var instanceof Expr\PropertyFetch) === false) {
+                if (($stmt->var instanceof Expr\PropertyFetch) === false && ($stmt->var instanceof Expr\StaticPropertyFetch) === false) {
                     if (is_object($stmt->var->name) === false) { // if true it is a dynamic var
                         $vars[] = $stmt->var->name;
                     }
