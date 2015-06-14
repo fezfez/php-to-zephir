@@ -244,6 +244,8 @@ class ClassMethodPrinter
                 }
             } elseif ($stmt instanceof Stmt\Catch_) {
                 $vars[] = $stmt->var;
+            } elseif ($stmt instanceof Stmt\Return_ && $stmt->expr instanceof Expr\Array_) {
+            	$vars[] = 'tmpArray'.md5(serialize($stmt->expr->items));
             }
 
             $vars = array_merge($vars, $this->collectVars($stmt));

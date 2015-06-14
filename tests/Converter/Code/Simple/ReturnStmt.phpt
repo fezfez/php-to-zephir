@@ -50,6 +50,8 @@ class ReturnStmt
     
     public function testReturnArray()
     {
+        var tmpArray961e689622b008ac464bf70d9d437c4d;
+    
         let tmpArray961e689622b008ac464bf70d9d437c4d = ["foo" : "bar"];
         return tmpArray961e689622b008ac464bf70d9d437c4d;
     }
