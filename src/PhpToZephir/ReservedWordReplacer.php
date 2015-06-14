@@ -31,6 +31,7 @@ class ReservedWordReplacer
             'protected' => 'protectedd',
             'public' => 'publicc',
             'boolean' => 'booleann',
+        	'return' => 'returnn',
         );
 
         foreach ($reservedWord as $word => $replacement) {
