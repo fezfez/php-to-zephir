@@ -14,6 +14,9 @@ class NewPrinter extends SimplePrinter
 
     public function convert(Expr\New_ $node)
     {
-        return 'new '.$this->dispatcher->p($node->class).'('.$this->dispatcher->pCommaSeparated($node->args).')';
+        if ($node->class instanceof \PhpParser\Node\Expr\Variable) {
+            return 'new {' . $this->dispatcher->p($node->class) . '}(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
+        }
+        return 'new ' . $this->dispatcher->p($node->class) . '(' . $this->dispatcher->pCommaSeparated($node->args) . ')';
     }
 }
