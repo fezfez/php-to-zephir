@@ -24,7 +24,7 @@ class UnsetPrinter extends SimplePrinter
     {
         $unset = '';
         foreach ($node->vars as $var) {
-            $unset .= 'unset('.$this->dispatcher->p($var).');'."\n";
+            $unset .= 'unset '.$this->dispatcher->p($var).';'."\n";
         }
 
         return $unset;
