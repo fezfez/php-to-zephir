@@ -64,7 +64,7 @@ class TypeFinder
               }
           } elseif ($param->type instanceof \PhpParser\Node\Name) {
               $className = implode('\\', $param->type->parts);
-              $params['type']['value'] = $this->searchClass($className, $actualNamespace, $use, $classes);
+              $params['type']['value'] = $className;
               $params['type']['isClass'] = true;
           }
 
@@ -239,7 +239,7 @@ class TypeFinder
         } elseif (in_array(strtolower($rawType), $arrayOfPrimitiveTypes)) {
             $type = array('value' => strtolower($rawType), 'isClass' => false);
         } else { // considered as class
-            $type = array('value' => $this->searchClass($rawType, $actualNamespace, $use, $classes), 'isClass' => true);
+            $type = array('value' => $rawType, 'isClass' => true);
         }
 
         return $type;
