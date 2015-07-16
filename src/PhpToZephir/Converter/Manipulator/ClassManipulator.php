@@ -2,6 +2,7 @@
 
 namespace PhpToZephir\Converter\Manipulator;
 
+use PhpParser\Node\Stmt;
 use PhpParser\Node;
 use PhpToZephir\ReservedWordReplacer;
 use PhpToZephir\Converter\ClassMetadata;
@@ -12,6 +13,7 @@ class ClassManipulator
      * @var ReservedWordReplacer
      */
     private $reservedWordReplacer = null;
+    private $classes = array();
 
     /**
      * @param ReservedWordReplacer $reservedWordReplacer
@@ -48,5 +50,10 @@ class ClassManipulator
         } else {
             return $class;
         }
+    }
+    
+    public function registerClassImplements(Stmt\Class_ $node)
+    {
+
     }
 }

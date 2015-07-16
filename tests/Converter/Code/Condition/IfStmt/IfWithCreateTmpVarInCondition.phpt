@@ -10,6 +10,8 @@ require __DIR__ . '/../../../../Bootstrap.php';
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
 use Symfony\Component\Console\Output\NullOutput;
+use PhpToZephir\Render\StringRender;
+use PhpToZephir\CodeCollector\StringCodeCollector;
 
 $engine = EngineFactory::getInstance(new Logger(new NullOutput(), false));
 $code   = <<<'EOT'
@@ -47,7 +49,11 @@ class IfWithCreateTmpVarInCondition
     }
 }
 EOT;
-echo $engine->convertString($code, true);
+$render = new StringRender();
+
+foreach ($engine->convert(new StringCodeCollector(array($code))) as $file) {
+	echo $render->render($file);
+}
 
 ?>
 --EXPECT--

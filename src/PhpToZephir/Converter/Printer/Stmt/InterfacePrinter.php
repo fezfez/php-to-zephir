@@ -60,7 +60,7 @@ class InterfacePrinter
             $extendsStmt = ' extends ';
             $extends = array();
             foreach ($node->extends as $extend) {
-                $extends[] = $this->classManipulator->findRightClass($extend, $this->dispatcher->getMetadata());
+                $extends[] = $this->reservedWordReplacer->replace($extend);
             }
 
             $extendsStmt .= implode(', ', $extends);

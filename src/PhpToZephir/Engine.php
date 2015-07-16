@@ -4,6 +4,8 @@ namespace PhpToZephir;
 
 use PhpParser\Parser;
 use PhpToZephir\Converter\Converter;
+use PhpToZephir\CodeCollector\CodeCollectorInterface;
+use PhpToZephir\Render\RenderInterface;
 
 class Engine
 {
@@ -32,67 +34,33 @@ class Engine
      */
     public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector, Logger $logger)
     {
-        $this->parser = $parser;
-        $this->converter = $converter;
+        $this->parser         = $parser;
+        $this->converter      = $converter;
         $this->classCollector = $classCollector;
-        $this->logger = $logger;
+        $this->logger         = $logger;
     }
 
-    /**
-     * @param string $class
-     *
-     * @return string
-     */
-    public function convertClass($class)
-    {
-        $rc = new \ReflectionClass($class);
-
-        $phpCode = file_get_contents($rc->getFileName());
-
-        return $this->convertCode($phpCode);
-    }
-
-    public function convert($phpCode)
-    {
-        return $this->convertCode($phpCode);
-    }
-
-    /**
-     * @param string $dir
-     */
-    private function findFiles($dir)
-    {
-        $directory = new \RecursiveDirectoryIterator($dir);
-        $iterator = new \RecursiveIteratorIterator($directory);
-        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-
-        return $regex;
-    }
-    /**
-     * @param string $dir
-     *
-     * @return array
-     */
-    public function convertDirectory($dir, $recursive = true, $filterFileName = null)
+    public function convert(CodeCollectorInterface $codeCollector, $filterFileName = null)
     {
         $zephirCode = array();
-        $fileExtension = '.php';
-        $classes = array();
+        $classes    = array();
 
-        $files = $this->findFiles($dir);
-
-        $count = iterator_count($files);
+        $files = $codeCollector->getCode();
+        $count = count($files);
+        $codes = array();
+        
         $this->logger->log('Collect class names');
         $progress = $this->logger->progress($count);
-        foreach ($files as $filei) {
-            $file = $filei[0];
+
+        foreach ($files as $fileName => $fileContent) {
             try {
-                $classes[$file] = $this->classCollector->collect($this->parser->parse(file_get_contents($file)), $file);
+            	$codes[$fileName]   = $this->parser->parse($fileContent);
+                $classes[$fileName] = $this->classCollector->collect($codes[$fileName], $fileName);
             } catch (\Exception $e) {
                 $this->logger->log(
                     sprintf(
                         '<error>Could not convert file'."\n".'"%s"'."\n".'cause : %s %s %s</error>'."\n",
-                        $file,
+                        $fileName,
                         $e->getMessage(),
                         $e->getFile(),
                         $e->getLine()
@@ -114,7 +82,7 @@ class Engine
                 }
             }
 
-            $phpCode   = file_get_contents($phpFile);
+            $phpCode   = $codes[$phpFile];
             $fileName  = basename($phpFile, '.php');
             try {
                 $converted = $this->convertCode($phpCode, $phpFile, $classes);
@@ -159,24 +127,8 @@ class Engine
 
         $progress->finish();
         $this->logger->log("\n");
-
+        
         return $zephirCode;
-    }
-    
-    /**
-     * @param string $phpCode
-     * @return string
-     */
-    public function convertString($phpCode)
-    {
-    	$result = $this->convertCode($phpCode);
-    	
-    	return $result['zephir'];
-    }
-
-    private function rstrstr($haystack, $needle)
-    {
-        return substr($haystack, 0, strpos($haystack, $needle));
     }
 
     /**
@@ -186,13 +138,13 @@ class Engine
      */
     private function convertCode($phpCode, $fileName = null, array $classes = array())
     {
-        $converted = $this->converter->nodeToZephir($this->parser->parse($phpCode), $fileName, $classes);
+        $converted = $this->converter->nodeToZephir($phpCode, $fileName, $classes);
         
         return array(
-            'zephir'    => $converted['code'],
-            'php'       => $phpCode,
-            'namespace' => $converted['namespace'],
-            'destination' => str_replace('\\', '/', $converted['namespace']).'/',
+            'zephir'          => $converted['code'],
+            'php'             => $phpCode,
+            'namespace'       => $converted['namespace'],
+            'destination'     => str_replace('\\', '/', $converted['namespace']).'/',
             'additionalClass' => $converted['additionalClass'],
         );
     }

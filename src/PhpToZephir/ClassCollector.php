@@ -43,7 +43,7 @@ class ClassCollector
     public function collect(array $stmts, $fileName)
     {
         $namespace = null;
-        $class = null;
+        $class     = null;
 
         foreach ($this->nodeFetcher->foreachNodes($stmts) as $nodeData) {
             $node = $nodeData['node'];

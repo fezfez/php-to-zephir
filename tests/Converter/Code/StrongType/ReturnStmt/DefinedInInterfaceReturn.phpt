@@ -14,25 +14,28 @@ use PhpToZephir\Render\StringRender;
 use PhpToZephir\CodeCollector\StringCodeCollector;
 
 $engine = EngineFactory::getInstance(new Logger(new NullOutput(), false));
-$code   = <<<'EOT'
+$fileOne   = <<<'EOT'
 <?php
 
 namespace Code\StrongType\ReturnStmt;
 
-class DefinedTypeReturn
+interface MyInterface
 {
     /**
      * @return string
      */
+	public function test($toto);
+}
+EOT;
+
+$fileTwo   = <<<'EOT'
+<?php
+
+namespace Code\StrongType\ReturnStmt;
+
+class DefinedInInterfaceReturn implements MyInterface
+{
     public function test($toto)
-    {
-        return $toto;
-    }
-    
-    /**
-     * @return string return a super string
-     */
-    public function test2($toto)
     {
         return $toto;
     }
@@ -41,29 +44,27 @@ EOT;
 
 $render = new StringRender();
 
-foreach ($engine->convert(new StringCodeCollector(array($code))) as $file) {
-	echo $render->render($file);
+foreach ($engine->convert(new StringCodeCollector(array($fileOne, $fileTwo))) as $file) {
+	echo $render->render($file) . "\n";
 }
 
 ?>
 --EXPECT--
 namespace Code\StrongType\ReturnStmt;
 
-class DefinedTypeReturn
+interface MyInterface
 {
     /**
      * @return string
      */
-    public function test(toto) -> string
-    {
-        
-        return toto;
-    }
-    
-    /**
-     * @return string return a super string
-     */
-    public function test2(toto) -> string
+    public function test(toto) -> string;
+
+}
+namespace Code\StrongType\ReturnStmt;
+
+class DefinedInInterfaceReturn implements MyInterface
+{
+    public function test(toto)
     {
         
         return toto;

@@ -53,6 +53,8 @@ class ClassPrinter
 
     public function convert(Stmt\Class_ $node)
     {
+    	$this->classManipulator->registerClassImplements($node);
+    	
         $node->name = $this->reservedWordReplacer->replace($node->name);
 
         return $this->dispatcher->pModifiers($node->type)

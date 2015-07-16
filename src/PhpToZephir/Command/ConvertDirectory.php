@@ -2,7 +2,7 @@
 /**
  * This file is part of the Code Generator package.
  *
- * (c) St�phane Demonchaux <demonchaux.stephane@gmail.com>
+ * (c) St�ｿｽphane Demonchaux <demonchaux.stephane@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,11 +17,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
 use PhpToZephir\FileWriter;
+use PhpToZephir\CodeCollector\DirectoryCodeCollector;
+use PhpToZephir\Render\FileRender;
 
 /**
  * Generator command.
  *
- * @author St�phane Demonchaux
+ * @author Stéphane Demonchaux
  */
 class ConvertDirectory extends Command
 {
@@ -48,15 +50,10 @@ class ConvertDirectory extends Command
             throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
         }
 
-        foreach ($engine->convertDirectory($dir, true, $input->getArgument('file')) as $file => $convertedCode) {
-            $output->writeln(
-                sprintf(
-                    '<info>Converted %s</info>',
-                    $convertedCode['fileDestination']
-                )
-            );
-
-            $fileWriter->write($convertedCode);
+        $render = new FileRender(new FileWriter());
+        
+        foreach ($engine->convert(new DirectoryCodeCollector(array($dir)), $input->getArgument('file')) as $file) {
+        	$render->render($file);
         }
     }
 }
