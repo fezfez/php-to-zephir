@@ -233,6 +233,12 @@ class ClassMethodPrinter
                     $vars[] = $stmt->keyVar->name;
                 }
                 $vars[] = $stmt->valueVar->name;
+            } elseif ($stmt instanceof Stmt\For_) {
+            	foreach ($stmt->init as $init) {
+            		if ($init instanceof Expr\Assign) {
+            			$vars[] = $init->var->name;
+            		}
+            	}
             } elseif ($stmt instanceof Stmt\If_) {
                 foreach ($this->nodeFetcher->foreachNodes($stmt) as $nodeData) {
                     $node = $nodeData['node'];

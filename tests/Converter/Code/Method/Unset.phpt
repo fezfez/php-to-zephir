@@ -5,7 +5,7 @@ Lowlevel basic test
 --FILE--
 <?php
 
-require __DIR__ . '/../../../../Bootstrap.php';
+require __DIR__ . '/../../../Bootstrap.php';
 
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
@@ -14,17 +14,16 @@ use Symfony\Component\Console\Output\NullOutput;
 $engine = EngineFactory::getInstance(new Logger(new NullOutput(), false));
 $code   = <<<'EOT'
 <?php
-namespace Code\Loops\ForStmt;
 
-class SimpleFor
+namespace Code\Method;
+
+class TestUnset
 {
-    public function test()
+    public function simpleTest()
     {
-        $myArray = array('test', '2');
+        $foo = 'simpleTest';
 
-        /*for ($i = 0; count($myArray) < $i; $i++) {
-
-        }*/
+        unset($foo);
     }
 }
 EOT;
@@ -32,16 +31,17 @@ echo $engine->convertString($code, true);
 
 ?>
 --EXPECT--
-namespace Code\Loops\ForStmt;
+namespace Code\Method;
 
-class SimpleFor
+class TestUnset
 {
-    public function test() -> void
+    public function simpleTest() -> void
     {
-        var myArray;
+        var foo;
     
-        
-        let myArray =  ["test", "2"];
+        let foo = "simpleTest";
+        unset(foo);
+    
     }
 
 }
