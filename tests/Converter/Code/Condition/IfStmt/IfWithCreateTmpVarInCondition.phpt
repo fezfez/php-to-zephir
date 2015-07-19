@@ -50,9 +50,13 @@ class IfWithCreateTmpVarInCondition
 }
 EOT;
 $render = new StringRender();
+$codeValidator = new PhpToZephir\CodeValidator();
 
 foreach ($engine->convert(new StringCodeCollector(array($code))) as $file) {
-	echo $render->render($file);
+	$zephir = $render->render($file);
+	$codeValidator->isValid($zephir);
+	
+	echo $zephir;
 }
 
 ?>

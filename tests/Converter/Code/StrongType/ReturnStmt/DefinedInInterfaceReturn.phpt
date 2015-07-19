@@ -43,9 +43,13 @@ class DefinedInInterfaceReturn implements MyInterface
 EOT;
 
 $render = new StringRender();
+$codeValidator = new PhpToZephir\CodeValidator();
 
 foreach ($engine->convert(new StringCodeCollector(array($fileOne, $fileTwo))) as $file) {
-	echo $render->render($file) . "\n";
+	$zephir = $render->render($file);
+	$codeValidator->isValid($zephir);
+	
+	echo $zephir . "\n;
 }
 
 ?>
