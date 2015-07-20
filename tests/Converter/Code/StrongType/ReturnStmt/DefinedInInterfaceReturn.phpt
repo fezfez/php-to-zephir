@@ -48,8 +48,8 @@ $codeValidator = new PhpToZephir\CodeValidator();
 foreach ($engine->convert(new StringCodeCollector(array($fileOne, $fileTwo))) as $file) {
 	$zephir = $render->render($file);
 	$codeValidator->isValid($zephir);
-	
-	echo $zephir . "\n;
+
+	echo $zephir . "\n";
 }
 
 ?>
