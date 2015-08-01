@@ -3,6 +3,7 @@
 namespace PhpToZephir\Converter;
 
 use PhpToZephir\Logger;
+use PhpToZephir\ClassCollector;
 
 /**
  * @method string pExpr_Assign(\PhpParser\Node\Expr\Assign $node)
@@ -53,6 +54,10 @@ class Dispatcher
      * @var ClassMetadata
      */
     private $metadata = null;
+    /**
+     * @var ClassCollector
+     */
+    private $classCollector = null;
     /**
      * @var array
      */
@@ -175,6 +180,8 @@ class Dispatcher
                 $dependencies[] = $this;
             } elseif ($name === 'PhpToZephir\Logger') {
                 $dependencies[] = $this->logger;
+            } elseif ($name === 'PhpToZephir\ClassCollector') {
+                $dependencies[] = $this->classCollector;
             } else {
                 $dependencies[] = $this->dynamicConstruct($name);
             }
@@ -210,9 +217,10 @@ class Dispatcher
      *
      * @return string Pretty printed statements
      */
-    public function convert(array $stmts, ClassMetadata $metadata)
+    public function convert(array $stmts, ClassMetadata $metadata, ClassCollector $classCollector)
     {
         $this->metadata = $metadata;
+        $this->classCollector = $classCollector;
 
         return ltrim(str_replace("\n".self::noIndentToken, "\n", $this->pStmts($stmts, false)));
     }

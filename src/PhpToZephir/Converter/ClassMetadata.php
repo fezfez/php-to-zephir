@@ -24,6 +24,10 @@ class ClassMetadata
      * @var array
      */
     private $classesAlias = array();
+    /**
+     * @var array
+     */
+    private $implements = array();
 
     /**
      * @param string $value
@@ -38,6 +42,13 @@ class ClassMetadata
     public function setClass($value)
     {
         $this->class = $value;
+    }
+    /**
+     * @param string $value
+     */
+    public function setImplements(array $value)
+    {
+    	$this->implements = $value;
     }
 
     /**
@@ -76,6 +87,13 @@ class ClassMetadata
     public function getClass()
     {
         return $this->class;
+    }
+    /**
+     * @return array
+     */
+    public function getImplements()
+    {
+    	return $this->implements;
     }
     /**
      * @return array

@@ -10,6 +10,7 @@ use phpDocumentor\Reflection\DocBlock\Tag\ParamTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ReturnTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ThrowsTag;
 use phpDocumentor\Reflection\DocBlock\Tag\SeeTag;
+use PhpToZephir\Converter\ClassMetadata;
 
 class TypeFinder
 {
@@ -21,15 +22,47 @@ class TypeFinder
      * @var Logger
      */
     private $logger = null;
+    /**
+     * @var ClassCollector
+     */
+    private $classCollector = null;
+    /**
+     * @var NodeFetcher
+     */
+    private $nodeFetcher = null;
 
     /**
      * @param ReservedWordReplacer $reservedWordReplacer
      * @param Logger               $logger
+     * @param ClassCollector       $classCollector
+     * @param NodeFetcher $nodeFetcher
      */
-    public function __construct(ReservedWordReplacer $reservedWordReplacer, Logger $logger)
+    public function __construct(ReservedWordReplacer $reservedWordReplacer, Logger $logger, ClassCollector $classCollector, NodeFetcher $nodeFetcher)
     {
         $this->reservedWordReplacer = $reservedWordReplacer;
         $this->logger               = $logger;
+        $this->classCollector       = $classCollector;
+        $this->nodeFetcher          = $nodeFetcher;
+    }
+    
+    /**
+     * @param ClassMethod   $node
+     * @param ClassMetadata $classMetadata
+     * @retur narray
+     */
+    public function getTypes(ClassMethod $node, ClassMetadata $classMetadata)
+    {
+    	$actualNamespace = $classMetadata->getFullQualifiedNameClass();
+    	$use = $classMetadata->getUse();
+    	$classes = $classMetadata->getClasses();
+    	$class = $classMetadata->getClass();
+    	$definition = array();
+    	
+    	$definition = $this->parseParam($node, $actualNamespace, $use, $classes, $definition);
+    
+    	$phpdoc = $this->nodeToDocBlock($node);
+    
+    	return $this->findReturnTag($phpdoc, $actualNamespace, $definition, $use, $classes, $classMetadata, $node);
     }
 
     /**
@@ -136,27 +169,6 @@ class TypeFinder
     }
 
     /**
-     * @param ClassMethod $node
-     * @param string      $actualNamespace
-     * @param array       $use
-     * @param array       $classes
-     * @param array       $definition
-     * @retur narray
-     */
-    public function getTypes(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition = array())
-    {
-        $definition = $this->parseParam($node, $actualNamespace, $use, $classes, $definition);
-
-        $phpdoc = $this->nodeToDocBlock($node);
-
-        if ($phpdoc === null) {
-            return $definition;
-        }
-
-        return $this->findReturnTag($phpdoc, $actualNamespace, $definition, $use, $classes);
-    }
-
-    /**
      * @param string   $actualNamespace
      * @param array    $definition
      * @param array    $use
@@ -165,18 +177,63 @@ class TypeFinder
      *
      * @return array
      */
-    private function findReturnTag($phpdoc, $actualNamespace, array $definition, array $use, array $classes)
+    private function findReturnTag($phpdoc = null, $actualNamespace, array $definition, array $use, array $classes, ClassMetadata $classMetadata, ClassMethod $node)
     {
-        foreach ($phpdoc->getTags() as $tag) {
-            if ($this->isReturnTag($tag) === true) {
-                $definition['return'] = array(
-                    'type' => $this->findType($tag, $actualNamespace, $use, $classes),
-                );
-                break;
-            }
-        }
+    	$implements = $classMetadata->getImplements();
+    	if (is_array($implements) === true) {
+    		
+    		foreach ($implements as $implement) {
+	    		foreach ($this->classCollector->getCollected() as $className => $classInfo) {
+	    			if ($classMetadata->getNamespace() . '\\' . $implement === $className) {
+	    				try {
+	    					$phpdoc = $this->nodeToDocBlock($this->findMethod($classInfo, $node->name));
+	    					
+	    				} catch (\InvalidArgumentException $e) {
+	    				}
+	    				
+	    			}
+	    			foreach ($use as $uses) {
+	    				if ($uses . '/' . $implement === $className) {
+    						try {
+		    					$phpdoc = $this->nodeToDocBlock($this->findMethod($classInfo, $node->name));
+		    				} catch (\InvalidArgumentException $e) {
+		    				}
+	    				}
+	    			}
+	    		}
+    		}
+    	}
+
+    	if ($phpdoc !== null) {
+	        foreach ($phpdoc->getTags() as $tag) {
+	            if ($this->isReturnTag($tag) === true) {
+	                $definition['return'] = array(
+	                    'type' => $this->findType($tag, $actualNamespace, $use, $classes),
+	                );
+	                break;
+	            }
+	        }
+    	}
 
         return $definition;
+    }
+    
+    /**
+     * @param ClassMethod $classInfo
+     * @param string $name
+     * @throws \InvalidArgumentException
+     * @return \PhpParser\Node\Stmt\ClassMethod
+     */
+    private function findMethod(array $classInfo, $name)
+    {
+    	foreach ($this->nodeFetcher->foreachNodes($classInfo) as $stmtData) {
+    		$stmt = $stmtData['node'];
+    		if ($stmt instanceof ClassMethod && $stmt->name === $name) {
+    			return $stmt;
+    		}
+    	}
+    	
+    	throw new \InvalidArgumentException(sprintf('method %s not found', $name));
     }
 
     /**

@@ -7,6 +7,7 @@ use PhpToZephir\NodeFetcher;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpToZephir\Converter\Printer\Expr\ClosurePrinter;
+use PhpToZephir\ClassCollector;
 
 class Converter
 {
@@ -42,13 +43,13 @@ class Converter
      *
      * @return array
      */
-    public function nodeToZephir(array $stmts, $fileName = null, array $classCollected = array())
+    public function nodeToZephir(array $stmts, ClassCollector $classCollector, $fileName = null, array $classCollected = array())
     {
         $classInformation = ClassInformationFactory::getInstance();
         $metadata = $classInformation->getClassesMetdata($stmts);
 
         return array(
-            'code'            => $this->dispatcher->convert($stmts, $metadata),
+            'code'            => $this->dispatcher->convert($stmts, $metadata, $classCollector),
             'namespace'       => $metadata->getNamespace(),
             'additionalClass' => $this->findAdditionalClasses($stmts),
         );

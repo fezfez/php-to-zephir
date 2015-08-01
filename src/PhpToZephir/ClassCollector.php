@@ -21,6 +21,10 @@ class ClassCollector
      * @var ReservedWordReplacer
      */
     private $reservedWordReplacer = null;
+    /**
+     * @var array
+     */
+    private $collected = array();
 
     /**
      * @param Logger               $logger
@@ -74,7 +78,17 @@ class ClassCollector
         if ($class === null) {
             throw new \Exception('No class found in '.$fileName);
         }
+        
+        $this->collected[$class] = $stmts;
 
         return $class;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getCollected()
+    {
+    	return $this->collected;
     }
 }

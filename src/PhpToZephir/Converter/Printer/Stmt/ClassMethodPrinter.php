@@ -84,9 +84,7 @@ class ClassMethodPrinter
     {
         $types = $this->typeFinder->getTypes(
             $node,
-            $this->dispatcher->getMetadata()->getFullQualifiedNameClass(),
-            $this->dispatcher->getMetadata()->getUse(),
-            $this->dispatcher->getMetadata()->getClasses()
+            $this->dispatcher->getMetadata()
         );
         $this->dispatcher->setLastMethod($node->name);
         $node->stmts = $this->findModifiedToNonStaticVar($node->stmts);

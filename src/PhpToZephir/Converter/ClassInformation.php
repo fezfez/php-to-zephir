@@ -75,6 +75,20 @@ class ClassInformation
                 }
                 $class = $this->reservedWordReplacer->replace($node->name);
                 $classMetadata->setClass($class);
+
+                if ($node->implements !== null) {
+                	$implementsClean = array();
+                	foreach ($node->implements as $implement) {
+                		$implementsClean[] = $this->reservedWordReplacer->replace(implode('\\', $implement->parts));
+                	}
+                	$classMetadata->setImplements($implementsClean);
+                }
+            } elseif ($node instanceof Stmt\Interface_ || $node instanceof Stmt\Class_) {
+                if ($class !== null) {
+                    throw new \Exception('Multiple class find in '.$fileName);
+                }
+                $class = $this->reservedWordReplacer->replace($node->name);
+                $classMetadata->setClass($class);
             }
         }
 

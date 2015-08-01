@@ -85,7 +85,7 @@ class Engine
             $phpCode   = $codes[$phpFile];
             $fileName  = basename($phpFile, '.php');
             try {
-                $converted = $this->convertCode($phpCode, $phpFile, $classes);
+                $converted = $this->convertCode($phpCode, $this->classCollector, $phpFile, $classes);
                 $converted['class'] = $class;
             } catch (\Exception $e) {
                 $this->logger->log(
@@ -136,9 +136,9 @@ class Engine
      *
      * @return string
      */
-    private function convertCode($phpCode, $fileName = null, array $classes = array())
+    private function convertCode($phpCode, ClassCollector $classCollector, $fileName = null, array $classes = array())
     {
-        $converted = $this->converter->nodeToZephir($phpCode, $fileName, $classes);
+        $converted = $this->converter->nodeToZephir($phpCode, $classCollector, $fileName, $classes);
         
         return array(
             'zephir'          => $converted['code'],

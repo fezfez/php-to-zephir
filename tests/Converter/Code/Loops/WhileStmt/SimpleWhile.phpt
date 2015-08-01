@@ -32,9 +32,9 @@ class SimpleWhile
         $pos = 0;
         $input = 'mySuperString';
 
-        /*while (($pos = strpos($input, '@', $pos)) !== false) {
-
-        }*/
+        while (($pos = strpos($input, '@', $pos)) !== false) {
+			echo $pos;
+        }
     }
 }
 EOT;
@@ -44,7 +44,6 @@ $codeValidator = new PhpToZephir\CodeValidator();
 foreach ($engine->convert(new StringCodeCollector(array($code))) as $file) {
 	$zephir = $render->render($file);
 	$codeValidator->isValid($zephir);
-	
 	echo $zephir;
 }
 
@@ -69,6 +68,11 @@ class SimpleWhile
     
         let pos = 0;
         let input = "mySuperString";
+        let pos =  strpos(input, "@", pos);
+        while (pos !== false) {
+            echo pos;
+        let pos =  strpos(input, "@", pos);
+        }
     }
 
 }

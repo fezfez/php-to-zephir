@@ -4,6 +4,10 @@ namespace PhpToZephir;
 
 class CodeValidator
 {
+	/**
+	 * @param string $zephirCode
+	 * @throws \Exception
+	 */
 	public function isValid($zephirCode)
 	{
 		$tmpfname = __DIR__ . '/tmp.zep';
@@ -18,7 +22,8 @@ class CodeValidator
 			$zephirParserBinary = $ZEPHIRPATH . 'bin/zephir-parser';
 		}
 		
-		exec($zephirParserBinary . ' ' . $tmpfname, $output, $return);
+		
+		exec($zephirParserBinary . ' ' . $tmpfname, $tmp, $return);
 		
 		unlink($tmpfname);
 		
