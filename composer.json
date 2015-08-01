@@ -17,7 +17,7 @@
 	"require" : {
 		"nikic/PHP-Parser" : "1.0.*",
 		"phpdocumentor/reflection-docblock" : "2.0.*",
-		"phalcon/zephir" : "dev-master",
+		"phalcon/zephir" : "0.7.*",
 		"symfony/console" : "2.6.*"
 	},
 	"require-dev" : {
