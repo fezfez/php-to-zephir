@@ -8,34 +8,16 @@ php:
 before_install:
   - sudo apt-get install re2c libpcre3-dev 
 
-# TODO: fix the Zephir version via Composer
 install:
-  - cd /tmp
-  - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
-  - unzip -q json-c
-  - cd json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a
-  - sh autogen.sh
-  - ./configure
-  - make
-  - sudo make install
-  - wget https://github.com/phalcon/zephir/archive/master.zip -O zephir
-  - unzip -q zephir
-  - cd zephir-master
-  - sudo ./install -c
-  - phpize -v 
-  - cd $TRAVIS_BUILD_DIR
   - composer selfupdate
   - composer install
 
-before_script:
-  - ./vendor/bin/phpunit --coverage-clover coverage.clover
+script: ./vendor/bin/phpunit --coverage-clover coverage.clover
   
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
   - zephir build
-
-script: php -dextension=code.so ./vendor/bin/phpunit
 
 matrix:
   allow_failures:
