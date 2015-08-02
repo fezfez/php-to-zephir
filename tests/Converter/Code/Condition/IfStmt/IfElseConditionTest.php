@@ -4,9 +4,9 @@ namespace Converter\Code\Condition\IfStmt;
 
 class IfElseConditionTest extends \ConverterBaseTest
 {
-	public function testConverting()
-	{
-		$php = <<<'EOT'
+    public function testConverting()
+    {
+        $php = <<<'EOT'
 <?php
 
 namespace Code\Condition\IfStmt;
@@ -52,7 +52,7 @@ class IfElseCondition
 }
 EOT;
 
-		$zephirExpected = <<<EOT
+        $zephirExpected = <<<EOT
 namespace Code\Condition\IfStmt;
 
 class IfElseCondition
@@ -99,6 +99,6 @@ class IfElseCondition
 
 }
 EOT;
-		$this->assertConvertToZephir($php, $zephirExpected);
-	}
+        $this->assertConvertToZephir($php, $zephirExpected);
+    }
 }
