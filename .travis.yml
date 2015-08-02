@@ -9,6 +9,12 @@ before_install:
   - sudo apt-get install re2c libpcre3-dev 
 
 install:
+  - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
+  - unzip -q json-c
+  - ./json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/autogen.sh
+  - ./json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/configure
+  - make -C ./json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/
+  - sudo make install
   - composer selfupdate
   - composer install
 
