@@ -12,7 +12,7 @@ install:
   - composer install
   - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
   - unzip json-c -d tmp-json
-  - mv tmp-json/json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/* ./vendor/phalcon/zephir/json
+  - mv tmp-json/json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/* ./vendor/phalcon/zephir/json/
   - ./vendor/phalcon/zephir/install-json
   - ./vendor/phalcon/zephir/install -c
 
