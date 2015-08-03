@@ -8,8 +8,8 @@ php:
 
 install:
   - phpize -v
-  - ./vendor/zephir/install-json
-  - ./vendor/zephir/install -c
+  - ./vendor/phalcon/zephir/install-json
+  - ./vendor/phalcon/zephir/install -c
   - composer selfupdate
   - composer install
 
