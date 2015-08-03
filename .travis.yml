@@ -16,6 +16,10 @@ install:
   - ./vendor/phalcon/zephir/install-json
   - ./vendor/phalcon/zephir/install -c
 
+cache:
+  directories:
+  - vendor
+
 script: ./vendor/bin/phpunit --coverage-clover coverage.clover
   
 after_script:
