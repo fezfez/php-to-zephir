@@ -8,10 +8,10 @@ php:
 
 install:
   - phpize -v
-  - ./vendor/phalcon/zephir/install-json
-  - ./vendor/phalcon/zephir/install -c
   - composer selfupdate
   - composer install
+  - ./vendor/phalcon/zephir/install-json
+  - ./vendor/phalcon/zephir/install -c
 
 script: ./vendor/bin/phpunit --coverage-clover coverage.clover
   
