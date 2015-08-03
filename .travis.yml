@@ -1,12 +1,10 @@
 language: php
+sudo: false
 php:
   - 5.4
   - 5.5
   - 5.6
   - 7.0
-
-before_install:
-  - sudo apt-get install git gcc make re2c php5 php5-json php5-dev libpcre3-dev
 
 install:
   - phpize -v
