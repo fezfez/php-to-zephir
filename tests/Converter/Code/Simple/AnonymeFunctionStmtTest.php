@@ -69,6 +69,7 @@ class AnonymeFunctionStmttestClosureZero
     echo tutu . this->test;
     }
 }
+    
 EOT
 );
         $this->assertConvertToZephir($php, $zephir);

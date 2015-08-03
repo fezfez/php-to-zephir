@@ -67,15 +67,17 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
         if (is_array($php) === false) {
             $php = array($php);
         }
-        if (is_array($zephir) === false) {
-            $zephir = array($zephir);
-        }
 
-        foreach ($this->getEngine()->convert(new StringCodeCollector($php)) as $index => $file) {
+        foreach (array_values($this->getEngine()->convert(new StringCodeCollector($php))) as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);
             $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 
-            $this->assertEquals($zephir[$index], $zephirGenerated);
+			if (is_array($zephir) === true) {
+				$this->assertEquals($zephir[$index], $zephirGenerated);
+			} else {
+				var_dump($zephir, $zephirGenerated);
+            	$this->assertEquals($zephir, $zephirGenerated);
+			}
         }
     }
 }
