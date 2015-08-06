@@ -9,17 +9,14 @@ use PhpToZephir\Converter\ConverterFactory;
 class EngineFactory
 {
     /**
-     * @param Logger $logger
-     *
-     * @return \PhpToZephir\Engine
+     * @return Engine
      */
-    public static function getInstance(Logger $logger)
+    public static function getInstance()
     {
         return new Engine(
             new Parser(new Emulative()),
-            ConverterFactory::getInstance($logger),
-            ClassCollectorFactory::getInstance($logger),
-            $logger
+            ConverterFactory::getInstance(),
+            ClassCollectorFactory::getInstance()
         );
     }
 }

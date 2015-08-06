@@ -14,9 +14,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use PhpToZephir\EngineFactory;
+use PhpToZephir\Engine;
 use PhpToZephir\Logger;
-use PhpToZephir\FileWriter;
 use PhpToZephir\CodeCollector\DirectoryCodeCollector;
 use PhpToZephir\Render\FileRender;
 
@@ -27,6 +26,32 @@ use PhpToZephir\Render\FileRender;
  */
 class ConvertDirectory extends Command
 {
+    /**
+     * @var Engine
+     */
+    private $engine;
+    /**
+     * @var FileRender
+     */
+    private $fileRender;
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
+     * @param Engine          $engine
+     * @param FileRender      $fileRender
+     * @param OutputInterface $output
+     */
+    public function __construct(Engine $engine, FileRender $fileRender, OutputInterface $output)
+    {
+        $this->engine = $engine;
+        $this->fileRender = $fileRender;
+        $this->output = $output;
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -42,18 +67,17 @@ class ConvertDirectory extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $engine = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
-        $dir = $input->getArgument('dir');
-        $fileWriter = new FileWriter();
+        $directory = $input->getArgument('dir');
 
-        if (is_dir($dir) === false) {
-            throw new \Exception(sprintf('Directory "%s" does not exist', $dir));
+        if (is_dir($directory) === false) {
+            throw new \InvalidArgumentException(sprintf('Directory "%s" does not exist', $directory));
         }
 
-        $render = new FileRender(new FileWriter());
+        $logger = new Logger($this->output, $input->getOption('debug'));
+        $directoryCollector = new DirectoryCodeCollector(array($directory));
 
-        foreach ($engine->convert(new DirectoryCodeCollector(array($dir)), $input->getArgument('file')) as $file) {
-            $render->render($file);
+        foreach ($this->engine->convert($directoryCollector, $input->getArgument('file'), $logger) as $file) {
+            $this->fileRender->render($file);
         }
     }
 }

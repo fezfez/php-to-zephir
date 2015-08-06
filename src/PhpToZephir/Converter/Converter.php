@@ -16,34 +16,30 @@ class Converter
      */
     private $dispatcher = null;
     /**
-     * @var Logger
-     */
-    private $logger = null;
-    /**
      * @var NodeFetcher
      */
     private $nodeFetcher = null;
 
     /**
      * @param Dispatcher  $dispatcher
-     * @param Logger      $logger
      * @param NodeFetcher $nodeFetcher
      */
-    public function __construct(Dispatcher $dispatcher, Logger $logger, NodeFetcher $nodeFetcher)
+    public function __construct(Dispatcher $dispatcher, NodeFetcher $nodeFetcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger = $logger;
         $this->nodeFetcher = $nodeFetcher;
     }
 
     /**
-     * @param array  $stmts
-     * @param string $fileName
-     * @param array  $classCollected
+     * @param array          $stmts
+     * @param ClassCollector $classCollector
+     * @param Logger         $logger
+     * @param string         $fileName
+     * @param array          $classCollected
      *
      * @return array
      */
-    public function nodeToZephir(array $stmts, ClassCollector $classCollector, $fileName = null, array $classCollected = array())
+    public function nodeToZephir(array $stmts, ClassCollector $classCollector, Logger $logger, $fileName = null, array $classCollected = array())
     {
         $classInformation = ClassInformationFactory::getInstance();
         $metadata = $classInformation->getClassesMetdata($stmts);
@@ -51,7 +47,7 @@ class Converter
         return array(
             'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector),
             'namespace' => $metadata->getNamespace(),
-            'additionalClass' => $this->findAdditionalClasses($stmts),
+            'additionalClass' => $this->findAdditionalClasses($stmts, $logger),
         );
     }
 
@@ -60,9 +56,9 @@ class Converter
      *
      * @return array
      */
-    private function findAdditionalClasses(array $stmts)
+    private function findAdditionalClasses(array $stmts, Logger $logger)
     {
-        $closurePrinter = new ClosurePrinter($this->dispatcher, $this->logger);
+        $closurePrinter = new ClosurePrinter($this->dispatcher, $logger);
         $lastMethod = null;
         $aditionalClass = array();
         $number = 0;

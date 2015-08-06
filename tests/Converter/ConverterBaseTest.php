@@ -28,7 +28,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
     private function getEngine()
     {
         if (self::$engine === null) {
-            self::$engine = EngineFactory::getInstance(new Logger(new NullOutput(), false));
+            self::$engine = EngineFactory::getInstance();
         }
 
         return self::$engine;
@@ -68,7 +68,9 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             $php = array($php);
         }
 
-        foreach (array_values($this->getEngine()->convert(new StringCodeCollector($php))) as $index => $file) {
+        $logger = new Logger(new NullOutput(), false);
+
+        foreach (array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger)) as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);
             $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 

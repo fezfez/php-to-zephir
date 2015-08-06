@@ -17,6 +17,6 @@ if (is_file(__DIR__.'/../vendor/autoload.php') === true) {
 
 $output = new ConsoleOutput();
 $input  = new ArgvInput();
-$cli    = CliFactory::getInstance();
+$cli    = CliFactory::getInstance($output);
 
 $cli->run($input, $output);

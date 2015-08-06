@@ -10,10 +10,6 @@ use PhpParser\Node\Scalar\MagicConst;
 class ClassCollector
 {
     /**
-     * @var Logger
-     */
-    private $logger = null;
-    /**
      * @var NodeFetcher
      */
     private $nodeFetcher = null;
@@ -27,13 +23,11 @@ class ClassCollector
     private $collected = array();
 
     /**
-     * @param Logger               $logger
      * @param NodeFetcher          $nodeFetcher
      * @param ReservedWordReplacer $reservedWordReplacer
      */
-    public function __construct(Logger $logger, NodeFetcher $nodeFetcher, ReservedWordReplacer $reservedWordReplacer)
+    public function __construct(NodeFetcher $nodeFetcher, ReservedWordReplacer $reservedWordReplacer)
     {
-        $this->logger = $logger;
         $this->nodeFetcher = $nodeFetcher;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }

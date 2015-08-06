@@ -13,7 +13,8 @@ namespace PhpToZephir\Service;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
-use PhpToZephir\Command\ConvertDirectory;
+use Symfony\Component\Console\Output\OutputInterface;
+use PhpToZephir\Command\ConvertDirectoryFactory;
 
 /**
  * Create CLI instance.
@@ -27,14 +28,14 @@ class CliFactory
      *
      * @return Application
      */
-    public static function getInstance()
+    public static function getInstance(OutputInterface $output)
     {
         $questionHelper = new QuestionHelper();
         $application = new Application('Code Generator Command Line Interface', 'Alpha');
         $application->getHelperSet()->set(new FormatterHelper(), 'formatter');
         $application->getHelperSet()->set($questionHelper, 'question');
 
-        $application->add(new ConvertDirectory());
+        $application->add(ConvertDirectoryFactory::getInstance($output));
 
         return $application;
     }

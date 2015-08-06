@@ -2,8 +2,6 @@
 
 namespace PhpToZephir\Converter;
 
-use PhpToZephir\Logger;
-
 class DispatcherFactory
 {
     /**
@@ -12,25 +10,21 @@ class DispatcherFactory
     private static $instance = null;
 
     /**
-     * @param Logger $logger
-     *
      * @return \PhpToZephir\Converter\Dispatcher
      */
-    public static function getInstance(Logger $logger)
+    public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = self::createInstance($logger);
+            self::$instance = self::createInstance();
         }
 
         return self::$instance;
     }
 
     /**
-     * @param Logger $logger
-     *
      * @return \PhpToZephir\Converter\Dispatcher
      */
-    private static function createInstance(Logger $logger)
+    private static function createInstance()
     {
         $dirName = __DIR__.'/Printer/';
         $directory = new \RecursiveDirectoryIterator($dirName);
@@ -50,7 +44,6 @@ class DispatcherFactory
 
         return new Dispatcher(
             $classes,
-            $logger,
             include __DIR__.'/PrecedenceMap.php'
         );
     }

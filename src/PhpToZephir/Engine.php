@@ -20,32 +20,27 @@ class Engine
      * @var ClassCollector
      */
     private $classCollector = null;
-    /**
-     * @var Logger
-     */
-    private $logger = null;
 
     /**
      * @param Parser              $parser
      * @param Converter\Converter $converter
      * @param ClassCollector      $classCollector
-     * @param Logger              $logger
      */
-    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector, Logger $logger)
+    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector)
     {
         $this->parser = $parser;
         $this->converter = $converter;
         $this->classCollector = $classCollector;
-        $this->logger = $logger;
     }
 
     /**
      * @param CodeCollectorInterface $codeCollector
+     * @param Logger                 $logger
      * @param string                 $filterFileName
      *
      * @return array
      */
-    public function convert(CodeCollectorInterface $codeCollector, $filterFileName = null)
+    public function convert(CodeCollectorInterface $codeCollector, Logger $logger, $filterFileName = null)
     {
         $zephirCode = array();
         $classes = array();
@@ -54,15 +49,15 @@ class Engine
         $count = count($files);
         $codes = array();
 
-        $this->logger->log('Collect class names');
-        $progress = $this->logger->progress($count);
+        $logger->log('Collect class names');
+        $progress = $logger->progress($count);
 
         foreach ($files as $fileName => $fileContent) {
             try {
                 $codes[$fileName] = $this->parser->parse($fileContent);
                 $classes[$fileName] = $this->classCollector->collect($codes[$fileName], $fileName);
             } catch (\Exception $e) {
-                $this->logger->log(
+                $logger->log(
                     sprintf(
                         '<error>Could not convert file'."\n".'"%s"'."\n".'cause : %s %s %s</error>'."\n",
                         $fileName,
@@ -77,8 +72,8 @@ class Engine
 
         $progress->finish();
 
-        $this->logger->log("\nConvert php to zephir");
-        $progress = $this->logger->progress(count($classes));
+        $logger->log("\nConvert php to zephir");
+        $progress = $logger->progress(count($classes));
 
         foreach ($classes as $phpFile => $class) {
             if ($filterFileName !== null) {
@@ -90,10 +85,10 @@ class Engine
             $phpCode = $codes[$phpFile];
             $fileName = basename($phpFile, '.php');
             try {
-                $converted = $this->convertCode($phpCode, $this->classCollector, $phpFile, $classes);
+                $converted = $this->convertCode($phpCode, $this->classCollector, $logger, $phpFile, $classes);
                 $converted['class'] = $class;
             } catch (\Exception $e) {
-                $this->logger->log(
+                $logger->log(
                     sprintf(
                         'Could not convert file "%s" cause : %s %s %s'."\n",
                         $phpFile,
@@ -131,7 +126,7 @@ class Engine
         }
 
         $progress->finish();
-        $this->logger->log("\n");
+        $logger->log("\n");
 
         return $zephirCode;
     }
@@ -141,9 +136,9 @@ class Engine
      *
      * @return string
      */
-    private function convertCode($phpCode, ClassCollector $classCollector, $fileName = null, array $classes = array())
+    private function convertCode($phpCode, ClassCollector $classCollector, Logger $logger, $fileName = null, array $classes = array())
     {
-        $converted = $this->converter->nodeToZephir($phpCode, $classCollector, $fileName, $classes);
+        $converted = $this->converter->nodeToZephir($phpCode, $classCollector, $fileName, $classes, $logger);
 
         return array(
             'zephir' => $converted['code'],

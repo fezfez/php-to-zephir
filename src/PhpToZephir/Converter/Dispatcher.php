@@ -65,13 +65,11 @@ class Dispatcher
 
     /**
      * @param PrinterCollection $printerCollection
-     * @param Logger            $logger
      * @param array             $precedenceMap
      */
-    public function __construct(PrinterCollection $printerCollection, Logger $logger, array $precedenceMap)
+    public function __construct(PrinterCollection $printerCollection, array $precedenceMap)
     {
         $this->printerCollection = $printerCollection;
-        $this->logger = $logger;
         $this->precedenceMap = $precedenceMap;
     }
 
@@ -217,10 +215,11 @@ class Dispatcher
      *
      * @return string Pretty printed statements
      */
-    public function convert(array $stmts, ClassMetadata $metadata, ClassCollector $classCollector)
+    public function convert(array $stmts, ClassMetadata $metadata, ClassCollector $classCollector, Logger $logger)
     {
         $this->metadata = $metadata;
         $this->classCollector = $classCollector;
+        $this->logger = $logger;
 
         return ltrim(str_replace("\n".self::noIndentToken, "\n", $this->pStmts($stmts, false)));
     }
