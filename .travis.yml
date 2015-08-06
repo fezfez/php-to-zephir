@@ -26,7 +26,6 @@ script: ./vendor/bin/phpunit --coverage-clover coverage.clover
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
-  - zephir build
 
 matrix:
   allow_failures:
