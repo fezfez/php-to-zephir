@@ -10,7 +10,7 @@ class BitwiseAndPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_BitwiseAnd";
+        return 'pExpr_AssignOp_BitwiseAnd';
     }
 
     public function convert(AssignOp\BitwiseAnd $node)

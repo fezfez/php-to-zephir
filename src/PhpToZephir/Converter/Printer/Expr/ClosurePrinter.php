@@ -6,7 +6,6 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
 
 class ClosurePrinter
 {
@@ -28,7 +27,7 @@ class ClosurePrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,7 +35,7 @@ class ClosurePrinter
      */
     public static function getType()
     {
-        return "pExpr_Closure";
+        return 'pExpr_Closure';
     }
 
     /**
@@ -48,12 +47,12 @@ class ClosurePrinter
     {
         $methodName = $this->dispatcher->getMetadata()->getClass().$this->dispatcher->getLastMethod();
         if (isset(self::$converted[$methodName])) {
-            self::$converted[$methodName]++;
+            ++self::$converted[$methodName];
         } else {
             self::$converted[$methodName] = 1;
         }
 
-        $name = $methodName."Closure".$this->N2L(count(self::$converted[$methodName]));
+        $name = $methodName.'Closure'.$this->N2L(count(self::$converted[$methodName]));
 
         $this->logger->logNode(
             sprintf('Closure does not exist in Zephir, class "%s" with __invoke is created', $name),
@@ -61,18 +60,18 @@ class ClosurePrinter
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
         );
 
-        return "new ".$name.'('.$this->dispatcher->pCommaSeparated($node->uses).')';
+        return 'new '.$name.'('.$this->dispatcher->pCommaSeparated($node->uses).')';
     }
 
     /**
      * @param null|string $lastMethod
-     * @param integer     $number
+     * @param int         $number
      */
     public function createClosureClass(Expr\Closure $node, $lastMethod, $number)
     {
         $this->logger->trace(__METHOD__.' '.__LINE__, $node, $this->dispatcher->getMetadata()->getFullQualifiedNameClass());
 
-        $name = $this->dispatcher->getMetadata()->getClass().$lastMethod."Closure".$this->N2L($number);
+        $name = $this->dispatcher->getMetadata()->getClass().$lastMethod.'Closure'.$this->N2L($number);
 
         $this->logger->logNode(
             sprintf('Closure does not exist in Zephir, class "%s" with __invoke is created', $name),
@@ -99,24 +98,24 @@ class $name
 ";
 
         foreach ($node->uses as $use) {
-            $class .= "    private ".$use->var.";\n";
+            $class .= '    private '.$use->var.";\n";
         }
 
-        $class .= "
-    public function __construct(".(!empty($node->uses) ? ''.$this->dispatcher->pCommaSeparated($node->uses) : '').")
+        $class .= '
+    public function __construct('.(!empty($node->uses) ? ''.$this->dispatcher->pCommaSeparated($node->uses) : '').')
     {
-        ";
+        ';
         foreach ($node->uses as $use) {
-            $class .= "        let this->".$use->var." = ".$use->var.";\n";
+            $class .= '        let this->'.$use->var.' = '.$use->var.";\n";
         }
-        $class .= "
+        $class .= '
     }
 
-    public function __invoke(".$this->dispatcher->pCommaSeparated($node->params).")
-    {".$this->dispatcher->pStmts($this->convertUseToMemberAttribute($node->stmts, $node->uses))."
+    public function __invoke('.$this->dispatcher->pCommaSeparated($node->params).')
+    {'.$this->dispatcher->pStmts($this->convertUseToMemberAttribute($node->stmts, $node->uses)).'
     }
 }
-    ";
+    ';
 
         return $class;
     }
@@ -151,7 +150,7 @@ class $name
     }
 
     /**
-     * @param integer $number
+     * @param int $number
      */
     private function N2L($number)
     {

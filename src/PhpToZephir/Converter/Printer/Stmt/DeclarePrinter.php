@@ -9,7 +9,7 @@ class DeclarePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Declare";
+        return 'pStmt_Declare';
     }
 
     public function convert(Stmt\Declare_ $node)

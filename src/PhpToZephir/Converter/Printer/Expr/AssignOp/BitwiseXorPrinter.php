@@ -10,7 +10,7 @@ class BitwiseXorPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_BitwiseXor";
+        return 'pExpr_AssignOp_BitwiseXor';
     }
 
     public function convert(AssignOp\BitwiseXor $node)

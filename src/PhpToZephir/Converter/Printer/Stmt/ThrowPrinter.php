@@ -12,7 +12,7 @@ class ThrowPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Throw";
+        return 'pStmt_Throw';
     }
 
     /**

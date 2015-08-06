@@ -31,8 +31,8 @@ class Converter
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, NodeFetcher $nodeFetcher)
     {
-        $this->dispatcher  = $dispatcher;
-        $this->logger      = $logger;
+        $this->dispatcher = $dispatcher;
+        $this->logger = $logger;
         $this->nodeFetcher = $nodeFetcher;
     }
 
@@ -49,8 +49,8 @@ class Converter
         $metadata = $classInformation->getClassesMetdata($stmts);
 
         return array(
-            'code'            => $this->dispatcher->convert($stmts, $metadata, $classCollector),
-            'namespace'       => $metadata->getNamespace(),
+            'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector),
+            'namespace' => $metadata->getNamespace(),
             'additionalClass' => $this->findAdditionalClasses($stmts),
         );
     }
@@ -63,9 +63,9 @@ class Converter
     private function findAdditionalClasses(array $stmts)
     {
         $closurePrinter = new ClosurePrinter($this->dispatcher, $this->logger);
-        $lastMethod     = null;
+        $lastMethod = null;
         $aditionalClass = array();
-        $number         = 0;
+        $number = 0;
 
         foreach ($this->nodeFetcher->foreachNodes($stmts) as $nodeData) {
             $node = $nodeData['node'];
@@ -73,7 +73,7 @@ class Converter
                 $lastMethod = $node->name;
             } elseif ($node instanceof Expr\Closure) {
                 $aditionalClass[] = $closurePrinter->createClosureClass($node, $lastMethod, $number);
-                $number++;
+                ++$number;
             }
         }
 

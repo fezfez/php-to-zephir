@@ -9,7 +9,7 @@ class ConstPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Const";
+        return 'pStmt_Const';
     }
 
     public function convert(Stmt\Const_ $node)

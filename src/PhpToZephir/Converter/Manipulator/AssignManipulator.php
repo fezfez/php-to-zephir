@@ -26,7 +26,7 @@ class AssignManipulator
     public function __construct(NodeFetcher $nodeFetcher, Dispatcher $dispatcher)
     {
         $this->nodeFetcher = $nodeFetcher;
-        $this->dispatcher  = $dispatcher;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -62,14 +62,14 @@ class AssignManipulator
         if ($stmt instanceof Expr\Assign) {
             if ($stmt->expr instanceof Expr\BinaryOp) {
                 $stmt->expr = $stmt->expr->left;
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).";";
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).';';
             } else {
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).";";
+                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).';';
             }
         } elseif ($this->isVarModification($stmt)) {
-            $collected['extracted'][] = $this->dispatcher->p($stmt).";";
+            $collected['extracted'][] = $this->dispatcher->p($stmt).';';
         } elseif ($this->isVarCreation($stmt) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
-            $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).";";
+            $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).';';
         }
 
         return $collected;
@@ -120,7 +120,7 @@ class AssignManipulator
     /**
      * @param mixed $stmt
      *
-     * @return boolean
+     * @return bool
      */
     private function isVarCreation($stmt)
     {
@@ -130,7 +130,7 @@ class AssignManipulator
     /**
      * @param mixed $stmt
      *
-     * @return boolean
+     * @return bool
      */
     private function isVarModification($stmt)
     {

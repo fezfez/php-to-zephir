@@ -9,7 +9,7 @@ class MulPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Mul";
+        return 'pExpr_BinaryOp_Mul';
     }
 
     public function convert(BinaryOp\Mul $node)

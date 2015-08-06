@@ -12,7 +12,7 @@ class PropertyFetchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_PropertyFetch";
+        return 'pExpr_PropertyFetch';
     }
 
     /**

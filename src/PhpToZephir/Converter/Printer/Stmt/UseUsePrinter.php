@@ -29,14 +29,14 @@ class UseUsePrinter
      */
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
-        $this->dispatcher           = $dispatcher;
-        $this->logger               = $logger;
+        $this->dispatcher = $dispatcher;
+        $this->logger = $logger;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     public static function getType()
     {
-        return "pStmt_UseUse";
+        return 'pStmt_UseUse';
     }
 
     public function convert(Stmt\UseUse $node)

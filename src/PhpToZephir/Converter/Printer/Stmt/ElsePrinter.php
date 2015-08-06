@@ -12,7 +12,7 @@ class ElsePrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Else";
+        return 'pStmt_Else';
     }
 
     /**

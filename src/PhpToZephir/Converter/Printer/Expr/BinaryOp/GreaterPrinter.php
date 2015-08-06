@@ -9,7 +9,7 @@ class GreaterPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Greater";
+        return 'pExpr_BinaryOp_Greater';
     }
 
     public function convert(BinaryOp\Greater $node)

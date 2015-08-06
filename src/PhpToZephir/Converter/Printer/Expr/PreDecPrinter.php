@@ -9,7 +9,7 @@ class PreDecPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_PreDec";
+        return 'pExpr_PreDec';
     }
 
     public function convert(Expr\PreDec $node)

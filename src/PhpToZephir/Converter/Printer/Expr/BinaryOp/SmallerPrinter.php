@@ -9,7 +9,7 @@ class SmallerPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Smaller";
+        return 'pExpr_BinaryOp_Smaller';
     }
 
     public function convert(BinaryOp\Smaller $node)

@@ -12,7 +12,7 @@ class StaticPropertyFetchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_StaticPropertyFetch";
+        return 'pExpr_StaticPropertyFetch';
     }
 
     /**

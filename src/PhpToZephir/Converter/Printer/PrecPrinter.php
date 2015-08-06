@@ -9,7 +9,7 @@ class PrecPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pPrec";
+        return 'pPrec';
     }
 
     /**
@@ -29,7 +29,7 @@ class PrecPrinter extends SimplePrinter
         $type = $node->getType();
         if ($this->dispatcher->issetPrecedenceMap($type) === true) {
             $childPrecedences = $this->dispatcher->getPrecedenceMap($type);
-            $childPrecedence  = $childPrecedences[0];
+            $childPrecedence = $childPrecedences[0];
             if ($childPrecedence > $parentPrecedence
                 || ($parentPrecedence == $childPrecedence && $parentAssociativity != $childPosition)
             ) {

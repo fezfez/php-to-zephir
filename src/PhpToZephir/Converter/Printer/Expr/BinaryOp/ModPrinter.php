@@ -9,7 +9,7 @@ class ModPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Mod";
+        return 'pExpr_BinaryOp_Mod';
     }
 
     public function convert(BinaryOp\Mod $node)

@@ -14,7 +14,7 @@ class StringPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pScalar_String";
+        return 'pScalar_String';
     }
 
     /**

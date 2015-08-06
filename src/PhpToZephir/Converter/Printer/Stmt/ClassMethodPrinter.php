@@ -6,7 +6,6 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
-use PhpParser\Node\Expr\Assign;
 use PhpToZephir\ReservedWordReplacer;
 use PhpToZephir\TypeFinder;
 use PhpToZephir\NodeFetcher;
@@ -53,7 +52,7 @@ class ClassMethodPrinter
         NodeFetcher $nodeFetcher
     ) {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->reservedWordReplacer = $reservedWordReplacer;
         $this->typeFinder = $typeFinder;
         $this->nodeFetcher = $nodeFetcher;
@@ -72,7 +71,7 @@ class ClassMethodPrinter
      */
     public static function getType()
     {
-        return "pStmt_ClassMethod";
+        return 'pStmt_ClassMethod';
     }
 
     /**
@@ -103,7 +102,7 @@ class ClassMethodPrinter
             $stmt .= implode(', ', $params);
         }
 
-        $stmt .= ")";
+        $stmt .= ')';
         $stmt .= $this->printReturn($node, $types);
 
         $stmt .= (null !== $node->stmts ? "\n{".$this->printVars($node, $varsInMethodSign).
@@ -160,7 +159,7 @@ class ClassMethodPrinter
     private function printVars(Stmt\ClassMethod $node, array $varsInMethodSign)
     {
         $var = '';
-        $vars  = array_diff(array_unique(array_filter($this->collectVars($node))), $varsInMethodSign);
+        $vars = array_diff(array_unique(array_filter($this->collectVars($node))), $varsInMethodSign);
         if (!empty($vars)) {
             $var .= "\n    var ".implode(', ', $vars).";\n";
         }
@@ -189,7 +188,7 @@ class ClassMethodPrinter
     /**
      * @param Stmt\ClassMethod $nodes
      *
-     * @return boolean
+     * @return bool
      */
     private function hasReturnStatement($nodes)
     {
@@ -232,11 +231,11 @@ class ClassMethodPrinter
                 }
                 $vars[] = $stmt->valueVar->name;
             } elseif ($stmt instanceof Stmt\For_) {
-            	foreach ($stmt->init as $init) {
-            		if ($init instanceof Expr\Assign) {
-            			$vars[] = $init->var->name;
-            		}
-            	}
+                foreach ($stmt->init as $init) {
+                    if ($init instanceof Expr\Assign) {
+                        $vars[] = $init->var->name;
+                    }
+                }
             } elseif ($stmt instanceof Stmt\If_) {
                 foreach ($this->nodeFetcher->foreachNodes($stmt) as $nodeData) {
                     $node = $nodeData['node'];
@@ -249,7 +248,7 @@ class ClassMethodPrinter
             } elseif ($stmt instanceof Stmt\Catch_) {
                 $vars[] = $stmt->var;
             } elseif ($stmt instanceof Stmt\Return_ && $stmt->expr instanceof Expr\Array_) {
-            	$vars[] = 'tmpArray'.md5(serialize($stmt->expr->items));
+                $vars[] = 'tmpArray'.md5(serialize($stmt->expr->items));
             }
 
             $vars = array_merge($vars, $this->collectVars($stmt));

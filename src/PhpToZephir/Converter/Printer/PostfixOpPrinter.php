@@ -9,7 +9,7 @@ class PostfixOpPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pPostfixOp";
+        return 'pPostfixOp';
     }
 
     /**

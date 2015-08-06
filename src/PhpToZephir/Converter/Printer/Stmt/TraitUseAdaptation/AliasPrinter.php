@@ -9,7 +9,7 @@ class AliasPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_TraitUseAdaptation_Alias";
+        return 'pStmt_TraitUseAdaptation_Alias';
     }
 
     public function convert(Stmt\TraitUseAdaptation\Alias $node)

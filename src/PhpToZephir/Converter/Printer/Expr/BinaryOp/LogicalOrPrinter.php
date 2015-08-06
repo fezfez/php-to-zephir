@@ -9,7 +9,7 @@ class LogicalOrPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_LogicalOr";
+        return 'pExpr_BinaryOp_LogicalOr';
     }
 
     public function convert(BinaryOp\LogicalOr $node)

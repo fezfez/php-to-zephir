@@ -40,21 +40,21 @@ class ClassPrinter
         ClassManipulator $classManipulator,
         ReservedWordReplacer $reservedWordReplacer
     ) {
-        $this->dispatcher       = $dispatcher;
-        $this->logger           = $logger;
+        $this->dispatcher = $dispatcher;
+        $this->logger = $logger;
         $this->classManipulator = $classManipulator;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     public static function getType()
     {
-        return "pStmt_Class";
+        return 'pStmt_Class';
     }
 
     public function convert(Stmt\Class_ $node)
     {
-    	$this->classManipulator->registerClassImplements($node);
-    	
+        $this->classManipulator->registerClassImplements($node);
+
         $node->name = $this->reservedWordReplacer->replace($node->name);
 
         return $this->dispatcher->pModifiers($node->type)

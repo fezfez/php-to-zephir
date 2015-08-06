@@ -3,7 +3,6 @@
 namespace PhpToZephir\Converter\Printer\Expr;
 
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
 use PhpToZephir\Converter\SimplePrinter;
 
 class FuncCallPrinter extends SimplePrinter
@@ -13,7 +12,7 @@ class FuncCallPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_FuncCall";
+        return 'pExpr_FuncCall';
     }
 
     /**

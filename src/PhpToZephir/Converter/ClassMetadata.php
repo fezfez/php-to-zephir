@@ -48,7 +48,7 @@ class ClassMetadata
      */
     public function setImplements(array $value)
     {
-    	$this->implements = $value;
+        $this->implements = $value;
     }
 
     /**
@@ -93,7 +93,7 @@ class ClassMetadata
      */
     public function getImplements()
     {
-    	return $this->implements;
+        return $this->implements;
     }
     /**
      * @return array

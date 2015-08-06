@@ -9,7 +9,7 @@ class ContinuePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Continue";
+        return 'pStmt_Continue';
     }
 
     public function convert(Stmt\Continue_ $node)

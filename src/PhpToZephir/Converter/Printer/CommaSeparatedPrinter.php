@@ -11,7 +11,7 @@ class CommaSeparatedPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pCommaSeparated";
+        return 'pCommaSeparated';
     }
 
     /**

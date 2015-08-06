@@ -152,7 +152,7 @@ class Dispatcher
     /**
      * @param string $value
      *
-     * @return boolean
+     * @return bool
      */
     public function isMovedToNonStaticVar($value)
     {
@@ -203,7 +203,7 @@ class Dispatcher
     /**
      * @param string $type
      *
-     * @return boolean
+     * @return bool
      */
     public function issetPrecedenceMap($type)
     {

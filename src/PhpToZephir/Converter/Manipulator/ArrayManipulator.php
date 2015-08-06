@@ -26,7 +26,7 @@ class ArrayManipulator
     public function __construct(Dispatcher $dispatcher, Logger $logger)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -68,7 +68,7 @@ class ArrayManipulator
     /**
      * @param unknown $node
      *
-     * @return boolean
+     * @return bool
      */
     private function isInvalidInArrayDimFetch($node)
     {
@@ -83,7 +83,7 @@ class ArrayManipulator
     /**
      * @param \PhpParser\Node $node
      *
-     * @return boolean
+     * @return bool
      */
     private function isInvalidIn($node)
     {
@@ -103,7 +103,7 @@ class ArrayManipulator
     /**
      * @param Expr\ArrayDimFetch $node
      *
-     * @return array|boolean
+     * @return array|bool
      */
     public function arrayNeedToBeSplit(Expr\ArrayDimFetch $node)
     {

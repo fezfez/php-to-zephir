@@ -4,33 +4,33 @@ namespace PhpToZephir;
 
 class CodeValidator
 {
-	/**
-	 * @param string $zephirCode
-	 * @throws \Exception
-	 */
-	public function isValid($zephirCode)
-	{
-		$tmpfname = __DIR__ . '/tmp.zep';
+    /**
+     * @param string $zephirCode
+     *
+     * @throws \Exception
+     */
+    public function isValid($zephirCode)
+    {
+        $tmpfname = __DIR__.'/tmp.zep';
 
-		file_put_contents($tmpfname, $zephirCode);
+        file_put_contents($tmpfname, $zephirCode);
 
-		$ZEPHIRPATH = realpath(__DIR__ . '/../../vendor/phalcon/zephir') . '/';
+        $ZEPHIRPATH = realpath(__DIR__.'/../../vendor/phalcon/zephir').'/';
 
-		if (PHP_OS == "WINNT") {
-			$zephirParserBinary = $ZEPHIRPATH . 'bin\zephir-parser.exe';
-		} else {
-			$zephirParserBinary = $ZEPHIRPATH . 'bin/zephir-parser';
-		}
+        if (PHP_OS == 'WINNT') {
+            $zephirParserBinary = $ZEPHIRPATH.'bin\zephir-parser.exe';
+        } else {
+            $zephirParserBinary = $ZEPHIRPATH.'bin/zephir-parser';
+        }
 
+        exec($zephirParserBinary.' '.$tmpfname, $tmp, $return);
 
-		exec($zephirParserBinary . ' ' . $tmpfname, $tmp, $return);
+        unlink($tmpfname);
 
-		unlink($tmpfname);
+        if ($return !== 0) {
+            throw new \Exception(sprintf('Error on %s', $zephirCode));
+        }
 
-		if ($return !== 0) {
-			throw new \Exception(sprintf('Error on %s', $zephirCode));
-		}
-
-		return true;
-	}
+        return true;
+    }
 }

@@ -10,7 +10,7 @@ class BoolPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Bool";
+        return 'pExpr_Cast_Bool';
     }
 
     public function convert(Cast\Bool $node)

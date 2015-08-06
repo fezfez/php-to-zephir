@@ -11,7 +11,7 @@ class ImplodePrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pImplode";
+        return 'pImplode';
     }
 
     /**

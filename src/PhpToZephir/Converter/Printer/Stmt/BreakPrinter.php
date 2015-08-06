@@ -12,7 +12,7 @@ class BreakPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Break";
+        return 'pStmt_Break';
     }
 
     /**

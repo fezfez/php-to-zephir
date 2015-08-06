@@ -34,7 +34,7 @@ class IfWithAssignementArrayDimInCondition
     }
 }
 EOT;
-        $zephir   = <<<'EOT'
+        $zephir = <<<'EOT'
 namespace Code\Condition\IfStmt;
 
 class IfWithAssignementArrayDimInCondition

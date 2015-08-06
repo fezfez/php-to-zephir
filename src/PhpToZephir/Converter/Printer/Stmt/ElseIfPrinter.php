@@ -12,7 +12,7 @@ class ElseIfPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_ElseIf";
+        return 'pStmt_ElseIf';
     }
 
     /**

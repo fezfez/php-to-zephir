@@ -9,7 +9,7 @@ class NotEqualPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_NotEqual";
+        return 'pExpr_BinaryOp_NotEqual';
     }
 
     public function convert(BinaryOp\NotEqual $node)

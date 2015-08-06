@@ -9,7 +9,7 @@ class InfixOpPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pInfixOp";
+        return 'pInfixOp';
     }
 
     /**

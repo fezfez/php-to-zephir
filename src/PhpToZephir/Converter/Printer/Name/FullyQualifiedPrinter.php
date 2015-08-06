@@ -12,7 +12,7 @@ class FullyQualifiedPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pName_FullyQualified";
+        return 'pName_FullyQualified';
     }
 
     /**

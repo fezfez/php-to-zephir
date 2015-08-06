@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the Code Generator package.
  *
@@ -7,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace PhpToZephir\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -42,8 +42,8 @@ class ConvertDirectory extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $engine     = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
-        $dir        = $input->getArgument('dir');
+        $engine = EngineFactory::getInstance(new Logger($output, $input->getOption('debug')));
+        $dir = $input->getArgument('dir');
         $fileWriter = new FileWriter();
 
         if (is_dir($dir) === false) {
@@ -51,9 +51,9 @@ class ConvertDirectory extends Command
         }
 
         $render = new FileRender(new FileWriter());
-        
+
         foreach ($engine->convert(new DirectoryCodeCollector(array($dir)), $input->getArgument('file')) as $file) {
-        	$render->render($file);
+            $render->render($file);
         }
     }
 }

@@ -10,7 +10,7 @@ class DivPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Div";
+        return 'pExpr_AssignOp_Div';
     }
 
     public function convert(AssignOp\Div $node)

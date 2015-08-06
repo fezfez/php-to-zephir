@@ -9,7 +9,7 @@ class UnaryPlusPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_UnaryPlus";
+        return 'pExpr_UnaryPlus';
     }
 
     public function convert(Expr\UnaryPlus $node)

@@ -9,7 +9,7 @@ class MethodPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pScalar_MagicConst_Method";
+        return 'pScalar_MagicConst_Method';
     }
 
     public function convert(MagicConst\Method $node)

@@ -9,7 +9,7 @@ class PrecedencePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_TraitUseAdaptation_Precedence";
+        return 'pStmt_TraitUseAdaptation_Precedence';
     }
 
     public function convert(Stmt\TraitUseAdaptation\Precedence $node)

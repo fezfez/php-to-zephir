@@ -12,7 +12,7 @@ class ParamPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pParam";
+        return 'pParam';
     }
 
     /**

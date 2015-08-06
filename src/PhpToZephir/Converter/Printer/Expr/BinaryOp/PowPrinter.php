@@ -9,7 +9,7 @@ class PowPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Pow";
+        return 'pExpr_BinaryOp_Pow';
     }
 
     public function convert(BinaryOp\Pow $node)

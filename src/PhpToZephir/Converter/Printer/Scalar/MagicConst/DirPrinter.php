@@ -9,7 +9,7 @@ class DirPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pScalar_MagicConst_Dir";
+        return 'pScalar_MagicConst_Dir';
     }
 
     public function convert(MagicConst\Dir $node)

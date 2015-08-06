@@ -2,33 +2,30 @@
 
 namespace PhpToZephir\Converter\Printer;
 
-use PhpToZephir\Converter\Dispatcher;
-use PhpToZephir\Logger;
 use PhpParser\Node\Name;
-use PhpToZephir\Converter\Manipulator\ClassManipulator;
 use PhpToZephir\ReservedWordReplacer;
 
 class NamePrinter
 {
-	/**
-	 * @var ReservedWordReplacer
-	 */
-	private $reservedWordReplacer = null;
-	
-	/**
-	 * @param ReservedWordReplacer $reservedWordReplacer
-	 */
-	public function __construct(ReservedWordReplacer $reservedWordReplacer)
-	{
-		$this->reservedWordReplacer = $reservedWordReplacer;
-	}
-	
+    /**
+     * @var ReservedWordReplacer
+     */
+    private $reservedWordReplacer = null;
+
+    /**
+     * @param ReservedWordReplacer $reservedWordReplacer
+     */
+    public function __construct(ReservedWordReplacer $reservedWordReplacer)
+    {
+        $this->reservedWordReplacer = $reservedWordReplacer;
+    }
+
     /**
      * @return string
      */
     public static function getType()
     {
-        return "pName";
+        return 'pName';
     }
 
     /**
@@ -38,6 +35,6 @@ class NamePrinter
      */
     public function convert(Name $node)
     {
-    	return $this->reservedWordReplacer->replace(implode('\\', $node->parts));
+        return $this->reservedWordReplacer->replace(implode('\\', $node->parts));
     }
 }

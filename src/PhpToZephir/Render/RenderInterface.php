@@ -4,5 +4,5 @@ namespace PhpToZephir\Render;
 
 interface RenderInterface
 {
-	public function render(array $files);
+    public function render(array $files);
 }

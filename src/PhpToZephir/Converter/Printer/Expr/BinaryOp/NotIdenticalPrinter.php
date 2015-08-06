@@ -9,7 +9,7 @@ class NotIdenticalPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_NotIdentical";
+        return 'pExpr_BinaryOp_NotIdentical';
     }
 
     public function convert(BinaryOp\NotIdentical $node)

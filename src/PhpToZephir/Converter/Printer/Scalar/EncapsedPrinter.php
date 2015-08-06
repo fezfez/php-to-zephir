@@ -12,7 +12,7 @@ class EncapsedPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pScalar_Encapsed";
+        return 'pScalar_Encapsed';
     }
 
     /**

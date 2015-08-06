@@ -9,7 +9,7 @@ class PostDecPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_PostDec";
+        return 'pExpr_PostDec';
     }
 
     public function convert(Expr\PostDec $node)

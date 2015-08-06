@@ -28,7 +28,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
     private function getEngine()
     {
         if (self::$engine === null) {
-            self::$engine  = EngineFactory::getInstance(new Logger(new NullOutput(), false));
+            self::$engine = EngineFactory::getInstance(new Logger(new NullOutput(), false));
         }
 
         return self::$engine;
@@ -40,7 +40,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
     private function getRender()
     {
         if (self::$render === null) {
-            self::$render  = new StringRender();
+            self::$render = new StringRender();
         }
 
         return self::$render;
@@ -52,7 +52,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
     private function getCodeValidator()
     {
         if (self::$codeValidator === null) {
-            self::$codeValidator  = new CodeValidator();
+            self::$codeValidator = new CodeValidator();
         }
 
         return self::$codeValidator;
@@ -73,7 +73,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 
             if ($saveFile === true) {
-            	file_put_contents(__DIR__ . '/' . $index . '.zep', $zephirGenerated);
+                file_put_contents(__DIR__.'/'.$index.'.zep', $zephirGenerated);
             }
             if (is_array($zephir) === true) {
                 $this->assertEquals($zephir[$index], $zephirGenerated);

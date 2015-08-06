@@ -9,7 +9,7 @@ class SmallerOrEqualPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_SmallerOrEqual";
+        return 'pExpr_BinaryOp_SmallerOrEqual';
     }
 
     public function convert(BinaryOp\SmallerOrEqual $node)

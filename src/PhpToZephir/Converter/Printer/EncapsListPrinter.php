@@ -8,7 +8,7 @@ class EncapsListPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pEncapsList";
+        return 'pEncapsList';
     }
 
     public function convert(array $encapsList, $quote)
@@ -16,7 +16,7 @@ class EncapsListPrinter extends SimplePrinter
         $return = '';
         foreach ($encapsList as $element) {
             if (is_string($element)) {
-                $return .= addcslashes($element, "\n\r\t\f\v$".$quote."\\");
+                $return .= addcslashes($element, "\n\r\t\f\v$".$quote.'\\');
             } else {
                 $return .= '{'.$this->dispatcher->p($element).'}';
             }

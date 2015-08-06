@@ -9,7 +9,7 @@ class UsePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Use";
+        return 'pStmt_Use';
     }
 
     public function convert(Stmt\Use_ $node)

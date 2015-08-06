@@ -12,7 +12,7 @@ class AssignRefPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_AssignRef";
+        return 'pExpr_AssignRef';
     }
 
     /**

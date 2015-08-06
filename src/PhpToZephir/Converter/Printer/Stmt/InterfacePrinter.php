@@ -39,15 +39,15 @@ class InterfacePrinter
         ClassManipulator $classManipulator,
         ReservedWordReplacer $reservedWordReplacer
     ) {
-        $this->dispatcher           = $dispatcher;
-        $this->logger               = $logger;
-        $this->classManipulator     = $classManipulator;
+        $this->dispatcher = $dispatcher;
+        $this->logger = $logger;
+        $this->classManipulator = $classManipulator;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     public static function getType()
     {
-        return "pStmt_Interface";
+        return 'pStmt_Interface';
     }
 
     public function convert(Stmt\Interface_ $node)

@@ -12,7 +12,7 @@ class PropertyPropertyPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_PropertyProperty";
+        return 'pStmt_PropertyProperty';
     }
 
     /**

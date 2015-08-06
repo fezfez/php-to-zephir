@@ -12,7 +12,7 @@ class LabelPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Label";
+        return 'pStmt_Label';
     }
 
     /**

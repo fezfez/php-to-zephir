@@ -9,7 +9,7 @@ class ClassPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pScalar_MagicConst_Class";
+        return 'pScalar_MagicConst_Class';
     }
 
     public function convert(MagicConst\Class_ $node)

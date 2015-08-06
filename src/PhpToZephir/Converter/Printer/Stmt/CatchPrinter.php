@@ -12,7 +12,7 @@ class CatchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Catch";
+        return 'pStmt_Catch';
     }
 
     /**

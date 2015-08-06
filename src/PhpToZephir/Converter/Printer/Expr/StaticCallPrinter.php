@@ -3,8 +3,6 @@
 namespace PhpToZephir\Converter\Printer\Expr;
 
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpToZephir\Converter\SimplePrinter;
 
 class StaticCallPrinter extends SimplePrinter
@@ -14,7 +12,7 @@ class StaticCallPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_StaticCall";
+        return 'pExpr_StaticCall';
     }
 
     /**

@@ -9,7 +9,7 @@ class DivPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Div";
+        return 'pExpr_BinaryOp_Div';
     }
 
     public function convert(BinaryOp\Div $node)

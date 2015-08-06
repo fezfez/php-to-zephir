@@ -10,7 +10,7 @@ class MulPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Mul";
+        return 'pExpr_AssignOp_Mul';
     }
 
     public function convert(AssignOp\Mul $node)

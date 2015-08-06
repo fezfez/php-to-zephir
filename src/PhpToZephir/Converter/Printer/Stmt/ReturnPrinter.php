@@ -30,7 +30,7 @@ class ReturnPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -39,7 +39,7 @@ class ReturnPrinter
      */
     public static function getType()
     {
-        return "pStmt_Return";
+        return 'pStmt_Return';
     }
 
     /**
@@ -49,7 +49,7 @@ class ReturnPrinter
      */
     public function convert(Stmt\Return_ $node)
     {
-        $collected  = $this->assignManipulator->collectAssignInCondition($node->expr);
+        $collected = $this->assignManipulator->collectAssignInCondition($node->expr);
         $node->expr = $this->assignManipulator->transformAssignInConditionTest($node->expr);
 
         return implode(";\n", $collected['extracted'])."\n".'return'.(null !== $node->expr ? ' '.$this->dispatcher->p($node->expr) : '').';';

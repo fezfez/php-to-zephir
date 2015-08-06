@@ -9,7 +9,7 @@ class PostIncPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_PostInc";
+        return 'pExpr_PostInc';
     }
 
     public function convert(Expr\PostInc $node)

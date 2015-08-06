@@ -30,7 +30,7 @@ class WhilePrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -39,7 +39,7 @@ class WhilePrinter
      */
     public static function getType()
     {
-        return "pStmt_While";
+        return 'pStmt_While';
     }
 
     /**
@@ -49,7 +49,7 @@ class WhilePrinter
      */
     public function convert(Stmt\While_ $node)
     {
-        $collected  = $this->assignManipulator->collectAssignInCondition($node->cond);
+        $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
         return implode(";\n", $collected['extracted'])."\n".'while ('.$this->dispatcher->p($node->cond).') {'

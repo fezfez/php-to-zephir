@@ -12,7 +12,7 @@ class DeclareDeclarePrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_DeclareDeclare";
+        return 'pStmt_DeclareDeclare';
     }
 
     /**

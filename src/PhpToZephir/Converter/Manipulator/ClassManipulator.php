@@ -51,9 +51,8 @@ class ClassManipulator
             return $class;
         }
     }
-    
+
     public function registerClassImplements(Stmt\Class_ $node)
     {
-
     }
 }

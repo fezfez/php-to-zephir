@@ -40,13 +40,13 @@ class AssignPrinter
         ArrayManipulator $arrayManipulator
     ) {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->arrayManipulator = $arrayManipulator;
     }
 
     public static function getType()
     {
-        return "pExpr_Assign";
+        return 'pExpr_Assign';
     }
 
     /**
@@ -56,10 +56,10 @@ class AssignPrinter
      */
     public function convert(Expr\Assign $node)
     {
-        $type           = 'Expr_Assign';
-        $leftNode       = $node->var;
+        $type = 'Expr_Assign';
+        $leftNode = $node->var;
         $operatorString = ' = ';
-        $rightNode      = $node->expr;
+        $rightNode = $node->expr;
 
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
@@ -184,10 +184,10 @@ class AssignPrinter
      */
     private function convertListStmtToAssign($node)
     {
-        $type      = 'Expr_Assign';
+        $type = 'Expr_Assign';
         $rightNode = $node->expr;
-        $vars      = array();
-        $pList     = array();
+        $vars = array();
+        $pList = array();
 
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
@@ -200,7 +200,7 @@ class AssignPrinter
             }
         }
 
-        return 'var '.implode(", ", $vars).";\n".implode("\n", $pList);
+        return 'var '.implode(', ', $vars).";\n".implode("\n", $pList);
     }
 
     /**

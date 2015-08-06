@@ -9,7 +9,7 @@ class IssetPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Isset";
+        return 'pExpr_Isset';
     }
 
     public function convert(Expr\Isset_ $node)

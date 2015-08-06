@@ -12,7 +12,7 @@ class ForeachPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Foreach";
+        return 'pStmt_Foreach';
     }
 
     /**

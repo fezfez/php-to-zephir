@@ -32,7 +32,7 @@ class IfPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -41,7 +41,7 @@ class IfPrinter
      */
     public static function getType()
     {
-        return "pStmt_If";
+        return 'pStmt_If';
     }
 
     /**
@@ -54,9 +54,8 @@ class IfPrinter
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
-        
         if (empty($node->stmts)) {
-            $node->stmts = array(new Stmt\Echo_(array(new Scalar\String("not allowed"))));
+            $node->stmts = array(new Stmt\Echo_(array(new Scalar\String('not allowed'))));
             $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
         }
 
@@ -78,7 +77,7 @@ class IfPrinter
         foreach ($node->elseifs as $elseIf) {
             $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
             if (!empty($collected['extracted'])) {
-                $elseCount++;
+                ++$elseCount;
                 $toReturn .= ' else {'."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, array('stmts' => $elseIf->stmts)))."\n";
             } else {
                 $toReturn .= $this->dispatcher->pStmt_ElseIf($elseIf);

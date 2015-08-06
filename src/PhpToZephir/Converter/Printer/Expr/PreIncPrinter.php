@@ -12,7 +12,7 @@ class PreIncPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_PreInc";
+        return 'pExpr_PreInc';
     }
 
     /**

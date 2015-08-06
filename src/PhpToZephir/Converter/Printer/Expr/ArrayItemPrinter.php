@@ -12,7 +12,7 @@ class ArrayItemPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_ArrayItem";
+        return 'pExpr_ArrayItem';
     }
 
     /**

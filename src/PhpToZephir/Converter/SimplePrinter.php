@@ -22,6 +22,6 @@ abstract class SimplePrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
     }
 }

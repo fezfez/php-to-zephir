@@ -9,7 +9,7 @@ class PlusPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Plus";
+        return 'pExpr_BinaryOp_Plus';
     }
 
     public function convert(BinaryOp\Plus $node)

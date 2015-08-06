@@ -12,7 +12,7 @@ class LNumberPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pScalar_LNumber";
+        return 'pScalar_LNumber';
     }
 
     /**

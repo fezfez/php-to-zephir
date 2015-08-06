@@ -11,7 +11,7 @@ class StringPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_String";
+        return 'pExpr_Cast_String';
     }
 
     public function convert(Cast\String $node)

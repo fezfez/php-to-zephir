@@ -32,11 +32,11 @@ class DispatcherFactory
      */
     private static function createInstance(Logger $logger)
     {
-        $dirName   = __DIR__.'/Printer/';
+        $dirName = __DIR__.'/Printer/';
         $directory = new \RecursiveDirectoryIterator($dirName);
-        $iterator  = new \RecursiveIteratorIterator($directory);
-        $regex     = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-        $classes   = new PrinterCollection(array());
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+        $classes = new PrinterCollection(array());
         include 'SimplePrinter.php';
 
         foreach ($regex as $fileInfo) {

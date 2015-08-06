@@ -9,7 +9,7 @@ class GlobalPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Global";
+        return 'pStmt_Global';
     }
 
     public function convert(Stmt\Global_ $node)

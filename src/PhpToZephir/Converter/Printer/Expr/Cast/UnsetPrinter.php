@@ -10,7 +10,7 @@ class UnsetPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Unset";
+        return 'pExpr_Cast_Unset';
     }
 
     public function convert(Cast\Unset_ $node)

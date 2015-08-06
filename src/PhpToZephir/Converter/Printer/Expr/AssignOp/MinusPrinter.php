@@ -10,7 +10,7 @@ class MinusPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Minus";
+        return 'pExpr_AssignOp_Minus';
     }
 
     public function convert(AssignOp\Minus $node)

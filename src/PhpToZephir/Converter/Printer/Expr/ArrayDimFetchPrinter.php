@@ -5,7 +5,6 @@ namespace PhpToZephir\Converter\Printer\Expr;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpToZephir\Converter\Manipulator\ArrayManipulator;
 
 class ArrayDimFetchPrinter
@@ -31,13 +30,13 @@ class ArrayDimFetchPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, ArrayManipulator $arrayManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->arrayManipulator = $arrayManipulator;
     }
 
     public static function getType()
     {
-        return "pExpr_ArrayDimFetch";
+        return 'pExpr_ArrayDimFetch';
     }
 
     public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false)
@@ -47,9 +46,9 @@ class ArrayDimFetchPrinter
         if ($node->var instanceof Expr\StaticPropertyFetch) {
             if ($node->var->class->parts[0] === 'self') {
                 $node->var = new Expr\PropertyFetch(new Expr\Variable('this'), $node->var->name);
-                $this->logger->logNode("Change StaticProperty into PropertyFetch due to #188", $node);
+                $this->logger->logNode('Change StaticProperty into PropertyFetch due to #188', $node);
             } else {
-                $this->logger->logNode("StaticProperty on array not supported, see #188", $node);
+                $this->logger->logNode('StaticProperty on array not supported, see #188', $node);
             }
         }
 
@@ -71,7 +70,7 @@ class ArrayDimFetchPrinter
     }
 
     /**
-     * @param boolean $returnAsArray
+     * @param bool $returnAsArray
      */
     private function splitArray(array $collected, $returnAsArray)
     {

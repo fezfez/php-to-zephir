@@ -10,7 +10,7 @@ class DoublePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Double";
+        return 'pExpr_Cast_Double';
     }
 
     public function convert(Cast\Double $node)

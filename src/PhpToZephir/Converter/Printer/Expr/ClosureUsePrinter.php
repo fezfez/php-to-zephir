@@ -30,13 +30,13 @@ class ClosureUsePrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     public static function getType()
     {
-        return "pExpr_ClosureUse";
+        return 'pExpr_ClosureUse';
     }
 
     /**
@@ -48,7 +48,7 @@ class ClosureUsePrinter
     {
         if ($node->byRef) {
             $this->logger->logNode(
-                "Zephir not support reference parameters for now. Stay tuned for https://github.com/phalcon/zephir/issues/203",
+                'Zephir not support reference parameters for now. Stay tuned for https://github.com/phalcon/zephir/issues/203',
                 $node,
                 $this->dispatcher->getMetadata()->getClass()
             );

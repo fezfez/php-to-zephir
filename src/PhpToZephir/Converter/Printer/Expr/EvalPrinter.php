@@ -9,7 +9,7 @@ class EvalPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Eval";
+        return 'pExpr_Eval';
     }
 
     public function convert(Expr\Eval_ $node)

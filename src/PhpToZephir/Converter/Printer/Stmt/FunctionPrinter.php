@@ -9,7 +9,7 @@ class FunctionPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Function";
+        return 'pStmt_Function';
     }
 
     public function convert(Stmt\Function_ $node)

@@ -12,7 +12,7 @@ class UnsetPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Unset";
+        return 'pStmt_Unset';
     }
 
     /**

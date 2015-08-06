@@ -12,7 +12,7 @@ class CasePrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Case";
+        return 'pStmt_Case';
     }
 
     /**

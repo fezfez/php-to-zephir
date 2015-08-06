@@ -9,7 +9,7 @@ class YieldPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Yield";
+        return 'pExpr_Yield';
     }
 
     public function convert(Expr\Yield_ $node)

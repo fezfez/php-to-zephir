@@ -9,7 +9,7 @@ class StaticPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Static";
+        return 'pStmt_Static';
     }
 
     public function convert(Stmt\Static_ $node)

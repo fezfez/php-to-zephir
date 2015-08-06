@@ -12,7 +12,7 @@ class StaticVarPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_StaticVar";
+        return 'pStmt_StaticVar';
     }
 
     /**

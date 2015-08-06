@@ -9,7 +9,7 @@ class ConcatPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Concat";
+        return 'pExpr_BinaryOp_Concat';
     }
 
     public function convert(BinaryOp\Concat $node)

@@ -12,7 +12,7 @@ class DNumberPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pScalar_DNumber";
+        return 'pScalar_DNumber';
     }
 
     /**

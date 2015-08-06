@@ -10,7 +10,7 @@ class PowPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Pow";
+        return 'pExpr_AssignOp_Pow';
     }
 
     public function convert(AssignOp\Pow $node)

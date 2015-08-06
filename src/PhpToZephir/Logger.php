@@ -18,25 +18,25 @@ class Logger
      */
     private $progress = null;
     /**
-     * @var boolean
+     * @var bool
      */
     private $trace = null;
 
     /**
      * @param OutputInterface $output
-     * @param boolean         $trace
+     * @param bool            $trace
      */
     public function __construct(OutputInterface $output, $trace)
     {
         $this->output = $output;
-        $this->trace  = $trace;
+        $this->trace = $trace;
     }
 
     private function cleanProgressbar()
     {
         if ($this->progress !== null && $this->progress->getStartTime() !== null) {
             $this->progress->clear();
-            $this->output->writeln("");
+            $this->output->writeln('');
         }
     }
 
@@ -68,9 +68,9 @@ class Logger
         if ($this->trace === true) {
             $this->cleanProgressbar();
 
-            $space             = 35 - strlen($message);
+            $space = 35 - strlen($message);
             $spaceAfterMessage = str_repeat(' ', (($space <= 1) ? 1 : $space));
-            $spaceAfterLine    = str_repeat(' ', (5 - strlen($node->getLine())));
+            $spaceAfterLine = str_repeat(' ', (5 - strlen($node->getLine())));
 
             $this->output->writeln(
                 sprintf(
@@ -97,7 +97,7 @@ class Logger
     }
 
     /**
-     * @param integer $number
+     * @param int $number
      */
     public function progress($number)
     {

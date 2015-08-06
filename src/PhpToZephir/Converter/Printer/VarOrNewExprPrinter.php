@@ -13,7 +13,7 @@ class VarOrNewExprPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pVarOrNewExpr";
+        return 'pVarOrNewExpr';
     }
 
     /**

@@ -9,7 +9,7 @@ class BitwiseNotPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BitwiseNot";
+        return 'pExpr_BitwiseNot';
     }
 
     public function convert(Expr\BitwiseNot $node)

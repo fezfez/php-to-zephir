@@ -29,20 +29,20 @@ class DoPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
     public static function getType()
     {
-        return "pStmt_Do";
+        return 'pStmt_Do';
     }
 
     public function convert(Stmt\Do_ $node)
     {
-        $condition  = clone $node;
-        $collected  = $this->assignManipulator->collectAssignInCondition($condition->cond);
-        $collected  = !empty($collected['extracted']) ? "\n".implode("\n", $collected['extracted']) : '';
+        $condition = clone $node;
+        $collected = $this->assignManipulator->collectAssignInCondition($condition->cond);
+        $collected = !empty($collected['extracted']) ? "\n".implode("\n", $collected['extracted']) : '';
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
         return 'do {'.$this->dispatcher->pStmts($node->stmts).$collected."\n"

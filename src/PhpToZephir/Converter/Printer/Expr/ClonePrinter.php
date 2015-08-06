@@ -9,7 +9,7 @@ class ClonePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Clone";
+        return 'pExpr_Clone';
     }
 
     public function convert(Expr\Clone_ $node)

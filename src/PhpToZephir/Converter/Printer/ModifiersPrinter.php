@@ -12,11 +12,11 @@ class ModifiersPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pModifiers";
+        return 'pModifiers';
     }
 
     /**
-     * @param integer $modifiers
+     * @param int $modifiers
      *
      * @return string
      */

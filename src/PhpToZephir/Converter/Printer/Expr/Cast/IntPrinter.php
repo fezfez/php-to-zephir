@@ -10,7 +10,7 @@ class IntPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Int";
+        return 'pExpr_Cast_Int';
     }
 
     public function convert(Cast\Int $node)

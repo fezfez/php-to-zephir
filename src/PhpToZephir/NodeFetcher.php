@@ -11,7 +11,7 @@ class NodeFetcher
      *
      * @return array
      */
-    public function foreachNodes($nodesCollection, array $nodes = array(), $parentClass = "")
+    public function foreachNodes($nodesCollection, array $nodes = array(), $parentClass = '')
     {
         if (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
             $nodesCollection = $nodesCollection->getIterator();

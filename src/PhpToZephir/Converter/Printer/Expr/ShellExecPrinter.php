@@ -9,7 +9,7 @@ class ShellExecPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_ShellExec";
+        return 'pExpr_ShellExec';
     }
 
     public function convert(Expr\ShellExec $node)

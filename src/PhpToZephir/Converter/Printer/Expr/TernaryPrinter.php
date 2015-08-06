@@ -30,7 +30,7 @@ class TernaryPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -39,7 +39,7 @@ class TernaryPrinter
      */
     public static function getType()
     {
-        return "pExpr_Ternary";
+        return 'pExpr_Ternary';
     }
 
     /**

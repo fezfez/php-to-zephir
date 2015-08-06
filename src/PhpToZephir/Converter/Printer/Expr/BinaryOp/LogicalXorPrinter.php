@@ -9,7 +9,7 @@ class LogicalXorPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_LogicalXor";
+        return 'pExpr_BinaryOp_LogicalXor';
     }
 
     public function convert(BinaryOp\LogicalXor $node)

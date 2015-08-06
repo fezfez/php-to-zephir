@@ -9,7 +9,7 @@ class PrefixOpPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pPrefixOp";
+        return 'pPrefixOp';
     }
 
     /**

@@ -10,7 +10,7 @@ class ObjectPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Object";
+        return 'pExpr_Cast_Object';
     }
 
     public function convert(Cast\Object $node)

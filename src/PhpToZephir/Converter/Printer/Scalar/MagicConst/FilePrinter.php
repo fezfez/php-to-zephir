@@ -9,7 +9,7 @@ class FilePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pScalar_MagicConst_File";
+        return 'pScalar_MagicConst_File';
     }
 
     public function convert(MagicConst\File $node)

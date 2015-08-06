@@ -9,7 +9,7 @@ class BooleanOrPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_BooleanOr";
+        return 'pExpr_BinaryOp_BooleanOr';
     }
 
     public function convert(BinaryOp\BooleanOr $node)

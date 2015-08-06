@@ -1,4 +1,5 @@
 <?php
+
 namespace PhpToZephir;
 
 class ReservedWordReplacer
@@ -18,7 +19,7 @@ class ReservedWordReplacer
             'bool' => 'booll',
             'namespace' => 'namespacee',
             'const' => 'constt',
-            'enum'  => 'enumm',
+            'enum' => 'enumm',
             'interface' => 'interfacee',
             'loop' => 'loopp',
             'for' => 'forr',
@@ -31,7 +32,7 @@ class ReservedWordReplacer
             'protected' => 'protectedd',
             'public' => 'publicc',
             'boolean' => 'booleann',
-        	'return' => 'returnn',
+            'return' => 'returnn',
         );
 
         foreach ($reservedWord as $word => $replacement) {

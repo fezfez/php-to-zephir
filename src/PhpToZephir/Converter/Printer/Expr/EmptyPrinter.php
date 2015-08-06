@@ -9,7 +9,7 @@ class EmptyPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Empty";
+        return 'pExpr_Empty';
     }
 
     public function convert(Expr\Empty_ $node)

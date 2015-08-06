@@ -9,7 +9,7 @@ class ErrorSuppressPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_ErrorSuppress";
+        return 'pExpr_ErrorSuppress';
     }
 
     public function convert(Expr\ErrorSuppress $node)

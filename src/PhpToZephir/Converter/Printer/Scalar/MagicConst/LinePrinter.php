@@ -9,7 +9,7 @@ class LinePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pScalar_MagicConst_Line";
+        return 'pScalar_MagicConst_Line';
     }
 
     public function convert(MagicConst\Line $node)

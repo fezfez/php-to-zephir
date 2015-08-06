@@ -30,13 +30,13 @@ class ObjectPropertyPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, ReservedWordReplacer $reservedWordReplacer)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
     public static function getType()
     {
-        return "pObjectProperty";
+        return 'pObjectProperty';
     }
 
     public function convert($node)

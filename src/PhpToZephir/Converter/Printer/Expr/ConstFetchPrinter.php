@@ -12,7 +12,7 @@ class ConstFetchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pExpr_ConstFetch";
+        return 'pExpr_ConstFetch';
     }
 
     /**

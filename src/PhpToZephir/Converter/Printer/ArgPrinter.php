@@ -12,7 +12,7 @@ class ArgPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pArg";
+        return 'pArg';
     }
 
     /**

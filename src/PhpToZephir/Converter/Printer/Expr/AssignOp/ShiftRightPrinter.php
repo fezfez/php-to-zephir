@@ -10,7 +10,7 @@ class ShiftRightPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_ShiftRight";
+        return 'pExpr_AssignOp_ShiftRight';
     }
 
     public function convert(AssignOp\ShiftRight $node)

@@ -9,7 +9,7 @@ class TraitPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Trait";
+        return 'pStmt_Trait';
     }
 
     public function convert(Stmt\Trait_ $node)

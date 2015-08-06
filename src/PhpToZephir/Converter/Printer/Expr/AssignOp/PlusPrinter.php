@@ -10,7 +10,7 @@ class PlusPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Plus";
+        return 'pExpr_AssignOp_Plus';
     }
 
     public function convert(AssignOp\Plus $node)

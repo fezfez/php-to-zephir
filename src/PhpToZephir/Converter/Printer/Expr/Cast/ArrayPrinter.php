@@ -4,14 +4,13 @@ namespace PhpToZephir\Converter\Printer\Expr\Cast;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast;
-use PhpParser\Node\Expr\Array_;
 use PhpToZephir\Converter\SimplePrinter;
 
 class ArrayPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Cast_Array";
+        return 'pExpr_Cast_Array';
     }
 
     public function convert(Cast\Array_ $node)

@@ -15,7 +15,7 @@ class SwitchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_Switch";
+        return 'pStmt_Switch';
     }
 
     /**

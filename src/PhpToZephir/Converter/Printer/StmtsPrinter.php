@@ -11,7 +11,7 @@ class StmtsPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmts";
+        return 'pStmts';
     }
 
     /**

@@ -9,7 +9,7 @@ class ShiftRightPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_ShiftRight";
+        return 'pExpr_BinaryOp_ShiftRight';
     }
 
     public function convert(BinaryOp\ShiftRight $node)

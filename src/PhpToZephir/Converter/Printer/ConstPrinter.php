@@ -12,7 +12,7 @@ class ConstPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pConst";
+        return 'pConst';
     }
 
     /**

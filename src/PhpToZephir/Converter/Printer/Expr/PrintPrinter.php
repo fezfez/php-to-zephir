@@ -9,7 +9,7 @@ class PrintPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Print";
+        return 'pExpr_Print';
     }
 
     public function convert(Expr\Print_ $node)

@@ -9,7 +9,7 @@ class ExitPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Exit";
+        return 'pExpr_Exit';
     }
 
     public function convert(Expr\Exit_ $node)

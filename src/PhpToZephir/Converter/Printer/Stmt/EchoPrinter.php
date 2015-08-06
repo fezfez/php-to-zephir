@@ -9,7 +9,7 @@ class EchoPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pStmt_Echo";
+        return 'pStmt_Echo';
     }
 
     public function convert(Stmt\Echo_ $node)

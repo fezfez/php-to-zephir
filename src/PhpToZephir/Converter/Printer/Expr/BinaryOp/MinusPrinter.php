@@ -9,7 +9,7 @@ class MinusPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_Minus";
+        return 'pExpr_BinaryOp_Minus';
     }
 
     public function convert(BinaryOp\Minus $node)

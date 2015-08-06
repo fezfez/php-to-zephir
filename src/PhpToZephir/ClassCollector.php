@@ -33,8 +33,8 @@ class ClassCollector
      */
     public function __construct(Logger $logger, NodeFetcher $nodeFetcher, ReservedWordReplacer $reservedWordReplacer)
     {
-        $this->logger               = $logger;
-        $this->nodeFetcher          = $nodeFetcher;
+        $this->logger = $logger;
+        $this->nodeFetcher = $nodeFetcher;
         $this->reservedWordReplacer = $reservedWordReplacer;
     }
 
@@ -47,7 +47,7 @@ class ClassCollector
     public function collect(array $stmts, $fileName)
     {
         $namespace = null;
-        $class     = null;
+        $class = null;
 
         foreach ($this->nodeFetcher->foreachNodes($stmts) as $nodeData) {
             $node = $nodeData['node'];
@@ -78,17 +78,17 @@ class ClassCollector
         if ($class === null) {
             throw new \Exception('No class found in '.$fileName);
         }
-        
+
         $this->collected[$class] = $stmts;
 
         return $class;
     }
-    
+
     /**
      * @return array
      */
     public function getCollected()
     {
-    	return $this->collected;
+        return $this->collected;
     }
 }

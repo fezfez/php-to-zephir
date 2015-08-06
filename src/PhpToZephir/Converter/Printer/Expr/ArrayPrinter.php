@@ -5,7 +5,6 @@ namespace PhpToZephir\Converter\Printer\Expr;
 use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Array_;
 use PhpToZephir\Converter\Manipulator\AssignManipulator;
 
 class ArrayPrinter
@@ -31,7 +30,7 @@ class ArrayPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -40,12 +39,12 @@ class ArrayPrinter
      */
     public static function getType()
     {
-        return "pExpr_Array";
+        return 'pExpr_Array';
     }
 
     /**
      * @param Expr\Array_ $node
-     * @param boolean     $returnAsArray
+     * @param bool        $returnAsArray
      *
      * @return string|array
      */

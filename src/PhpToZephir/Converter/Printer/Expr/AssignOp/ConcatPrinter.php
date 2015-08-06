@@ -10,7 +10,7 @@ class ConcatPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_AssignOp_Concat";
+        return 'pExpr_AssignOp_Concat';
     }
 
     public function convert(AssignOp\Concat $node)

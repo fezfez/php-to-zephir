@@ -9,7 +9,7 @@ class BitwiseAndPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BinaryOp_BitwiseAnd";
+        return 'pExpr_BinaryOp_BitwiseAnd';
     }
 
     public function convert(BinaryOp\BitwiseAnd $node)

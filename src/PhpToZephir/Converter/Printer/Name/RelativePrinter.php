@@ -9,7 +9,7 @@ class RelativePrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pName_Relative";
+        return 'pName_Relative';
     }
 
     public function convert(Name\Relative $node)

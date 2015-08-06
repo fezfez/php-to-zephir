@@ -30,7 +30,7 @@ class MethodCallPrinter
     public function __construct(Dispatcher $dispatcher, Logger $logger, AssignManipulator $assignManipulator)
     {
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = $logger;
         $this->assignManipulator = $assignManipulator;
     }
 
@@ -39,7 +39,7 @@ class MethodCallPrinter
      */
     public static function getType()
     {
-        return "pExpr_MethodCall";
+        return 'pExpr_MethodCall';
     }
 
     /**
@@ -49,7 +49,7 @@ class MethodCallPrinter
      */
     public function convert(Expr\MethodCall $node)
     {
-        $collected  = $this->assignManipulator->collectAssignInCondition($node->args);
+        $collected = $this->assignManipulator->collectAssignInCondition($node->args);
         $node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
 
         return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').

@@ -9,7 +9,7 @@ class InstanceofPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_Instanceof";
+        return 'pExpr_Instanceof';
     }
 
     public function convert(Expr\Instanceof_ $node)

@@ -9,7 +9,7 @@ class BooleanNotPrinter extends SimplePrinter
 {
     public static function getType()
     {
-        return "pExpr_BooleanNot";
+        return 'pExpr_BooleanNot';
     }
 
     public function convert(Expr\BooleanNot $node)

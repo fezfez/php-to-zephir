@@ -12,7 +12,7 @@ class TryCatchPrinter extends SimplePrinter
      */
     public static function getType()
     {
-        return "pStmt_TryCatch";
+        return 'pStmt_TryCatch';
     }
 
     /**

@@ -75,4 +75,3 @@ EOT
         $this->assertConvertToZephir($php, $zephir);
     }
 }
-
