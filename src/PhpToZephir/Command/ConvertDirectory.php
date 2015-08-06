@@ -76,7 +76,7 @@ class ConvertDirectory extends Command
         $logger = new Logger($this->output, $input->getOption('debug'));
         $directoryCollector = new DirectoryCodeCollector(array($directory));
 
-        foreach ($this->engine->convert($directoryCollector, $input->getArgument('file'), $logger) as $file) {
+        foreach ($this->engine->convert($directoryCollector, $logger, $input->getArgument('file')) as $file) {
             $this->fileRender->render($file);
         }
     }

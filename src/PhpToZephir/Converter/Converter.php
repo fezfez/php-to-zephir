@@ -45,7 +45,7 @@ class Converter
         $metadata = $classInformation->getClassesMetdata($stmts);
 
         return array(
-            'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector),
+            'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector, $logger),
             'namespace' => $metadata->getNamespace(),
             'additionalClass' => $this->findAdditionalClasses($stmts, $logger),
         );

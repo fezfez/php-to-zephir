@@ -138,7 +138,7 @@ class Engine
      */
     private function convertCode($phpCode, ClassCollector $classCollector, Logger $logger, $fileName = null, array $classes = array())
     {
-        $converted = $this->converter->nodeToZephir($phpCode, $classCollector, $fileName, $classes, $logger);
+        $converted = $this->converter->nodeToZephir($phpCode, $classCollector, $logger, $fileName, $classes);
 
         return array(
             'zephir' => $converted['code'],
