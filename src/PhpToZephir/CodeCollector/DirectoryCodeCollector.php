@@ -40,6 +40,10 @@ class DirectoryCodeCollector implements CodeCollectorInterface
 		
 		foreach ($this->directories as $directory) {
 			foreach ($this->findFiles($directory) as $file) {
+				if (is_array($file)) {
+					$file = reset($file);
+				}
+				
 				$files[$file] = file_get_contents($file);
 			}
 		}
