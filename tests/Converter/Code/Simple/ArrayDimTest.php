@@ -260,6 +260,6 @@ class ArrayDim
 
 }
 EOT;
-        $this->assertConvertToZephir($php, $zephir);
+        $this->assertConvertToZephir($php, $zephir, true);
     }
 }

@@ -79,7 +79,7 @@ class IfPrinter
             $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
             if (!empty($collected['extracted'])) {
                 $elseCount++;
-                $toReturn .= ' else { '."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, array('stmts' => $elseIf->stmts)))."\n";
+                $toReturn .= ' else {'."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, array('stmts' => $elseIf->stmts)))."\n";
             } else {
                 $toReturn .= $this->dispatcher->pStmt_ElseIf($elseIf);
             }

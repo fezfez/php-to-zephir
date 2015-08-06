@@ -25,7 +25,7 @@ class CliFactory
     /**
      * Create CLI instance.
      *
-     * @return \Symfony\Component\Console\Application
+     * @return Application
      */
     public static function getInstance()
     {

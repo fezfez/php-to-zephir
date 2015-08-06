@@ -40,6 +40,11 @@ class Engine
         $this->logger         = $logger;
     }
 
+    /**
+     * @param CodeCollectorInterface $codeCollector
+     * @param string $filterFileName
+     * @return array
+     */
     public function convert(CodeCollectorInterface $codeCollector, $filterFileName = null)
     {
         $zephirCode = array();

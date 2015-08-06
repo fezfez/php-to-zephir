@@ -62,7 +62,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
      * @param string|array $php
      * @param string|array $zephirExpected
      */
-    public function assertConvertToZephir($php, $zephir)
+    public function assertConvertToZephir($php, $zephir, $saveFile = false)
     {
         if (is_array($php) === false) {
             $php = array($php);
@@ -72,6 +72,9 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             $zephirGenerated = $this->getRender()->render($file);
             $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 
+            if ($saveFile === true) {
+            	file_put_contents(__DIR__ . '/' . $index . '.zep', $zephirGenerated);
+            }
             if (is_array($zephir) === true) {
                 $this->assertEquals($zephir[$index], $zephirGenerated);
             } else {
