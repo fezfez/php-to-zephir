@@ -69,7 +69,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
         }
 
         $bufferOutput = new BufferedOutput();
-        $logger = new Logger($bufferOutput, false);
+        $logger = new Logger($bufferOutput, false, false);
 
         $generated = array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger));
         

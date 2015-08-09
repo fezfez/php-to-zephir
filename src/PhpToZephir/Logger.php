@@ -3,6 +3,7 @@
 namespace PhpToZephir;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 use PhpParser\Node;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\ProgressHelper;
@@ -21,20 +22,26 @@ class Logger
      * @var bool
      */
     private $trace = null;
+    /**
+     * @var bool
+     */
+    private $progresseBar = null;
 
     /**
      * @param OutputInterface $output
      * @param bool            $trace
+     * @param bool            $progresseBar
      */
-    public function __construct(OutputInterface $output, $trace)
+    public function __construct(OutputInterface $output, $trace = false, $progresseBar = true)
     {
-        $this->output = $output;
-        $this->trace = $trace;
+        $this->output       = $output;
+        $this->trace        = $trace;
+        $this->progresseBar = $progresseBar;
     }
 
     private function cleanProgressbar()
     {
-        if ($this->progress !== null && $this->progress->getStartTime() !== null) {
+        if ($this->progress !== null && $this->progress->getStartTime() !== null && $this->progresseBar === true) {
             $this->progress->clear();
             $this->output->writeln('');
         }
@@ -42,7 +49,7 @@ class Logger
 
     public function reDrawProgressBar()
     {
-        if ($this->progress !== null && $this->progress->getStartTime() !== null) {
+        if ($this->progress !== null && $this->progress->getStartTime() !== null && $this->progresseBar === true) {
             $this->progress->display();
         }
     }
@@ -101,7 +108,7 @@ class Logger
      */
     public function progress($number)
     {
-        $progress = new ProgressBar($this->output, $number);
+        $progress = new ProgressBar((($this->progresseBar === true) ? $this->output : new NullOutput()), $number);
         $progress->setFormat(ProgressHelper::FORMAT_VERBOSE);
         $progress->start();
 

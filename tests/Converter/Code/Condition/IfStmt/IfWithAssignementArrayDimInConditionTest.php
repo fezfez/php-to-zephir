@@ -27,7 +27,6 @@ class IfWithAssignementArrayDimInCondition
         $i = 0;
         $toto = array(1 => true);
 
-        // @FIXME the i++ is extract twice
         if ($averylongvariable = $toto[$i++]) {
             echo 'tata';
         }
@@ -58,8 +57,6 @@ class IfWithAssignementArrayDimInCondition
         let i = 0;
         
         let toto =  [1 : true];
-        // @FIXME the i++ is extract twice
-        let i++;;
         var tmpArray;
         let i++;
         let averylongvariable = toto[i];
