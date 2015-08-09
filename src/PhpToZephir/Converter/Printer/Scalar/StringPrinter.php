@@ -22,7 +22,7 @@ class StringPrinter extends SimplePrinter
      *
      * @return string
      */
-    public function convert(Scalar\String $node)
+    public function convert(Scalar\String_ $node)
     {
         return '"'.$this->pNoIndent(addcslashes($node->value, '\"\\')).'"';
     }
