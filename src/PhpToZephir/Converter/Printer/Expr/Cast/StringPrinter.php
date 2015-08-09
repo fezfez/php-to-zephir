@@ -4,7 +4,7 @@ namespace PhpToZephir\Converter\Printer\Expr\Cast;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast;
-use PhpParser\Node\Scalar\String;
+use PhpParser\Node\Scalar\String_;
 use PhpToZephir\Converter\SimplePrinter;
 
 class StringPrinter extends SimplePrinter
@@ -14,7 +14,7 @@ class StringPrinter extends SimplePrinter
         return 'pExpr_Cast_String';
     }
 
-    public function convert(Cast\String $node)
+    public function convert(Cast\String_ $node)
     {
         return $this->dispatcher->pPrefixOp('Expr_Cast_String', '(string) ', $node->expr);
     }
