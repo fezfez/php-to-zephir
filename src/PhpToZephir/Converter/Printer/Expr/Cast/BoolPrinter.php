@@ -13,7 +13,7 @@ class BoolPrinter extends SimplePrinter
         return 'pExpr_Cast_Bool';
     }
 
-    public function convert(Cast\Bool $node)
+    public function convert(Cast\Bool_ $node)
     {
         return $this->dispatcher->pPrefixOp('Expr_Cast_Bool', '(bool) ', $node->expr);
     }

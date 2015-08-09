@@ -13,7 +13,7 @@ class ObjectPrinter extends SimplePrinter
         return 'pExpr_Cast_Object';
     }
 
-    public function convert(Cast\Object $node)
+    public function convert(Cast\Object_ $node)
     {
         return $this->dispatcher->pPrefixOp('Expr_Cast_Object', '(object) ', $node->expr);
     }

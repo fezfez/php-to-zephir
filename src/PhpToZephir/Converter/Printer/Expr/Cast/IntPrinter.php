@@ -13,7 +13,7 @@ class IntPrinter extends SimplePrinter
         return 'pExpr_Cast_Int';
     }
 
-    public function convert(Cast\Int $node)
+    public function convert(Cast\Int_ $node)
     {
         return $this->dispatcher->pPrefixOp('Expr_Cast_Int', '(int) ', $node->expr);
     }
