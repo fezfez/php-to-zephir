@@ -1,6 +1,6 @@
 <?php
 
-use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
 use PhpToZephir\Render\StringRender;
@@ -68,9 +68,14 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             $php = array($php);
         }
 
-        $logger = new Logger(new NullOutput(), false);
+        $bufferOutput = new BufferedOutput();
+        $logger = new Logger($bufferOutput, false);
 
-        foreach (array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger)) as $index => $file) {
+        $generated = array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger));
+        
+        $this->assertCount(count($zephir), $generated, $bufferOutput->fetch());
+        
+        foreach ($generated as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);
             $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 

@@ -107,9 +107,9 @@ class AssignManipulator
                 foreach ($primaryNode as $key => $node) {
                     $primaryNode[$key] = $this->transformAssignInConditionTest($node);
                 }
-            } elseif (is_string($primaryNode) === false && method_exists($primaryNode, 'getIterator') === true) {
-                foreach ($primaryNode->getIterator() as $key => $node) {
-                    $primaryNode->{$key} = $this->transformAssignInConditionTest($node, get_class($primaryNode));
+            } elseif (is_object($primaryNode) === true && !empty($primaryNode->getSubNodeNames())) {
+                foreach ($primaryNode->getSubNodeNames() as $key) {
+                    $primaryNode->$key = $this->transformAssignInConditionTest($primaryNode->$key, get_class($primaryNode));
                 }
             }
         }

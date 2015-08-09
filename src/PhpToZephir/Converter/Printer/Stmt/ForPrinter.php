@@ -64,10 +64,6 @@ class ForPrinter extends SimplePrinter
             $node->cond[0]->right = $varValue;
         }
 
-        if ($node->cond[0] instanceof BinaryOp\Smaller) {
-            --$node->cond[0]->right->value;
-        }
-
         return $node;
     }
 }

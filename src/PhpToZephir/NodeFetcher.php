@@ -13,8 +13,8 @@ class NodeFetcher
      */
     public function foreachNodes($nodesCollection, array $nodes = array(), $parentClass = '')
     {
-        if (is_string($nodesCollection) === false &&  method_exists($nodesCollection, 'getIterator') === true) {
-            $nodesCollection = $nodesCollection->getIterator();
+        if (is_object($nodesCollection) === true && property_exists($nodesCollection, 'stmts') === true) {
+            $nodesCollection = $nodesCollection->stmts;
         } elseif (is_array($nodesCollection) === false) {
             return $nodes;
         }

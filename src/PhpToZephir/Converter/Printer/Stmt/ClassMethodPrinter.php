@@ -212,16 +212,27 @@ class ClassMethodPrinter
     {
         if (is_array($node) === true) {
             $nodes = $node;
-        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
-            $nodes = $node->getIterator();
+        } elseif (is_object($node) === true && !empty($node->getSubNodeNames())) {
+            $nodes = array();
+            foreach (array_values($node->getSubNodeNames()) as $subnodeName) {
+            	if (is_object($node->$subnodeName)) {
+            		$nodes[] = $node->$subnodeName;
+            	} elseif (is_array($node->$subnodeName) && !empty($node->$subnodeName)) {
+            		foreach ($node->$subnodeName as $subnode) {
+            			$nodes[] = $subnode;
+            		}
+            	}
+            }
         } else {
             return $vars;
         }
 
         foreach ($nodes as $stmt) {
             if ($stmt instanceof Expr\Assign) {
-                if (($stmt->var instanceof Expr\PropertyFetch) === false && ($stmt->var instanceof Expr\StaticPropertyFetch) === false) {
-                    if (is_object($stmt->var->name) === false) { // if true it is a dynamic var
+                if (($stmt->var instanceof Expr\PropertyFetch) === false 
+                 && ($stmt->var instanceof Expr\StaticPropertyFetch) === false
+                 && ($stmt->var instanceof Expr\ArrayDimFetch) === false) {
+                	if (is_object($stmt->var->name) === false) { // if true it is a dynamic var
                         $vars[] = $stmt->var->name;
                     }
                 }
