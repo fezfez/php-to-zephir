@@ -76,7 +76,9 @@ class ClassInformation
                 $class = $this->reservedWordReplacer->replace($node->name);
                 $classMetadata->setClass($class);
 
-                if ($node->implements !== null) {
+                if ($node instanceof Stmt\Interface_ ) {
+                	
+                } elseif ($node instanceof Stmt\Class_ && $node->implements !== null) {
                     $implementsClean = array();
                     foreach ($node->implements as $implement) {
                         $implementsClean[] = $this->reservedWordReplacer->replace(implode('\\', $implement->parts));

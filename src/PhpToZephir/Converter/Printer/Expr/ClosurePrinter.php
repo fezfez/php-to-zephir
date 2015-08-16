@@ -6,6 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpToZephir\NodeFetcher;
 
 class ClosurePrinter
 {
@@ -126,24 +127,16 @@ class $name
      */
     private function convertUseToMemberAttribute($node, $uses)
     {
-        if (is_array($node) === true) {
-            $nodes = $node;
-        } elseif (method_exists($node, 'getIterator') === true) {
-            $nodes = $node->getIterator();
-        } else {
-            return $node;
-        }
-
-        foreach ($nodes as &$stmt) {
-            if ($stmt instanceof Expr\Variable) {
+        $noFetcher = new NodeFetcher();
+        
+        foreach ($noFetcher->foreachNodes($node) as &$stmt) {
+            if ($stmt['node'] instanceof Expr\Variable) {
                 foreach ($uses as $use) {
-                    if ($use->var === $stmt->name) {
-                        $stmt->name = 'this->'.$stmt->name;
+                    if ($use->var === $stmt['node']->name) {
+                        $stmt['node']->name = 'this->'.$stmt['node']->name;
                     }
                 }
             }
-
-            $stmt = $this->convertUseToMemberAttribute($stmt, $uses);
         }
 
         return $node;
