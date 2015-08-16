@@ -21,16 +21,6 @@ class IfWithAssignementArrayDimInCondition
             echo 'tata';
         }
     }
-
-    public function testIncrementInArrayDim()
-    {
-        $i = 0;
-        $toto = array(1 => true);
-
-        if ($averylongvariable = $toto[$i++]) {
-            echo 'tata';
-        }
-    }
 }
 EOT;
         $zephir = <<<'EOT'
@@ -50,21 +40,6 @@ class IfWithAssignementArrayDimInCondition
         }
     }
     
-    public function testIncrementInArrayDim() -> void
-    {
-        var i, toto, averylongvariable;
-    
-        let i = 0;
-        
-        let toto =  [1 : true];
-        var tmpArray;
-        let i++;
-        let averylongvariable = toto[i];
-        if averylongvariable {
-            echo "tata";
-        }
-    }
-
 }
 EOT;
         $this->assertConvertToZephir($php, $zephir);
