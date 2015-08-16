@@ -6,7 +6,7 @@ class IfWithCreateTmpVarInConditionTest extends \ConverterBaseTest
 {
     public function testConverting()
     {
-        $php = <<<'EOT'
+       $php = <<<'EOT'
 <?php
 
 namespace Code\Condition\IfStmt;
@@ -48,7 +48,7 @@ class IfWithCreateTmpVarInCondition
 {
     public function test(toto) -> void
     {
-        var tmpArray40cd750bba9870f18aada2478b24840a, tmpArray6ef611fccd6ae1abb1ff53cf46464309;
+        var tmpArray40cd750bba9870f18aada2478b24840a, tmpArrayf2ca4b16a4d8a754fb08192031cfb1b4;
     
         let tmpArray40cd750bba9870f18aada2478b24840a = [];
         if toto == tmpArray40cd750bba9870f18aada2478b24840a {
@@ -62,8 +62,8 @@ class IfWithCreateTmpVarInCondition
         if toto == false {
             echo "tata";
         }
-        let tmpArray6ef611fccd6ae1abb1ff53cf46464309 = [10];
-        if toto === true && toto === tmpArray6ef611fccd6ae1abb1ff53cf46464309 {
+        let tmpArrayf2ca4b16a4d8a754fb08192031cfb1b4 = [10];
+        if toto === true && toto === tmpArrayf2ca4b16a4d8a754fb08192031cfb1b4 {
             echo "tata";
         }
         let tmpArray40cd750bba9870f18aada2478b24840a = [];

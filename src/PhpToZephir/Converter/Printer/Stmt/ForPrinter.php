@@ -6,6 +6,7 @@ use PhpParser\Node\Stmt;
 use PhpToZephir\Converter\SimplePrinter;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Scalar;
 
 class ForPrinter extends SimplePrinter
 {
@@ -62,6 +63,10 @@ class ForPrinter extends SimplePrinter
             $node->cond[0]->left = $varValue;
         } elseif ($node->cond[0]->right instanceof Variable && $node->cond[0]->right->name === $varName->name) {
             $node->cond[0]->right = $varValue;
+        }
+        
+        if ($node->cond[0] instanceof BinaryOp\Smaller && $node->cond[0]->right instanceof Scalar\LNumber) {
+        	--$node->cond[0]->right->value;
         }
 
         return $node;

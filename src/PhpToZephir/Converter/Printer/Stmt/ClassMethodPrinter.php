@@ -118,31 +118,13 @@ class ClassMethodPrinter
      */
     private function findModifiedToNonStaticVar($node)
     {
-        if (is_array($node) === true) {
-            $nodes = $node;
-        } elseif (is_string($node) === false && method_exists($node, 'getIterator') === true) {
-            $nodes = $node->getIterator();
-        } else {
-            return $node;
-        }
+        $noFetcher = new NodeFetcher();
 
-        foreach ($nodes as $key => &$stmt) {
-            if ($stmt instanceof Expr\ClassConstFetch) {
-                $isMovedToNonStatic = $this->dispatcher->isMovedToNonStaticVar($stmt->name);
+        foreach ($noFetcher->foreachNodes($node) as &$stmt) {
+            if ($stmt['node'] instanceof Expr\ClassConstFetch) {
+                $isMovedToNonStatic = $this->dispatcher->isMovedToNonStaticVar($stmt['node']->name);
                 if ($isMovedToNonStatic === true) {
-                    $var = new Expr\Variable('this->'.$stmt->name);
-                    if (is_array($node) === true) {
-                        $node[$key] = $var;
-                    } else {
-                        $node->$key = $var;
-                    }
-                }
-            } else {
-                $stmt = $this->findModifiedToNonStaticVar($stmt);
-                if (is_array($node) === true) {
-                    $node[$key] = $stmt;
-                } else {
-                    $node->$key = $stmt;
+                    $stmt['node'] = new Expr\Variable('this->'.$stmt['node']->name);
                 }
             }
         }
@@ -210,45 +192,30 @@ class ClassMethodPrinter
      */
     private function collectVars($node, array $vars = array())
     {
-        if (is_array($node) === true) {
-            $nodes = $node;
-        } elseif (is_object($node) === true && !empty($node->getSubNodeNames())) {
-            $nodes = array();
-            foreach (array_values($node->getSubNodeNames()) as $subnodeName) {
-            	if (is_object($node->$subnodeName)) {
-            		$nodes[] = $node->$subnodeName;
-            	} elseif (is_array($node->$subnodeName) && !empty($node->$subnodeName)) {
-            		foreach ($node->$subnodeName as $subnode) {
-            			$nodes[] = $subnode;
-            		}
-            	}
-            }
-        } else {
-            return $vars;
-        }
+        $noFetcher = new NodeFetcher();
 
-        foreach ($nodes as $stmt) {
-            if ($stmt instanceof Expr\Assign) {
-                if (($stmt->var instanceof Expr\PropertyFetch) === false 
-                 && ($stmt->var instanceof Expr\StaticPropertyFetch) === false
-                 && ($stmt->var instanceof Expr\ArrayDimFetch) === false) {
-                	if (is_object($stmt->var->name) === false) { // if true it is a dynamic var
-                        $vars[] = $stmt->var->name;
+        foreach ($noFetcher->foreachNodes($node) as &$stmt) {
+            if ($stmt['node'] instanceof Expr\Assign) {
+                if (($stmt['node']->var instanceof Expr\PropertyFetch) === false 
+                 && ($stmt['node']->var instanceof Expr\StaticPropertyFetch) === false
+                 && ($stmt['node']->var instanceof Expr\ArrayDimFetch) === false) {
+                	if (is_object($stmt['node']->var->name) === false) { // if true it is a dynamic var
+                        $vars[] = $stmt['node']->var->name;
                     }
                 }
-            } elseif ($stmt instanceof Stmt\Foreach_) {
-                if (null !== $stmt->keyVar) {
-                    $vars[] = $stmt->keyVar->name;
+            } elseif ($stmt['node'] instanceof Stmt\Foreach_) {
+                if (null !== $stmt['node']->keyVar) {
+                    $vars[] = $stmt['node']->keyVar->name;
                 }
-                $vars[] = $stmt->valueVar->name;
-            } elseif ($stmt instanceof Stmt\For_) {
-                foreach ($stmt->init as $init) {
+                $vars[] = $stmt['node']->valueVar->name;
+            } elseif ($stmt['node'] instanceof Stmt\For_) {
+                foreach ($stmt['node']->init as $init) {
                     if ($init instanceof Expr\Assign) {
                         $vars[] = $init->var->name;
                     }
                 }
-            } elseif ($stmt instanceof Stmt\If_) {
-                foreach ($this->nodeFetcher->foreachNodes($stmt) as $nodeData) {
+            } elseif ($stmt['node'] instanceof Stmt\If_) {
+                foreach ($this->nodeFetcher->foreachNodes($stmt['node']) as $nodeData) {
                     $node = $nodeData['node'];
                     if ($node instanceof Expr\Assign) {
                         $vars[] = $node->var->name;
@@ -256,13 +223,11 @@ class ClassMethodPrinter
                         $vars[] = 'tmpArray'.md5(serialize($node->items));
                     }
                 }
-            } elseif ($stmt instanceof Stmt\Catch_) {
-                $vars[] = $stmt->var;
-            } elseif ($stmt instanceof Stmt\Return_ && $stmt->expr instanceof Expr\Array_) {
-                $vars[] = 'tmpArray'.md5(serialize($stmt->expr->items));
+            } elseif ($stmt['node'] instanceof Stmt\Catch_) {
+                $vars[] = $stmt['node']->var;
+            } elseif ($stmt['node'] instanceof Stmt\Return_ && $stmt['node']->expr instanceof Expr\Array_) {
+                $vars[] = 'tmpArray'.md5(serialize($stmt['node']->expr->items));
             }
-
-            $vars = array_merge($vars, $this->collectVars($stmt));
         }
 
         $vars = array_map(array($this->reservedWordReplacer, 'replace'), $vars);

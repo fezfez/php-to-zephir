@@ -41,10 +41,10 @@ class ReturnStmt
     
     public function testReturnArray()
     {
-        var tmpArray961e689622b008ac464bf70d9d437c4d;
+        var tmpArrayf6499d168b352149fb71f58a79c076bd;
     
-        let tmpArray961e689622b008ac464bf70d9d437c4d = ["foo" : "bar"];
-        return tmpArray961e689622b008ac464bf70d9d437c4d;
+        let tmpArrayf6499d168b352149fb71f58a79c076bd = ["foo" : "bar"];
+        return tmpArrayf6499d168b352149fb71f58a79c076bd;
     }
 
 }

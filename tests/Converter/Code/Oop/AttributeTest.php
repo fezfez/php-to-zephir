@@ -56,9 +56,9 @@ class Attribute
         let test =  this->publicAttr;
         let test =  this->protectedAttr;
         let test =  this->privateAttr;
-        let test = this->publicStaticAttr;
-        let test = this->protectedStaticAttr;
-        let test = this->privateStaticAttr;
+        let test =  self::publicStaticAttr;
+        let test =  self::protectedStaticAttr;
+        let test =  self::privateStaticAttr;
         let test =  self::MY_CONST;
     }
 
