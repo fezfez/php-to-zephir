@@ -102,8 +102,17 @@ class AssignManipulator
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarCreation($primaryNode) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
             $primaryNode = new Expr\Variable('tmpArray'.md5(serialize($primaryNode->items)));
+        } else {
+			if (is_array($primaryNode) === true) {
+				foreach ($primaryNode as $key => $node) {
+					$primaryNode[$key] = $this->transformAssignInConditionTest($node);
+				}
+			} elseif (is_object($primaryNode) === true && !empty($primaryNode->getSubNodeNames())) {
+				foreach ($primaryNode->getSubNodeNames() as $key) {
+					$primaryNode->$key = $this->transformAssignInConditionTest($primaryNode->$key, get_class($primaryNode));
+				}
+			}
         }
-
         return $primaryNode;
     }
 

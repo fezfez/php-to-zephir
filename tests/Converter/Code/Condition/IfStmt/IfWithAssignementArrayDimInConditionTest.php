@@ -39,7 +39,7 @@ class IfWithAssignementArrayDimInCondition
             echo "tata";
         }
     }
-    
+
 }
 EOT;
         $this->assertConvertToZephir($php, $zephir);
