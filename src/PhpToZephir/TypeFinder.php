@@ -189,8 +189,8 @@ class TypeFinder
                         } catch (\InvalidArgumentException $e) {
                         }
                     }
-                    foreach ($use as $uses) {
-                        if ($uses.'/'.$implement === $className) {
+                    foreach ($classMetadata->getClasses() as $use) {
+                        if ($use.'/'.$implement === $className) {
                             try {
                                 $phpdoc = $this->nodeToDocBlock($this->findMethod($classInfo, $node->name));
                             } catch (\InvalidArgumentException $e) {

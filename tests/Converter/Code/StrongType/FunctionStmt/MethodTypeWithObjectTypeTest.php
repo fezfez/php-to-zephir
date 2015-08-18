@@ -72,4 +72,95 @@ EOT
 );
         $this->assertConvertToZephir($php, $zephir);
     }
+
+    public function testDefinedInInterfaceDoc()
+    {
+    	$php = array(<<<'EOT'
+<?php
+    
+namespace Code\StrongType\FunctionStmt;
+    
+use Code\StrongType\MyParametterTwo;
+    
+class MyClass implements MyInterface
+{
+    public function test(MyParametter $parametter, MyParametterTwo $parametterTwo)
+    {
+    }
+}
+EOT
+    			,<<<'EOT'
+<?php
+
+namespace Code\StrongType\FunctionStmt;
+
+use Code\StrongType\MyParametterTwo;
+
+interface MyInterface
+{
+    public function test(MyParametter $parametter, MyParametterTwo $parametterTwo);
+}
+EOT
+    			,
+    			<<<'EOT'
+<?php
+    
+namespace Code\StrongType\FunctionStmt;
+    
+class MyParametter
+{
+}
+EOT
+    			,
+    			<<<'EOT'
+<?php
+
+namespace Code\StrongType;
+
+class MyParametterTwo
+{
+}
+EOT
+    	);
+    	$zephir = array(<<<'EOT'
+namespace Code\StrongType\FunctionStmt;
+
+use Code\StrongType\MyParametterTwo;
+class MyClass implements MyInterface
+{
+    public function test(<MyParametter> parametter, <MyParametterTwo> parametterTwo) -> void
+    {
+    }
+
+}
+EOT
+    			,<<<'EOT'
+namespace Code\StrongType\FunctionStmt;
+
+use Code\StrongType\MyParametterTwo;
+interface MyInterface
+{
+    public function test(<MyParametter> parametter, <MyParametterTwo> parametterTwo) -> void;
+
+}
+EOT
+    			,
+    			<<<'EOT'
+namespace Code\StrongType\FunctionStmt;
+
+class MyParametter
+{
+}
+EOT
+    			,
+    			<<<'EOT'
+namespace Code\StrongType;
+
+class MyParametterTwo
+{
+}
+EOT
+    	);
+    	$this->assertConvertToZephir($php, $zephir);
+    }
 }
