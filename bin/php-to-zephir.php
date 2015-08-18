@@ -3,7 +3,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Input\ArgvInput;
 use PhpToZephir\Service\CliFactory;
 
-ini_set('xdebug.max_nesting_level', 200);
+ini_set('xdebug.max_nesting_level', 3000);
 
 chdir(realpath('./'));
 

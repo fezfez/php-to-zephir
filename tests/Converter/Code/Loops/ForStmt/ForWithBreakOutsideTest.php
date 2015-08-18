@@ -14,13 +14,13 @@ class ForWithBreakOutside
 {
     public function testSampleFromPhpDoc2()
     {
-		for ($i = 1; ; $i++) {
-		    if ($i > 10) {
-		        break;
-		    }
-		    echo $i;
-		}
-	}
+        for ($i = 1; ; $i++) {
+            if ($i > 10) {
+                break;
+            }
+            echo $i;
+        }
+    }
 }
 EOT;
         $zephir = <<<'EOT'

@@ -7,6 +7,7 @@ use PhpToZephir\Converter\SimplePrinter;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar;
+use PhpParser\Node;
 
 class ForPrinter extends SimplePrinter
 {
@@ -25,12 +26,6 @@ class ForPrinter extends SimplePrinter
      */
     public function convert(Stmt\For_ $node)
     {
-        $transformAsLoop = false;
-
-        if (is_array($node->init) && count($node->init) > 1) {
-            throw new \Exception(sprintf('Cannot convert %s ', $this->dispatcher->pCommaSeparated($node->init)));
-        }
-
         if (is_array($node->cond) && count($node->cond) > 1) {
             throw new \Exception(sprintf('Cannot convert %s ', $this->dispatcher->pCommaSeparated($node->cond)));
         }
@@ -39,14 +34,31 @@ class ForPrinter extends SimplePrinter
             return (!empty($node->init) ? $this->dispatcher->pStmts($node->init)."\n" : '')
                .'loop'
               .' {'.$this->dispatcher->pStmts($node->stmts)."\n".$this->dispatcher->pStmts($node->loop)."\n".'}';
-        } else {
+        } elseif ($node->cond[0] instanceof BinaryOp) {
             $node = $this->findIteratorVar($node);
 
-            return 'for '
+            return $this->printVars($node) . 'for '
                  .$this->dispatcher->p($node->init[0]->var).' in '.(!empty($node->cond) ? '' : '')
                  .'range('.$this->dispatcher->p($node->cond[0]->left).', '.$this->dispatcher->p($node->cond[0]->right).')'
                  .' {'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
+        } elseif (count($node->cond) === 1 && $node->cond[0] instanceof Node\Expr) {
+        	$ifNode = new Stmt\If_($node->cond[0], array('stmts' => array(new Node\Stmt\Break_())));
+        	return (!empty($node->init) ? $this->dispatcher->pStmts($node->init)."\n" : '')
+        	.'loop'
+        			.' {'.$this->dispatcher->p($ifNode)."\n".$this->dispatcher->pStmts($node->stmts)."\n".$this->dispatcher->pStmts($node->loop)."\n".'}';
+        } else {
+        	throw new \Exception(sprintf('Cannot convert %s ', $this->dispatcher->pCommaSeparated($node->cond)));
         }
+    }
+    
+    private function printVars(Stmt\For_ $node)
+    {
+    	$initPrint = '';
+    	foreach ($node->init as $init) {
+    		$initPrint .= $this->dispatcher->p($init) . ";\n";
+    	}
+    	
+    	return $initPrint;
     }
 
     /**

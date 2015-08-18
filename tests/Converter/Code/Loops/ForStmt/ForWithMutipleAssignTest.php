@@ -2,7 +2,7 @@
 
 namespace Converter\Code\Loops\ForStmt;
 
-class ForWithCountTest extends \ConverterBaseTest
+class ForWithMutipleAssignTest extends \ConverterBaseTest
 {
     public function testConverting()
     {
@@ -16,7 +16,7 @@ class ForWithCount
     {
         $myArray = array('test', '2');
 
-        for ($i = 0; $i < count($myArray); $i++) {
+        for ($i = 0, $count = count($myArray); $i < $count; $i++) {
 			echo $i;
         }
     }
@@ -29,12 +29,13 @@ class ForWithCount
 {
     public function testWithCall() -> void
     {
-        var myArray, i;
+        var myArray, i, count;
     
         
         let myArray =  ["test", "2"];
         let i = 0;
-        for i in range(0, count(myArray)) {
+        let count =  count(myArray);
+        for i in range(0, count) {
             echo i;
         }
     }

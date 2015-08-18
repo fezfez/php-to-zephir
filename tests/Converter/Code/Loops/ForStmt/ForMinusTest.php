@@ -29,6 +29,7 @@ class ForMinus
     {
         var i;
     
+        let i = 0;
         for i in range(0, 9) {
             echo i;
         }
