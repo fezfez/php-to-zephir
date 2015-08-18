@@ -52,17 +52,13 @@ class TypeFinder
      */
     public function getTypes(ClassMethod $node, ClassMetadata $classMetadata)
     {
-        $actualNamespace = $classMetadata->getFullQualifiedNameClass();
-        $use = $classMetadata->getUse();
-        $classes = $classMetadata->getClasses();
-        $class = $classMetadata->getClass();
         $definition = array();
 
-        $definition = $this->parseParam($node, $actualNamespace, $use, $classes, $definition);
+        $definition = $this->parseParam($node, $classMetadata, $definition);
 
         $phpdoc = $this->nodeToDocBlock($node);
 
-        return $this->findReturnTag($phpdoc, $actualNamespace, $definition, $use, $classes, $classMetadata, $node);
+        return $this->findReturnTag($phpdoc, $definition, $classMetadata, $node);
     }
 
     /**
@@ -74,7 +70,7 @@ class TypeFinder
      *
      * @return array
      */
-    private function parseParam(ClassMethod $node, $actualNamespace, array $use, array $classes, array $definition)
+    private function parseParam(ClassMethod $node, ClassMetadata $classMetadata, array $definition)
     {
         if (isset($definition['params']) === false) {
             $definition['params'] = array();
@@ -93,7 +89,7 @@ class TypeFinder
           } elseif ($param->type === null) { // scalar or not strong typed in method
              $docBlock = $this->nodeToDocBlock($node);
               if ($docBlock !== null) {
-                  $params['type'] = $this->foundTypeInCommentForVar($docBlock, $param,  $actualNamespace, $use, $classes);
+                  $params['type'] = $this->foundTypeInCommentForVar($docBlock, $param, $classMetadata);
               }
           } elseif ($param->type instanceof \PhpParser\Node\Name) {
               $className = implode('\\', $param->type->parts);
@@ -142,30 +138,17 @@ class TypeFinder
      *
      * @return null|array
      */
-    private function foundTypeInCommentForVar(DocBlock $phpdoc, Param $param, $actualNamespace, array $use, array $classes)
+    private function foundTypeInCommentForVar(DocBlock $phpdoc, Param $param, ClassMetadata $classMetadata)
     {
         foreach ($phpdoc->getTags() as $tag) {
             if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\ParamTag) {
                 if ($param->name === substr($tag->getVariableName(), 1)) {
-                    return $this->findType($tag, $actualNamespace, $use, $classes);
+                    return $this->findType($tag);
                 }
             }
         }
 
-        foreach ($phpdoc->getTags() as $tag) {
-            /* @var $tag \phpDocumentor\Reflection\DocBlock\Tag\VarTag */
-           if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\SeeTag) {
-               try {
-                   $seeDocBlock = $this->findSeeDocBlock($tag, $actualNamespace, $use, $classes);
-
-                   return $this->foundTypeInCommentForVar($seeDocBlock, $param, $actualNamespace, $use, $classes);
-               } catch (\Exception $e) {
-                   echo $e->getMessage()."\n";
-               }
-           }
-        }
-
-        return;
+        return; 
     }
 
     /**
@@ -177,7 +160,7 @@ class TypeFinder
      *
      * @return array
      */
-    private function findReturnTag($phpdoc = null, $actualNamespace, array $definition, array $use, array $classes, ClassMetadata $classMetadata, ClassMethod $node)
+    private function findReturnTag($phpdoc = null, array $definition, ClassMetadata $classMetadata, ClassMethod $node)
     {
         $implements = $classMetadata->getImplements();
         if (is_array($implements) === true) {
@@ -205,7 +188,7 @@ class TypeFinder
             foreach ($phpdoc->getTags() as $tag) {
                 if ($this->isReturnTag($tag) === true) {
                     $definition['return'] = array(
-                        'type' => $this->findType($tag, $actualNamespace, $use, $classes),
+                        'type' => $this->findType($tag),
                     );
                     break;
                 }
@@ -255,7 +238,7 @@ class TypeFinder
      *
      * @return string
      */
-    private function findType(Tag $tag, $actualNamespace, array $use, array $classes)
+    private function findType(Tag $tag)
     {
         $rawType = $tag->getType();
 
@@ -299,128 +282,5 @@ class TypeFinder
         }
 
         return $type;
-    }
-
-    /**
-     * @param string $class
-     *
-     * @return string
-     */
-    private function cleanClass($class)
-    {
-        $class = str_replace('\\\\', '\\', $class);
-
-        if (substr($class, 0, 1) === '\\') {
-            return substr($class, 1);
-        } else {
-            return $class;
-        }
-    }
-
-    /**
-     * @param string $classReference
-     * @param string $actualNamespace
-     *
-     * @throws \Exception
-     *
-     * @return string
-     */
-    private function searchClass($classReference, $actualNamespace, array $uses, array $classes)
-    {
-        $classReference = $this->cleanClass($classReference);
-        $classWithActualNamespace = $this->cleanClass($actualNamespace.'\\'.$classReference);
-        $fullClass = null;
-        $possibleClass = array($classReference, $classWithActualNamespace);
-
-        if ($this->loadClass($classReference) === true || in_array($classReference, $classes) === true) {
-            $fullClass = $classReference;
-        } elseif ($this->loadClass($classWithActualNamespace) === true || in_array($classWithActualNamespace, $classes) === true) {
-            $fullClass = $classWithActualNamespace;
-        } else {
-            // test the use
-            foreach ($uses as $use) {
-                /* @var $use \PhpParser\Node\Stmt\UseUse */
-
-                // test alias ex : test\myClass as mySuperClass ( mySuperClass === $classReference)
-                if ($use->alias === str_replace('\\', '', $classReference)) {
-                    $aliasClass = implode('\\', $use->name->parts);
-                    $possibleClass[] = $aliasClass;
-                    if ($this->loadClass($aliasClass) === true) {
-                        $fullClass = $aliasClass;
-                        break;
-                    }
-                } else {
-                    // test alias ex : test\myClass as mySuperClass ( test\myClass\Test === $classReference)
-                    $classParts = str_replace($use->alias, implode('\\', $use->name->parts), $classReference);
-                    $possibleClass[] = $classParts;
-                    if ($this->loadClass($classParts) === true) {
-                        $fullClass = $classParts;
-                        break;
-                    }
-
-                    $classParts = $this->rstrstr(implode('\\', $use->name->parts), '\\').'\\'.$classReference;
-                    $possibleClass[] = $classParts;
-                    if ($this->loadClass($classParts) === true) {
-                        $fullClass = $classParts;
-                        break;
-                    }
-                }
-            }
-
-            if ($fullClass === null) {
-                throw new \Exception(sprintf('Class "%s" not found refrenced in "%s"', implode(' or ', $possibleClass), $actualNamespace));
-            }
-        }
-
-        return '\\'.$this->cleanClass($fullClass);
-    }
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     */
-    private function rstrstr($haystack, $needle)
-    {
-        return substr($haystack, 0, strrpos($haystack, $needle));
-    }
-    /**
-     * @param Tag    $tag
-     * @param string $actualNamespace
-     *
-     * @throws \Exception
-     */
-    private function findSeeDocBlock(SeeTag $tag, $actualNamespace, array $use, array $classes)
-    {
-        $classReference = strstr($tag->getReference(), '::', true);
-        $methodRefrence = str_replace(array(':', '(', ')'), '', strstr($tag->getReference(), '::'));
-        $fullClass = $this->searchClass($classReference, $actualNamespace, $use, $classes);
-
-        $rc = new \ReflectionClass($fullClass);
-
-        if ($rc->hasMethod($methodRefrence) === false) {
-            throw new \Exception(sprintf('Method "%s" does not exist in "%s"', $methodRefrence, $fullClass));
-        }
-
-        return new DocBlock($rc->getMethod($methodRefrence)->getDocComment());
-    }
-
-    /**
-     * @param string $class
-     *
-     * @return bool
-     */
-    private function loadClass($class)
-    {
-        if (interface_exists($class, false) === true) {
-            return true;
-        } elseif (class_exists($class, false) === true) {
-            return true;
-        } elseif (interface_exists($class, true) === true) {
-            return true;
-        } elseif (class_exists($class, true) === true) {
-            return true;
-        }
-
-        return false;
     }
 }
