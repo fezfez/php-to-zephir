@@ -15,6 +15,9 @@ install:
   - composer install
   - cd ./vendor/phalcon/zephir/
   - ./unit-tests/ci/before_install.sh
+  - export LD_LIBRARY_PATH="$TRAVIS_BUILD_DIR/vendor/phalcon/zephir/build/lib":$LD_LIBRARY_PATH
+  - export LIBRARY_PATH="$TRAVIS_BUILD_DIR/vendor/phalcon/zephir/build/lib":$LIBRARY_PATH
+  - export C_INCLUDE_PATH="$TRAVIS_BUILD_DIR/vendor/phalcon/zephir/build/include"
   - ./install-nosudo -c
   - cd ./../../../
 
