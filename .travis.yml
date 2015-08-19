@@ -10,9 +10,6 @@ install:
   - phpize -v
   - composer selfupdate
   - composer install
-  - wget https://github.com/json-c/json-c/archive/0eedf3802fad2d41e45eecd92af529440f0d7d3a.zip -O json-c
-  - unzip json-c -d tmp-json
-  - mv tmp-json/json-c-0eedf3802fad2d41e45eecd92af529440f0d7d3a/* ./vendor/phalcon/zephir/json-c/
   - cd ./vendor/phalcon/zephir/unit-tests/ci/
   - ./before_install.sh
   - cd ./../../
