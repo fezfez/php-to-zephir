@@ -82,13 +82,18 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             $zephirGenerated = $this->getRender()->render($file);
 
             if (is_array($zephir) === true) {
-                $this->assertEquals($zephir[$index], $zephirGenerated);
+                $this->assertEquals($this->showWiteSpace($zephir[$index]), $this->showWiteSpace($zephirGenerated));
             } else {
-                $this->assertEquals($zephir, $zephirGenerated);
+                $this->assertEquals($this->showWiteSpace($zephir), $this->showWiteSpace($zephirGenerated));
             }
         }
 
         $this->assertTrue($this->getCodeValidator()->isValid('code'));
+    }
+    
+    private function showWiteSpace($string)
+    {
+    	return str_replace(array("\n", "\t", "\r", " "), array('\n' . "\n", '\t', '\r', '.'), $string);
     }
 
     public static function delTree($dir)
