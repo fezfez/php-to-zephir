@@ -17,7 +17,7 @@ class MethodExist
     {
         $foo = 'simpleTest';
 
-        method_exists(self, $foo);
+        method_exists(this, $foo);
     }
 }
 EOT;
@@ -31,7 +31,7 @@ class MethodExist
         var foo;
     
         let foo = "simpleTest";
-        method_exists(self, foo);
+        method_exists(this, foo);
     }
 
 }

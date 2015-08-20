@@ -2,6 +2,11 @@
 
 namespace PhpToZephir;
 
+use Zephir\Commands\CommandGenerate;
+use Zephir\Config;
+use Zephir\Logger as ZephirLogger;
+use Zephir\CompilerException;
+
 class CodeValidator
 {
     /**
@@ -9,26 +14,20 @@ class CodeValidator
      *
      * @throws \Exception
      */
-    public function isValid($zephirCode)
+    public function isValid($namespace)
     {
-        $tmpfname = __DIR__.'/tmp.zep';
+        if (!defined('ZEPHIRPATH'))
+            define('ZEPHIRPATH', realpath(__DIR__.'/../../vendor/phalcon/zephir').'/');
 
-        file_put_contents($tmpfname, $zephirCode);
+        $generateCommand = new CommandGenerate();
 
-        $ZEPHIRPATH = realpath(__DIR__.'/../../vendor/phalcon/zephir').'/';
-
-        if (PHP_OS == 'WINNT') {
-            $zephirParserBinary = $ZEPHIRPATH.'bin\zephir-parser.exe';
-        } else {
-            $zephirParserBinary = $ZEPHIRPATH.'bin/zephir-parser';
-        }
-
-        exec($zephirParserBinary.' '.$tmpfname, $tmp, $return);
-
-        unlink($tmpfname);
-
-        if ($return !== 0) {
-            throw new \Exception(sprintf('Error on %s', $zephirCode));
+        try {
+            $config = new Config();
+            $config->set('namespace', $namespace);
+            $config->set('silent', true);
+            $generateCommand->execute($config, new ZephirLogger($config));
+        } catch (CompilerException $e) {
+            throw new \Exception(sprintf('Error on %s', $e->getMessage()));
         }
 
         return true;

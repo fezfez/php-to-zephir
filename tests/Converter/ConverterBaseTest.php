@@ -3,9 +3,10 @@
 use Symfony\Component\Console\Output\BufferedOutput;
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Logger;
-use PhpToZephir\Render\StringRender;
+use PhpToZephir\Render\FileRender;
 use PhpToZephir\CodeCollector\StringCodeCollector;
 use PhpToZephir\CodeValidator;
+use PhpToZephir\FileWriter;
 
 abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +15,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
      */
     private static $engine;
     /**
-     * @var StringRender
+     * @var FileRender
      */
     private static $render;
     /**
@@ -40,7 +41,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
     private function getRender()
     {
         if (self::$render === null) {
-            self::$render = new StringRender();
+            self::$render = new FileRender(new FileWriter());
         }
 
         return self::$render;
@@ -72,18 +73,28 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
         $logger = new Logger($bufferOutput, false, false);
 
         $generated = array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger));
-        
+
         $this->assertCount(count($zephir), $generated, $bufferOutput->fetch());
-        
+
+        self::delTree('code');
+
         foreach ($generated as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);
-            $this->assertTrue($this->getCodeValidator()->isValid($zephirGenerated));
 
             if (is_array($zephir) === true) {
                 $this->assertEquals($zephir[$index], $zephirGenerated);
             } else {
                 $this->assertEquals($zephir, $zephirGenerated);
             }
+        }
+
+        $this->assertTrue($this->getCodeValidator()->isValid('code'));
+    }
+
+    public static function delTree($dir)
+    {
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+            $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
         }
     }
 }
