@@ -54,16 +54,6 @@ class PropertyPrinter
             $node->props[$key] = $prop;
         }
 
-        if ($node->props[0]->default instanceof Expr\Array_ && $node->isStatic() === true) {
-            $node->type = $node->type - Stmt\Class_::MODIFIER_STATIC;
-            $this->dispatcher->moveToNonStaticVar($node->props[0]->name);
-            $this->logger->logNode(
-                'Static attribute default array not supported in zephir, (see #188). Changed into non static. ',
-                $node,
-                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
-            );
-        }
-
         return $this->dispatcher->pModifiers($node->type).$this->dispatcher->pCommaSeparated($node->props).';';
     }
 }
