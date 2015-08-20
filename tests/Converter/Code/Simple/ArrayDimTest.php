@@ -131,7 +131,7 @@ class ArrayDim
     protected typeMap = [];
     protected namespaces = null;
     protected imports = [];
-    protected annotationMetadata = ["test"];
+    protected static annotationMetadata = ["test"];
     public function testArrayDimScalarWithAssignLet() -> void
     {
         var number, myArray;
@@ -238,7 +238,7 @@ class ArrayDim
             echo "im converted !";
         }
         }
-        let property = this->annotationMetadata[name]["default_property"];
+        let property = self::annotationMetadata[name]["default_property"];
         if !property {
             echo "not allowed";
         }

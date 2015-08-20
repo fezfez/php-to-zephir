@@ -57,7 +57,7 @@ namespace Code\Condition\IfStmt;
 
 class IfElseCondition
 {
-    protected staticArray = [];
+    protected static staticArray = [];
     public function test(toto)
     {
         var toReturn;
@@ -92,7 +92,7 @@ class IfElseCondition
             echo "static funcall!";
         }
         
-        if isset this->staticArray["test"] {
+        if isset self::staticArray["test"] {
             echo "static array !";
         }
     }

@@ -43,15 +43,6 @@ class ArrayDimFetchPrinter
     {
         $collected = $this->arrayManipulator->arrayNeedToBeSplit($node);
 
-        if ($node->var instanceof Expr\StaticPropertyFetch) {
-            if ($node->var->class->parts[0] === 'self') {
-                $node->var = new Expr\PropertyFetch(new Expr\Variable('this'), $node->var->name);
-                $this->logger->logNode('Change StaticProperty into PropertyFetch due to #188', $node);
-            } else {
-                $this->logger->logNode('StaticProperty on array not supported, see #188', $node);
-            }
-        }
-
         if ($collected !== false) {
             return $this->splitArray($collected, $returnAsArray);
         } else {

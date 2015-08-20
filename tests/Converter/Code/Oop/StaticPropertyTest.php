@@ -17,7 +17,7 @@ class StaticProperty
 
     public static function test1()
     {
-        Test::$x = 1;
+        StaticProperty::$x = 1;
     }
 }
 EOT;
@@ -29,7 +29,7 @@ class StaticProperty
     public static x;
     public static function test1() -> void
     {
-        let Test::x = 1;
+        let StaticProperty::x = 1;
     }
 
 }

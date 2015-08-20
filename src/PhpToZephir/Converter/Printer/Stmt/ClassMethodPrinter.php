@@ -86,7 +86,6 @@ class ClassMethodPrinter
             $this->dispatcher->getMetadata()
         );
         $this->dispatcher->setLastMethod($node->name);
-        $node->stmts = $this->findModifiedToNonStaticVar($node->stmts);
 
         $stmt = $this->dispatcher->pModifiers($node->type).'function '.($node->byRef ? '&' : '').$node->name.'(';
         $varsInMethodSign = array();
@@ -109,27 +108,6 @@ class ClassMethodPrinter
              $this->dispatcher->pStmts($node->stmts)."\n}" : ';')."\n";
 
         return $stmt;
-    }
-
-    /**
-     * @param array|\ArrayIterator $node
-     *
-     * @return array|\ArrayIterator
-     */
-    private function findModifiedToNonStaticVar($node)
-    {
-        $noFetcher = new NodeFetcher();
-
-        foreach ($noFetcher->foreachNodes($node) as &$stmt) {
-            if ($stmt['node'] instanceof Expr\ClassConstFetch) {
-                $isMovedToNonStatic = $this->dispatcher->isMovedToNonStaticVar($stmt['node']->name);
-                if ($isMovedToNonStatic === true) {
-                    $stmt['node'] = new Expr\Variable('this->'.$stmt['node']->name);
-                }
-            }
-        }
-
-        return $node;
     }
 
     /**

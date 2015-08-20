@@ -45,9 +45,9 @@ class Attribute
     public publicAttr = [];
     protected protectedAttr = [];
     protected privateAttr = [];
-    public publicStaticAttr = [];
-    protected protectedStaticAttr = [];
-    protected privateStaticAttr = [];
+    public static publicStaticAttr = [];
+    protected static protectedStaticAttr = [];
+    protected static privateStaticAttr = [];
     const MY_CONST = "";
     public function test() -> void
     {
