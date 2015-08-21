@@ -195,7 +195,7 @@ class ClassMethodPrinter
             } elseif ($stmt['node'] instanceof Stmt\If_) {
                 foreach ($this->nodeFetcher->foreachNodes($stmt['node']) as $nodeData) {
                     $node = $nodeData['node'];
-                    if ($node instanceof Expr\Assign) {
+                    if ($node instanceof Expr\Assign && false === ($node->var instanceof Expr\ArrayDimFetch)) {
                         $vars[] = $node->var->name;
                     } elseif ($node instanceof Expr\Array_) {
                         $vars[] = 'tmpArray'.md5(serialize($node->items));
