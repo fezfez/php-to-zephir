@@ -1,6 +1,6 @@
 <?php
 
-namespace Converter\Code\Simple;
+namespace Converter\Code\ArrayManipulation;
 
 class ArrayNestedTest extends \ConverterBaseTest
 {
