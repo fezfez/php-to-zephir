@@ -9,7 +9,7 @@ php:
 install:
   - phpize -v
   - composer selfupdate
-  - composer install
+  - composer install --prefer-source
   - cd ./vendor/phalcon/zephir/
   - ./unit-tests/ci/before_install.sh
   - export LD_LIBRARY_PATH="$TRAVIS_BUILD_DIR/build/lib":$LD_LIBRARY_PATH
