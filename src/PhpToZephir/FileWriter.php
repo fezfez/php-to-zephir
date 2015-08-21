@@ -9,8 +9,8 @@ class FileWriter
      */
     public function write(array $file)
     {
-        if (is_dir(strtolower($file['destination'])) === false) {
-            mkdir(strtolower($file['destination']), 0777, true);
+        if (is_dir($file['destination']) === false) {
+            mkdir($file['destination'], 0777, true);
         }
 
         file_put_contents(
