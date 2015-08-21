@@ -76,7 +76,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(count($zephir), $generated, $bufferOutput->fetch());
 
-        self::delTree('code');
+        self::delTree('Code');
 
         foreach ($generated as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);
@@ -88,7 +88,7 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertTrue($this->getCodeValidator()->isValid('code'));
+        $this->assertTrue($this->getCodeValidator()->isValid('Code'));
     }
     
     private function showWiteSpace($string)
