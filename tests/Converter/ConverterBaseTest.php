@@ -98,6 +98,9 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
 
     public static function delTree($dir)
     {
+        if (is_dir($dir) === false) {
+            return;
+        }
         foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
             $path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
         }
