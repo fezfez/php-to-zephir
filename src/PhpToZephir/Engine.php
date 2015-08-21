@@ -110,15 +110,15 @@ class Engine
                 )
              );
 
-            $zephirCode[$phpFile]['fileDestination'] = strtolower(str_replace('\\', '/', $zephirCode[$phpFile]['fileDestination']));
+            $zephirCode[$phpFile]['fileDestination'] = str_replace('\\', '/', $zephirCode[$phpFile]['fileDestination']);
 
             foreach ($converted['additionalClass'] as $aditionalClass) {
                 $zephirCode[$phpFile.$aditionalClass['name']] = array_merge(
                     array(
                         'fileName' => $aditionalClass['name'],
                         'zephir' => $aditionalClass['code'],
-                        'fileDestination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'.$aditionalClass['name']).'.zep',
-                        'destination' => strtolower(str_replace('\\', '/', $converted['namespace']).'/'),
+                        'fileDestination' => str_replace('\\', '/', $converted['namespace']).'/'.$aditionalClass['name'].'.zep',
+                        'destination' => str_replace('\\', '/', $converted['namespace']).'/',
                     )
                 );
             }
