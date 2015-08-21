@@ -11,7 +11,7 @@ class ExtendsAndImplementTest extends \ConverterBaseTest
 
 namespace Code\Oop;
 
-use Code\Myclass;
+use Code\MyClass;
 use Code\MyImplementation;
 
 class ExtendsAndImplementTest extends MyClass implements MyImplementation
@@ -45,7 +45,7 @@ EOT
         $zephir = array(<<<'EOT'
 namespace Code\Oop;
 
-use Code\Myclass;
+use Code\MyClass;
 use Code\MyImplementation;
 class ExtendsAndImplementTest extends MyClass implements MyImplementation
 {
