@@ -14,6 +14,12 @@ class ErrorSuppressPrinter extends SimplePrinter
 
     public function convert(Expr\ErrorSuppress $node)
     {
-        return $this->dispatcher->pPrefixOp('Expr_ErrorSuppress', '@', $node->expr);
+        $this->logger->logNode(
+            'ErrorSuppress is not supported in Zephir (see #906)',
+            $node,
+            $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+        );
+
+        return $this->dispatcher->pPrefixOp('Expr_ErrorSuppress', '', $node->expr);
     }
 }
