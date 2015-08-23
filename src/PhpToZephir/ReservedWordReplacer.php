@@ -33,6 +33,9 @@ class ReservedWordReplacer
             'public' => 'publicc',
             'boolean' => 'booleann',
             'return' => 'returnn',
+            'abstract' => 'abstractt',
+            'resource' => 'resourcee',
+            'callable' => 'callablee'
         );
 
         foreach ($reservedWord as $word => $replacement) {

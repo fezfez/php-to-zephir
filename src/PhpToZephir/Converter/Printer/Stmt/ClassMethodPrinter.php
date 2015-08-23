@@ -205,6 +205,10 @@ class ClassMethodPrinter
                 $vars[] = $stmt['node']->var;
             } elseif ($stmt['node'] instanceof Stmt\Return_ && $stmt['node']->expr instanceof Expr\Array_) {
                 $vars[] = 'tmpArray'.md5(serialize($stmt['node']->expr->items));
+            } elseif ($stmt['node'] instanceof Stmt\Static_) {
+            	foreach ($stmt['node']->vars as $var) {
+                	$vars[] = $var->name;
+            	}
             }
         }
 

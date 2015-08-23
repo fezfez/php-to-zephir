@@ -101,13 +101,13 @@ class AssignTmpArray
     
     public function getConfigurator()
     {
-    
+        
         return true;
     }
     
     public function inlineArguments(container, configurator)
     {
-    
+        
         return true;
     }
     
@@ -116,13 +116,3 @@ EOT;
     	$this->assertConvertToZephir($php, $zephir);
     }
 }
-
-
-/*
-
-
-// zephir
-
-let configurator = this->inlineArguments(container, [definition->getConfigurator()]);
-
-*/
