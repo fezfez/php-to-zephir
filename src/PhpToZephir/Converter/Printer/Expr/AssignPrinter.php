@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpToZephir\Converter\Manipulator\ArrayManipulator;
+use PhpToZephir\Converter\Manipulator\AssignManipulator;
 
 class AssignPrinter
 {
@@ -28,20 +29,27 @@ class AssignPrinter
      * @var ArrayManipulator
      */
     private $arrayManipulator = null;
+    /**
+     * @var AssignManipulator
+     */
+    private $assignManipulator = null;
 
     /**
-     * @param Dispatcher       $dispatcher
-     * @param Logger           $logger
-     * @param ArrayManipulator $arrayManipulator
+     * @param Dispatcher        $dispatcher
+     * @param Logger            $logger
+     * @param ArrayManipulator  $arrayManipulator
+     * @param AssignManipulator $assignManipulator
      */
     public function __construct(
         Dispatcher $dispatcher,
         Logger $logger,
-        ArrayManipulator $arrayManipulator
+        ArrayManipulator $arrayManipulator,
+        AssignManipulator $assignManipulator
     ) {
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->arrayManipulator = $arrayManipulator;
+        $this->assignManipulator = $assignManipulator;
     }
 
     public static function getType()
@@ -63,7 +71,7 @@ class AssignPrinter
 
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
-        if ($rightNode instanceof Expr\Array_) {
+    	if ($rightNode instanceof Expr\Array_) {
             $this->logger->trace(
                 self::getType().' '.__LINE__,
                 $node,
@@ -74,6 +82,13 @@ class AssignPrinter
             return implode(";\n", $collect['extracted'])."\n".
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$collect['expr'];
+        } elseif ($rightNode instanceof Expr\MethodCall || $rightNode instanceof Expr\FuncCall) {
+            $collected = $this->assignManipulator->collectAssignInCondition($node->expr->args);
+            $node->expr->args = $this->assignManipulator->transformAssignInConditionTest($node->expr->args);
+
+            return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').
+                'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
+                .$operatorString.' '.$this->dispatcher->p($node->expr);
         } elseif ($rightNode instanceof Expr\Ternary) {
             $collect = $this->dispatcher->pExpr_Ternary($rightNode, true);
 

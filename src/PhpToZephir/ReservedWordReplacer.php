@@ -26,7 +26,7 @@ class ReservedWordReplacer
             'foreach' => 'foreachh',
             'if' => 'iff',
             'elseif' => 'elseiff',
-            'else' => 'else',
+            'else' => 'elsee',
             'function' => 'functionn',
             'private' => 'privatee',
             'protected' => 'protectedd',
@@ -35,7 +35,10 @@ class ReservedWordReplacer
             'return' => 'returnn',
             'abstract' => 'abstractt',
             'resource' => 'resourcee',
-            'callable' => 'callablee'
+            'callable' => 'callablee',
+            'string' => 'stringg',
+            'float' => 'floatt',
+            'int' => 'intt'
         );
 
         foreach ($reservedWord as $word => $replacement) {

@@ -59,7 +59,7 @@ class AssignManipulator
     private function extract($stmt, array $collected, $parentClass = '')
     {
         if ($stmt instanceof Expr\Assign) {
-        	// @FIXME remove var modification in assign (see IncrementInArrayDimTest)
+            // @FIXME remove var modification in assign (see IncrementInArrayDimTest)
             if ($stmt->expr instanceof Expr\BinaryOp) {
                 $stmt->expr = $stmt->expr->left;
                 $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).';';
@@ -103,16 +103,17 @@ class AssignManipulator
         } elseif ($this->isVarCreation($primaryNode) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
             $primaryNode = new Expr\Variable('tmpArray'.md5(serialize($primaryNode->items)));
         } else {
-			if (is_array($primaryNode) === true) {
-				foreach ($primaryNode as $key => $node) {
-					$primaryNode[$key] = $this->transformAssignInConditionTest($node);
-				}
-			} elseif (is_object($primaryNode) === true && !empty($primaryNode->getSubNodeNames())) {
-				foreach ($primaryNode->getSubNodeNames() as $key) {
-					$primaryNode->$key = $this->transformAssignInConditionTest($primaryNode->$key, get_class($primaryNode));
-				}
-			}
+            if (is_array($primaryNode) === true) {
+                foreach ($primaryNode as $key => $node) {
+                    $primaryNode[$key] = $this->transformAssignInConditionTest($node);
+                }
+            } elseif (is_object($primaryNode) === true && !empty($primaryNode->getSubNodeNames())) {
+                foreach ($primaryNode->getSubNodeNames() as $key) {
+                    $primaryNode->$key = $this->transformAssignInConditionTest($primaryNode->$key, get_class($primaryNode));
+                }
+            }
         }
+
         return $primaryNode;
     }
 

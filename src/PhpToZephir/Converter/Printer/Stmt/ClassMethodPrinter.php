@@ -6,6 +6,7 @@ use PhpToZephir\Converter\Dispatcher;
 use PhpToZephir\Logger;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Arg;
 use PhpToZephir\ReservedWordReplacer;
 use PhpToZephir\TypeFinder;
 use PhpToZephir\NodeFetcher;
@@ -209,6 +210,8 @@ class ClassMethodPrinter
             	foreach ($stmt['node']->vars as $var) {
                 	$vars[] = $var->name;
             	}
+            } elseif ($stmt['node'] instanceof Arg && $stmt['node']->value instanceof Expr\Array_) {
+            	 $vars[] = 'tmpArray'.md5(serialize($stmt['node']->value->items));
             }
         }
 

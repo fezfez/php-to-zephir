@@ -49,7 +49,10 @@ class MethodCallPrinter
      */
     public function convert(Expr\MethodCall $node)
     {
-        return 
+    	$collected = $this->assignManipulator->collectAssignInCondition($node->args);
+    	$node->args = $this->assignManipulator->transformAssignInConditionTest($node->args);
+    	
+    	return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').
                 $this->dispatcher->pVarOrNewExpr($node->var).'->'.$this->dispatcher->pObjectProperty($node->name)
              .'('.$this->dispatcher->pCommaSeparated($node->args).')';
     }

@@ -85,12 +85,12 @@ class ArrayDim
         let metadata["targets"] = this->targets;
         let metadata["properties"][this->name] = this->name;
         
-        let metadata["enum"][this->name]["literal"] =  !empty(this->literal) ? this->literal : this->value;
+        let metadata["enum"][this->name]["literal"] =  !empty(this->literal) ? this->literal  : this->value;
         
-        let type =  isset this->typeMap[this->type] ? this->typeMap[this->type] : this->type;
+        let type =  isset this->typeMap[this->type] ? this->typeMap[this->type]  : this->type;
         let name = "test";
         let pos =  strpos(name, "\\");
-        let alias =  pos === false ? name : substr(name, 0, pos);
+        let alias =  pos === false ? name  : substr(name, 0, pos);
         
         if this->namespaces {
             echo "toto";

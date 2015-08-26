@@ -37,7 +37,7 @@ class SimpleTmpArray
 {
     public function test() -> void
     {
-        var container, configurator;
+        var container, configurator, tmpArray8184aefe7d1180b34c53e15ef5a12249;
     
         let container = "test";
         let configurator =  this->inlineArguments(container, [this->getConfigurator()]);
