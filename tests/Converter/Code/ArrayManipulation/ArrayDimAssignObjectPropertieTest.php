@@ -85,7 +85,7 @@ class ArrayDim
         let metadata["targets"] = this->targets;
         let metadata["properties"][this->name] = this->name;
         
-        let metadata["enum"][this->name]["literal"] =  !empty(this->literal) ? this->literal  : this->value;
+        let metadata["enum"][this->name]["literal"] =  !(empty(this->literal)) ? this->literal  : this->value;
         
         let type =  isset this->typeMap[this->type] ? this->typeMap[this->type]  : this->type;
         let name = "test";
@@ -101,7 +101,7 @@ class ArrayDim
         }
         }
         let property = self::annotationMetadata[name]["default_property"];
-        if !property {
+        if !(property) {
             echo "not allowed";
         }
         let lineCnt = 0;

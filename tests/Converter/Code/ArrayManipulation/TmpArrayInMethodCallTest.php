@@ -40,7 +40,8 @@ class SimpleTmpArray
         var container, configurator, tmpArray8184aefe7d1180b34c53e15ef5a12249;
     
         let container = "test";
-        let configurator =  this->inlineArguments(container, [this->getConfigurator()]);
+        let tmpArray8184aefe7d1180b34c53e15ef5a12249 = [this->getConfigurator()];
+        let configurator =  this->inlineArguments(container, tmpArray8184aefe7d1180b34c53e15ef5a12249);
     }
     
     public function getConfigurator()
@@ -88,15 +89,17 @@ class AssignTmpArray
 EOT;
     	$zephir = <<<'EOT'
 namespace Code\ArrayManipulation;
-    
+
 class AssignTmpArray
 {
     public function test() -> void
     {
-        var container, configurator;
+        var container, configurator, test;
     
         let container = "test";
-        let configurator =  this->inlineArguments(container, [this->getConfigurator()]);
+        
+        let test =  [this->getConfigurator()];
+        let configurator =  this->inlineArguments(container, test);
     }
     
     public function getConfigurator()
@@ -110,7 +113,7 @@ class AssignTmpArray
         
         return true;
     }
-    
+
 }
 EOT;
     	$this->assertConvertToZephir($php, $zephir);

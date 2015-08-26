@@ -68,7 +68,7 @@ class AssignManipulator
             }
         } elseif ($this->isVarModification($stmt)) {
             $collected['extracted'][] = $this->dispatcher->p($stmt).';';
-        } elseif ($this->isVarCreation($stmt) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
+        } elseif ($this->isVarCreation($stmt) && $parentClass != "PhpParser\Node\Expr\ArrayItem" && $parentClass != "PhpParser\Node\Expr\Assign") {
             $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).';';
         }
 

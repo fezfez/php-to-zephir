@@ -14,6 +14,6 @@ class BooleanNotPrinter extends SimplePrinter
 
     public function convert(Expr\BooleanNot $node)
     {
-        return $this->dispatcher->pPrefixOp('Expr_BooleanNot', '!', $node->expr);
+        return $this->dispatcher->pPrefixOp('Expr_BooleanNot', '!(', $node->expr) . ')';
     }
 }

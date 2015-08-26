@@ -86,7 +86,7 @@ class AssignPrinter
             $collected = $this->assignManipulator->collectAssignInCondition($node->expr->args);
             $node->expr->args = $this->assignManipulator->transformAssignInConditionTest($node->expr->args);
 
-            return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '').
+            return (!empty($collected['extracted']) ? implode("\n", $collected['extracted'])."\n" : '').
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$this->dispatcher->p($node->expr);
         } elseif ($rightNode instanceof Expr\Ternary) {
