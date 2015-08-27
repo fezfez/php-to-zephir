@@ -68,10 +68,10 @@ class AssignPrinter
         $leftNode = $node->var;
         $operatorString = ' = ';
         $rightNode = $node->expr;
-
+        
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
-    	if ($rightNode instanceof Expr\Array_) {
+        if ($rightNode instanceof Expr\Array_) {
             $this->logger->trace(
                 self::getType().' '.__LINE__,
                 $node,
@@ -83,12 +83,17 @@ class AssignPrinter
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$collect['expr'];
         } elseif ($rightNode instanceof Expr\MethodCall || $rightNode instanceof Expr\FuncCall) {
-            $collected = $this->assignManipulator->collectAssignInCondition($node->expr->args);
-            $node->expr->args = $this->assignManipulator->transformAssignInConditionTest($node->expr->args);
+            $collected = $this->convertCall($node);
 
             return (!empty($collected['extracted']) ? implode("\n", $collected['extracted'])."\n" : '').
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
-                .$operatorString.' '.$this->dispatcher->p($node->expr);
+                .$operatorString.' '.$this->dispatcher->p($collected['node']->expr);
+        } elseif ($rightNode instanceof Expr\BinaryOp\Concat) {
+            $collected = $this->convertConcat($node->expr);
+
+            return (!empty($collected['extracted']) ? implode("\n", $collected['extracted'])."\n" : '').
+                'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
+                .$operatorString.' '.$this->dispatcher->p($collected['node']);
         } elseif ($rightNode instanceof Expr\Ternary) {
             $collect = $this->dispatcher->pExpr_Ternary($rightNode, true);
 
@@ -133,6 +138,49 @@ class AssignPrinter
             return 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                    .$operatorString.' '.$this->dispatcher->p($rightNode);
         }
+    }
+    
+    private function convertConcat(Expr\BinaryOp\Concat $concat, $collected = array())
+    {
+        if ($collected === array()) {
+            $collected = array('extracted' => array());
+        }
+        
+        if ($concat->left instanceof Expr\BinaryOp\Concat) {
+            $collected = $this->convertConcat($concat->left, $collected);
+            $concat->left = $collected['node'];
+        }
+        if ($concat->right instanceof Expr\BinaryOp\Concat) {
+            $collected = $this->convertConcat($concat->right, $collected);
+            $concat->right = $collected['node'];
+        }
+
+        $collected = $this->convertCall($concat, $collected);
+        
+        return $collected;
+    }
+    
+    private function convertCall($node, array $collected = array())
+    {
+        if ($collected === array()) {
+            $collected = array('extracted' => array());
+        }
+        if (property_exists($node, 'left') === true && ($node->left instanceof Expr\MethodCall || $node->left  instanceof Expr\FuncCall)) {
+            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->left->args));
+            $node->left->args = $this->assignManipulator->transformAssignInConditionTest($node->left->args);
+        }
+        
+        if (property_exists($node, 'right') === true && ($node->right instanceof Expr\MethodCall || $node->right  instanceof Expr\FuncCall)) {
+            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->right->args));
+            $node->right->args = $this->assignManipulator->transformAssignInConditionTest($node->right->args);
+        }
+        
+        if (property_exists($node, 'expr') === true && ($node->expr instanceof Expr\MethodCall || $node->expr  instanceof Expr\FuncCall)) {
+            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->expr->args));
+            $node->expr->args = $this->assignManipulator->transformAssignInConditionTest($node->expr->args);
+        }
+
+        return array('extracted' => $collected['extracted'], 'node' => $node);
     }
 
     private function isSomething($rightNode)
