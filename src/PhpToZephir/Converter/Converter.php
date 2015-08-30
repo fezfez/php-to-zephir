@@ -44,7 +44,7 @@ class Converter
         $classInformation = ClassInformationFactory::getInstance();
         $metadata = $classInformation->getClassesMetdata($stmts);
 
-        $this->implementExist($metadata, $classCollector);
+        $this->implementsExist($metadata, $classCollector);
 
         return array(
             'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector, $logger),
@@ -53,22 +53,27 @@ class Converter
         );
     }
     
-    private function implementExist(ClassMetadata $metadata, ClassCollector $classCollector)
+    private function implementsExist(ClassMetadata $metadata, ClassCollector $classCollector)
     {
-    	foreach ($metadata->getImplements() as $implements) {
-    		// Class is in actual namespace
-    		if (in_array($metadata->getNamespace() . '\\' . $implements, $classCollector->getCollected())) {
-    			return true;
-    		}
-    		
-    		foreach ($metadata->getClasses() as $use) {
-    			if (strstr($use, '\\', true) === $implements) {
-    				return true;
-    			}
-    		}
-    	}
-    	
-    	throw new \Exception('interface does not exist');
+        foreach ($metadata->getImplements() as $implements) {
+            $this->implementExist($metadata, $classCollector, $implements);
+        }
+    }
+    
+    private function implementExist(ClassMetadata $metadata, ClassCollector $classCollector, $implements)
+    {
+        // Class is in actual namespace
+        if (array_key_exists($metadata->getNamespace() . '\\' . $implements, $classCollector->getCollected())) {
+            return true;
+        }
+    
+        foreach ($metadata->getClasses() as $use) {
+            if (substr(strrchr($use, "\\"), 1) === $implements) {
+                return true;
+            }
+        }
+    
+        throw new \Exception(sprintf('interface %s does not exist', $implements));
     }
 
     /**
