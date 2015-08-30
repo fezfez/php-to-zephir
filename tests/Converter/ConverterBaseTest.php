@@ -88,7 +88,9 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertTrue($this->getCodeValidator()->isValid('Code'));
+        if (count($zephir) !== 0) {
+        	$this->assertTrue($this->getCodeValidator()->isValid('Code'));
+        }
     }
     
     private function showWiteSpace($string)

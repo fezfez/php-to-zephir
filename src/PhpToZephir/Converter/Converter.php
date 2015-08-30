@@ -44,11 +44,31 @@ class Converter
         $classInformation = ClassInformationFactory::getInstance();
         $metadata = $classInformation->getClassesMetdata($stmts);
 
+        $this->implementExist($metadata, $classCollector);
+
         return array(
             'code' => $this->dispatcher->convert($stmts, $metadata, $classCollector, $logger),
             'namespace' => $metadata->getNamespace(),
             'additionalClass' => $this->findAdditionalClasses($stmts, $logger),
         );
+    }
+    
+    private function implementExist(ClassMetadata $metadata, ClassCollector $classCollector)
+    {
+    	foreach ($metadata->getImplements() as $implements) {
+    		// Class is in actual namespace
+    		if (in_array($metadata->getNamespace() . '\\' . $implements, $classCollector->getCollected())) {
+    			return true;
+    		}
+    		
+    		foreach ($metadata->getClasses() as $use) {
+    			if (strstr($use, '\\', true) === $implements) {
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	throw new \Exception('interface does not exist');
     }
 
     /**
