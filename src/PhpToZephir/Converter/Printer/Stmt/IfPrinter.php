@@ -55,7 +55,7 @@ class IfPrinter
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
         if (empty($node->stmts)) {
-            $node->stmts = array(new Stmt\Echo_(array(new Scalar\String('not allowed'))));
+            $node->stmts = array(new Stmt\Echo_(array(new Scalar\String_('not allowed'))));
             $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
         }
 
