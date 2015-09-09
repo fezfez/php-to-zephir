@@ -27,7 +27,7 @@ class SwitchPrinter extends SimplePrinter
     {
         $transformToIf = false;
         foreach ($node->cases as $case) {
-            if (($case->cond instanceof Scalar\String) === false && $case->cond !== null) {
+            if (($case->cond instanceof Scalar\String_) === false && $case->cond !== null) {
                 $transformToIf = true;
             }
         }

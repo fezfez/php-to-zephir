@@ -86,7 +86,7 @@ class AssignManipulator
         if ($primaryNode instanceof BinaryOp && ($primaryNode instanceof BinaryOp\Concat === false)) {
             // this is yoda ! invert condition
             if ($primaryNode->left instanceof Expr\ConstFetch ||
-                $primaryNode->left instanceof Scalar\String ||
+                $primaryNode->left instanceof Scalar\String_ ||
                 $primaryNode->left instanceof Expr\Array_
             ) {
                 $left = $primaryNode->left;

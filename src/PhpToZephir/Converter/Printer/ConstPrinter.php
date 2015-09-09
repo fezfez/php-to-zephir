@@ -28,7 +28,7 @@ class ConstPrinter extends SimplePrinter
                 $node,
                 $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
             );
-            $node->value = new Node\Scalar\String('');
+            $node->value = new Node\Scalar\String_('');
         }
 
         return $node->name.' = '.$this->dispatcher->p($node->value);
