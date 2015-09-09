@@ -37,10 +37,8 @@ class SimpleWhile
 {
     public function test() -> void
     {
-        
         while (true) {
             break;
-        
         }
     }
     

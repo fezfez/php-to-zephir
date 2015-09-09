@@ -55,7 +55,6 @@ class DefinedInInterfaceReturn implements MyInterface
 {
     public function test(toto) -> string
     {
-        
         return toto;
     }
 

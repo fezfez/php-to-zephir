@@ -41,7 +41,6 @@ class DefinedTypeReturn
      */
     public function test(toto) -> string
     {
-        
         return toto;
     }
     
@@ -50,7 +49,6 @@ class DefinedTypeReturn
      */
     public function test2(toto) -> string
     {
-        
         return toto;
     }
 

@@ -36,7 +36,7 @@ class ForWithoutStmt
     
         let i = 1;
         loop {
-            
+        
             if i > 10 {
                 break;
             }

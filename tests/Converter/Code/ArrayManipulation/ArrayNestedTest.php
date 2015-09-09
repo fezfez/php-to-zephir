@@ -28,7 +28,6 @@ class ArrayNested
     {
         var returnn;
     
-        
         let returnn =  [["a" : "apple"], ["b" : "ball"]];
     }
 

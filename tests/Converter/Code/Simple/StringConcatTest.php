@@ -38,13 +38,11 @@ class StringConcat
     
         let foo = "foo";
         let works =  "bar" . foo . "bar";
-        
         return "bar" . foo . "bar";
     }
     
     public function testConcatAndReturn()
     {
-        
         return "bar {foo} bar";
     }
 

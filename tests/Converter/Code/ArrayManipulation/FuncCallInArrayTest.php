@@ -33,7 +33,6 @@ class FuncCallInArray
     
         let name = "Test";
         let style = "test";
-        
         let styles =  [];
         let styles[strtolower(name)] = style;
     }

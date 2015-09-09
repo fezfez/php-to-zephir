@@ -42,10 +42,9 @@ class DoPrinter
     {
         $condition = clone $node;
         $collected = $this->assignManipulator->collectAssignInCondition($condition->cond);
-        $collected = !empty($collected['extracted']) ? "\n".implode("\n", $collected['extracted']) : '';
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
-        return 'do {'.$this->dispatcher->pStmts($node->stmts).$collected."\n"
+        return 'do {'.$this->dispatcher->pStmts($node->stmts).$collected->getCollected()."\n"
              .'} while ('.$this->dispatcher->p($node->cond).');';
     }
 }

@@ -39,13 +39,11 @@ class ArrayDim
 {
     protected function getConstructor()
     {
-        
         return;
     }
     
     protected function getNumberOfParameters()
     {
-        
         return 5;
     }
     

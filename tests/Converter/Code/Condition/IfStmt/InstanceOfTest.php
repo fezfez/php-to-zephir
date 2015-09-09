@@ -32,7 +32,6 @@ class InstanceOfTest
         var listener;
     
         let listener = "";
-        
         if !(listener instanceof WrappedListener) {
             echo "tata";
         }
@@ -71,7 +70,6 @@ class InstanceOfTest
         var listener;
     
         let listener = "";
-        
         if listener instanceof WrappedListener {
             echo "tata";
         }

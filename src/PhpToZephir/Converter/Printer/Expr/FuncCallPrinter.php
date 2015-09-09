@@ -56,8 +56,7 @@ class FuncCallPrinter
         } else {
             $instanciation = $this->dispatcher->p($node->name);
         }
-        
-        return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '') . 
-        $instanciation . '('.$this->dispatcher->pCommaSeparated($node->args).')';
+
+        return $collected->getCollected() . $instanciation . '('.$this->dispatcher->pCommaSeparated($node->args).')';
     }
 }

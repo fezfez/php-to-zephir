@@ -53,13 +53,12 @@ class ArrayPrinter
         $collected = $this->assignManipulator->collectAssignInCondition($node->items);
         $node->items = $this->assignManipulator->transformAssignInConditionTest($node->items);
 
-        $collected['expr'] = '['.$this->dispatcher->pCommaSeparated($node->items).']';
+        $collected->setExpr('['.$this->dispatcher->pCommaSeparated($node->items).']');
 
         if ($returnAsArray === true) {
             return $collected;
         } else {
-            return (!empty($collected['extracted']) ? implode(";\n", $collected['extracted'])."\n" : '')
-                   .$collected['expr'];
+            return $collected->getCollected().$collected->getExpr();
         }
     }
 }

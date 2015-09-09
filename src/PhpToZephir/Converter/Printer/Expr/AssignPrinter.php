@@ -14,6 +14,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpToZephir\Converter\Manipulator\ArrayManipulator;
 use PhpToZephir\Converter\Manipulator\AssignManipulator;
+use PhpToZephir\Converter\Manipulator\ArrayDto;
+use PhpToZephir\Converter\Manipulator\PhpToZephir\Converter\Manipulator;
 
 class AssignPrinter
 {
@@ -62,7 +64,7 @@ class AssignPrinter
      *
      * @return string
      */
-    public function convert(Expr\Assign $node)
+    public function convert(Expr\Assign $node, $extract = true)
     {
         $type = 'Expr_Assign';
         $leftNode = $node->var;
@@ -79,31 +81,31 @@ class AssignPrinter
             );
             $collect = $this->dispatcher->pExpr_Array($rightNode, true);
 
-            return implode(";\n", $collect['extracted'])."\n".
+            return (($extract === true) ? $collect->getCollected() : '') .
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
-                .$operatorString.' '.$collect['expr'];
+                .$operatorString.' '.$collect->getExpr();
         } elseif ($rightNode instanceof Expr\MethodCall || $rightNode instanceof Expr\FuncCall) {
-            $collected = $this->convertCall($node);
+            $collected = $this->convertCall($node, new ArrayDto());
 
-            return (!empty($collected['extracted']) ? implode("\n", $collected['extracted'])."\n" : '').
+            return $collected['extracted']->getCollected().
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$this->dispatcher->p($collected['node']->expr);
         } elseif ($rightNode instanceof Expr\BinaryOp\Concat) {
-            $collected = $this->convertConcat($node->expr);
+            $collected = $this->convertConcat($node->expr, new ArrayDto());
 
-            return (!empty($collected['extracted']) ? implode("\n", $collected['extracted'])."\n" : '').
+            return $collected['extracted']->getCollected().
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$this->dispatcher->p($collected['node']);
         } elseif ($rightNode instanceof Expr\Ternary) {
             $collect = $this->dispatcher->pExpr_Ternary($rightNode, true);
 
-            return implode(";\n", $collect['extracted'])."\n".
+            return $collect->getCollected().
                    'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
-            .$operatorString.' '.$collect['expr'];
+            .$operatorString.' '.$collect->getExpr();
         } elseif ($node->var instanceof Expr\List_) {
             return $this->convertListStmtToAssign($node);
         } elseif ($leftNode instanceof Expr\ArrayDimFetch || $rightNode instanceof Expr\ArrayDimFetch) {
-            return $this->arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity);
+            return $this->arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity, $extract);
         } elseif ($rightNode instanceof Expr\Assign) { // multiple assign
             $valueToAssign = ' = '.$this->dispatcher->p($this->findValueToAssign($rightNode));
             $vars = array($this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1));
@@ -140,47 +142,40 @@ class AssignPrinter
         }
     }
     
-    private function convertConcat(Expr\BinaryOp\Concat $concat, $collected = array())
+    private function convertConcat(Expr\BinaryOp\Concat $concat, ArrayDto $collected)
     {
-        if ($collected === array()) {
-            $collected = array('extracted' => array());
-        }
-        
         if ($concat->left instanceof Expr\BinaryOp\Concat) {
-            $collected = $this->convertConcat($concat->left, $collected);
-            $concat->left = $collected['node'];
+            $extracted = $this->convertConcat($concat->left, $collected);
+            $concat->left = $extracted['node'];
+            $collected = $extracted['extracted'];
         }
         if ($concat->right instanceof Expr\BinaryOp\Concat) {
-            $collected = $this->convertConcat($concat->right, $collected);
-            $concat->right = $collected['node'];
+            $extracted = $this->convertConcat($concat->right, $collected);
+            $concat->right = $extracted['node'];
+            $collected = $extracted['extracted'];
         }
 
-        $collected = $this->convertCall($concat, $collected);
-        
-        return $collected;
+        return $this->convertCall($concat, $collected);
     }
     
-    private function convertCall($node, array $collected = array())
+    private function convertCall($node, ArrayDto $collected)
     {
-        if ($collected === array()) {
-            $collected = array('extracted' => array());
-        }
         if (property_exists($node, 'left') === true && ($node->left instanceof Expr\MethodCall || $node->left  instanceof Expr\FuncCall)) {
-            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->left->args));
+            $collected = $this->assignManipulator->collectAssignInCondition($node->left->args, $collected);
             $node->left->args = $this->assignManipulator->transformAssignInConditionTest($node->left->args);
         }
-        
+
         if (property_exists($node, 'right') === true && ($node->right instanceof Expr\MethodCall || $node->right  instanceof Expr\FuncCall)) {
-            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->right->args));
+            $collected = $this->assignManipulator->collectAssignInCondition($node->right->args, $collected);
             $node->right->args = $this->assignManipulator->transformAssignInConditionTest($node->right->args);
         }
-        
+
         if (property_exists($node, 'expr') === true && ($node->expr instanceof Expr\MethodCall || $node->expr  instanceof Expr\FuncCall)) {
-            $collected = array_merge_recursive($collected, $this->assignManipulator->collectAssignInCondition($node->expr->args));
+            $collected = $this->assignManipulator->collectAssignInCondition($node->expr->args, $collected);
             $node->expr->args = $this->assignManipulator->transformAssignInConditionTest($node->expr->args);
         }
 
-        return array('extracted' => $collected['extracted'], 'node' => $node);
+        return array('extracted' => $collected, 'node' => $node);
     }
 
     private function isSomething($rightNode)
@@ -285,7 +280,7 @@ class AssignPrinter
      * @param Expr   $rightNode
      * @param string $operatorString
      */
-    private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity)
+    private function arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity, $extract = true)
     {
         $this->logger->trace(
             self::getType().' '.__LINE__,
@@ -299,7 +294,9 @@ class AssignPrinter
                 $leftString = $this->dispatcher->pPrec($leftNode, $precedence, $associativity, 1);
             } else {
                 $result = $this->dispatcher->pExpr_ArrayDimFetch($leftNode, true);
-                $head .= $result['head'];
+                if ($extract === true) {
+                    $head .= $result['head'];
+                }
                 $leftString = $result['lastExpr'];
             }
         } else {
@@ -311,7 +308,9 @@ class AssignPrinter
                 $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
                 $result = $this->dispatcher->pExpr_ArrayDimFetch($rightNode, true);
-                $head .= $result['head'];
+                if ($extract === true) {
+                    $head .= $result['head'];
+                }
                 $rightString = $result['lastExpr'];
             }
         } elseif ($this->isSomething($rightNode)) {
@@ -323,7 +322,10 @@ class AssignPrinter
             // @TODO add test case for each
             $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
         } else {
-            $head .= $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1).";\n";
+            if ($extract === true) {
+                $head .= $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1).";\n";
+            }
+            
             $rightString = $this->dispatcher->p($rightNode->var);
         }
 

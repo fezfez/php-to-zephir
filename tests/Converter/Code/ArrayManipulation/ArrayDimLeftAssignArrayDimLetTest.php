@@ -32,7 +32,6 @@ class ArrayDim
         var number, myArray, tmpVar1;
     
         let number = 0;
-        
         let myArray =  [1 : 10, 2 : 11];
         let number++;
         let tmpVar1 = number;

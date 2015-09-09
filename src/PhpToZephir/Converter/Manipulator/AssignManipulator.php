@@ -32,47 +32,44 @@ class AssignManipulator
     /**
      * @param mixed $node
      *
-     * @return array
+     * @return ArrayDto
      */
-    public function collectAssignInCondition($node)
+    public function collectAssignInCondition($node, ArrayDto $arrayDto = null)
     {
-        $collected = array(
-            'extracted' => array(),
-        );
-
-        foreach ($this->nodeFetcher->foreachNodes($node) as $stmtData) {
-            $collected = $this->extract($stmtData['node'], $collected, $stmtData['parentClass']);
+        if ($arrayDto === null) {
+            $arrayDto = new ArrayDto();
         }
 
-        $collected = $this->extract($node, $collected);
+        foreach ($this->nodeFetcher->foreachNodes($node) as $stmtData) {
+            $collected = $this->extract($stmtData['node'], $arrayDto, $stmtData['parentClass']);
+        }
 
-        return $collected;
+        return $this->extract($node, $arrayDto);
     }
 
     /**
      * @param mixed  $stmt
-     * @param array  $collected
+     * @param ArrayDto  $arrayDto
      * @param string $parentClass
      *
      * @return array
      */
-    private function extract($stmt, array $collected, $parentClass = '')
+    private function extract($stmt, ArrayDto $arrayDto, $parentClass = '')
     {
         if ($stmt instanceof Expr\Assign) {
-            // @FIXME remove var modification in assign (see IncrementInArrayDimTest)
             if ($stmt->expr instanceof Expr\BinaryOp) {
                 $stmt->expr = $stmt->expr->left;
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).';';
+                $arrayDto->addCollected($this->dispatcher->pExpr_Assign($stmt, false));
             } else {
-                $collected['extracted'][] = $this->dispatcher->pExpr_Assign($stmt).';';
+                $arrayDto->addCollected($this->dispatcher->pExpr_Assign($stmt, false));
             }
         } elseif ($this->isVarModification($stmt)) {
-            $collected['extracted'][] = $this->dispatcher->p($stmt).';';
+            $arrayDto->addCollected($this->dispatcher->p($stmt));
         } elseif ($this->isVarCreation($stmt) && $parentClass != "PhpParser\Node\Expr\ArrayItem" && $parentClass != "PhpParser\Node\Expr\Assign") {
-            $collected['extracted'][] = 'let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt).';';
+            $arrayDto->addCollected('let tmpArray'.md5(serialize($stmt->items)).' = '.$this->dispatcher->p($stmt));
         }
 
-        return $collected;
+        return $arrayDto;
     }
 
     /**

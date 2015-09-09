@@ -56,14 +56,14 @@ class TernaryPrinter
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
-        $collected['expr'] = $this->dispatcher->pInfixOp('Expr_Ternary',
+        $collected->setExpr($this->dispatcher->pInfixOp('Expr_Ternary',
             $node->cond, ' ?'.(null !== $node->if ? ' '.$this->dispatcher->p($node->if).' ' : ' ' . $this->dispatcher->p($node->cond)).' : ', $node->else
-        );
+        ));
 
         if ($returnAsArray === true) {
             return $collected;
         } else {
-            return implode(";\n", $collected['extracted'])." ".$collected['expr'];
+            return $collected->getCollected()." ".$collected->getExpr();
         }
     }
 }

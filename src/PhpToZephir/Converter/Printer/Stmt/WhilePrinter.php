@@ -52,7 +52,7 @@ class WhilePrinter
         $collected = $this->assignManipulator->collectAssignInCondition($node->cond);
         $node->cond = $this->assignManipulator->transformAssignInConditionTest($node->cond);
 
-        return implode(";\n", $collected['extracted'])."\n".'while ('.$this->dispatcher->p($node->cond).') {'
-             .$this->dispatcher->pStmts($node->stmts)."\n".implode(";\n", $collected['extracted'])."\n".'}';
+        return $collected->getCollected().'while ('.$this->dispatcher->p($node->cond).') {'
+             .$this->dispatcher->pStmts($node->stmts)."\n".$collected->getCollected().'}';
     }
 }

@@ -31,7 +31,6 @@ class ForWithBooleanContinue
     {
         var messages, i;
     
-        
         let messages =  [];
         
             let i = 0;

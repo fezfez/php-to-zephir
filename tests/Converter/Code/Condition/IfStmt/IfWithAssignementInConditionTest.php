@@ -62,7 +62,7 @@ class IfWithAssignementInCondition
     {
         var twoAssignVariable, treeAssignVariable;
     
-        let twoAssignVariable = twoAssignedVariable;;
+        let twoAssignVariable = twoAssignedVariable;
         let treeAssignVariable = treeAssignedVariable;
         if toto === true && twoAssignVariable {
             echo "tata";
@@ -71,7 +71,6 @@ class IfWithAssignementInCondition
     
     protected function getName()
     {
-        
         return "myName";
     }
     
@@ -81,7 +80,6 @@ class IfWithAssignementInCondition
     
         let name =  this->getName();
         if isset this->ignoredAnnotationNames[name] {
-            
             return this->ignoredAnnotationNames[name];
         }
     }

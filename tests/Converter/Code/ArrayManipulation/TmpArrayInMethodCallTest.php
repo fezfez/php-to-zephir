@@ -46,13 +46,11 @@ class SimpleTmpArray
     
     public function getConfigurator()
     {
-        
         return true;
     }
     
     public function inlineArguments(container, configurator)
     {
-        
         return true;
     }
 
@@ -97,20 +95,17 @@ class AssignTmpArray
         var container, configurator, test;
     
         let container = "test";
-        
         let test =  [this->getConfigurator()];
         let configurator =  this->inlineArguments(container, test);
     }
     
     public function getConfigurator()
     {
-        
         return true;
     }
     
     public function inlineArguments(container, configurator)
     {
-        
         return true;
     }
 

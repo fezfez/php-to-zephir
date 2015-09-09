@@ -63,7 +63,6 @@ class IfElseCondition
         var toReturn;
     
         let toReturn =  null;
-        
         if toto === "tata" {
             let toReturn = "tata";
         } elseif toto === "tutu" {
@@ -71,27 +70,22 @@ class IfElseCondition
         } else {
             let toReturn = "else";
         }
-        
         return toReturn;
     }
     
     public static function imStatic()
     {
-        
         return;
     }
     
     public function testFuncCallIncondition() -> void
     {
-        
         if this->test("tata") {
             echo "tutu";
         }
-        
         if self::imStatic() {
             echo "static funcall!";
         }
-        
         if isset self::staticArray["test"] {
             echo "static array !";
         }

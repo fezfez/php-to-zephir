@@ -36,7 +36,6 @@ class AnonymeFunctionStmt
 {
     public function test(test)
     {
-        
         return new AnonymeFunctionStmttestClosureOne(test);
     }
     

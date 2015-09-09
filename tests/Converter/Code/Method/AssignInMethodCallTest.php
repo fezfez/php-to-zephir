@@ -41,7 +41,6 @@ class AssignInMethodCall
     
     public function getDefinitionId(id)
     {
-        
         return id;
     }
 
@@ -87,7 +86,6 @@ class AssignInMethodCall
     
     public function getDefinitionId(id)
     {
-        
         return id;
     }
 

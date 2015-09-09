@@ -32,7 +32,6 @@ class IfWithAssignementArrayDimInCondition
     {
         var toto, averylongvariable;
     
-        
         let toto =  [1 : true];
         let averylongvariable = toto[1];
         if averylongvariable {

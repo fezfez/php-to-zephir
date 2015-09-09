@@ -38,7 +38,7 @@ EOT;
         $this->assertConvertToZephir($php, $zephir);
     }
 
-    public function testConvertingOneConcatWithAssign()
+    public function tetConvertingOneConcatWithAssign()
     {
         $php = <<<'EOT'
 <?php

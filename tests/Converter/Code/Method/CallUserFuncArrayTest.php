@@ -35,7 +35,6 @@ class CallUserFuncArray
         var method, arguments, tmpArray679d025e144e01e72d3d2a6e800187cd;
     
         let method = "test";
-        
         let arguments =  [];
         let tmpArray679d025e144e01e72d3d2a6e800187cd = [this->dispatcher, method];
         return call_user_func_array(tmpArray679d025e144e01e72d3d2a6e800187cd, arguments);

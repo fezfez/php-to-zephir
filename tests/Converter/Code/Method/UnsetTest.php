@@ -66,7 +66,6 @@ class TestUnset
     {
         var foo;
     
-        
         let foo =  ["simpleTest"];
         unset foo["simpleTest"];
     

@@ -31,7 +31,6 @@ class ForWithCount
     {
         var myArray, i, count;
     
-        
         let myArray =  ["test", "2"];
         let i = 0;
         let count =  count(myArray);

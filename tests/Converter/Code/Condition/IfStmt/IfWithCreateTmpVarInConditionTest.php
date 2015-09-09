@@ -54,11 +54,9 @@ class IfWithCreateTmpVarInCondition
         if toto == tmpArray40cd750bba9870f18aada2478b24840a {
             echo "tata";
         }
-        
         if toto == "im a string" {
             echo "tata";
         }
-        
         if toto == false {
             echo "tata";
         }

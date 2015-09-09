@@ -29,7 +29,6 @@ class ArrayPlus
     {
         var info;
     
-        
         let info =  ["test"];
         let info = this->array_plus(info, ["type" : "Closure", "pretty" : "closure"]);
     }

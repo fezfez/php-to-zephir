@@ -35,7 +35,6 @@ class ContinueStmt
     {
         var tests, test;
     
-        
         let tests =  ["im a test"];
         for test in tests {
             continue;

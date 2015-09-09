@@ -59,7 +59,7 @@ class IfPrinter
             $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
         }
 
-        return implode(";\n", $collected['extracted'])."\n".
+        return $collected->getCollected() .
                'if '.$this->dispatcher->p($node->cond).' {'
              .$this->dispatcher->pStmts($node->stmts)."\n".'}'
              .$this->implodeElseIfs($node);
@@ -76,7 +76,7 @@ class IfPrinter
         $toReturn = '';
         foreach ($node->elseifs as $elseIf) {
             $collected = $this->assignManipulator->collectAssignInCondition($elseIf->cond);
-            if (!empty($collected['extracted'])) {
+            if ($collected->hasCollected()) {
                 ++$elseCount;
                 $toReturn .= ' else {'."\n".$this->dispatcher->p(new Stmt\If_($elseIf->cond, array('stmts' => $elseIf->stmts)))."\n";
             } else {

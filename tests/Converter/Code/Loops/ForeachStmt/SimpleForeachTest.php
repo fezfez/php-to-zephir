@@ -33,7 +33,6 @@ class SimpleForeach
     {
         var myArray, myValue, myKey;
     
-        
         let myArray =  ["test", "2"];
         for myValue in myArray {
         }

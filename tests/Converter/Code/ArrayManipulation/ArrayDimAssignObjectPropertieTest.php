@@ -52,11 +52,6 @@ class ArrayDim
 
         if (! $property = self::$annotationMetadata[$name]['default_property']) {
         }
-
-        $lineCnt = 0;
-        $lineNumber = 1;
-        if ($lineCnt++ == $lineNumber) {
-        }
     }
 }
 EOT;
@@ -76,22 +71,18 @@ class ArrayDim
     protected static annotationMetadata = ["test"];
     public function arrayDimAssignObjectPropertie() -> void
     {
-        var metadata, test, type, name, alias, pos, loweredAlias, property, lineCnt, lineNumber;
+        var metadata, test, type, name, alias, pos, loweredAlias, property;
     
-        
         let metadata =  [];
         let test =  true;
         let metadata["tutu"] = test;
         let metadata["targets"] = this->targets;
         let metadata["properties"][this->name] = this->name;
-        
         let metadata["enum"][this->name]["literal"] =  !(empty(this->literal)) ? this->literal  : this->value;
-        
         let type =  isset this->typeMap[this->type] ? this->typeMap[this->type]  : this->type;
         let name = "test";
         let pos =  strpos(name, "\\");
         let alias =  pos === false ? name  : substr(name, 0, pos);
-        
         if this->namespaces {
             echo "toto";
         } else {
@@ -102,12 +93,6 @@ class ArrayDim
         }
         let property = self::annotationMetadata[name]["default_property"];
         if !(property) {
-            echo "not allowed";
-        }
-        let lineCnt = 0;
-        let lineNumber = 1;
-        let lineCnt++;
-        if lineCnt == lineNumber {
             echo "not allowed";
         }
     }

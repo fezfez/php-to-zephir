@@ -34,9 +34,7 @@ class IncrementInArrayDim
         var i, toto, averylongvariable;
     
         let i = 0;
-        
         let toto =  [1 : true];
-        var tmpArray;
         let i++;
         let averylongvariable = toto[i];
         if averylongvariable {
