@@ -97,7 +97,7 @@ class AssignManipulator
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarModification($primaryNode)) {
             $primaryNode = $primaryNode->var;
-        } elseif ($this->isVarCreation($primaryNode) && $parentClass != "PhpParser\Node\Expr\ArrayItem") {
+        } elseif ($this->isVarCreation($primaryNode) && $parentClass != "PhpParser\Node\Expr\ArrayItem" ) {
             $primaryNode = new Expr\Variable('tmpArray'.md5(serialize($primaryNode->items)));
         } else {
             if (is_array($primaryNode) === true) {

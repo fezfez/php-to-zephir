@@ -42,7 +42,7 @@ class ArrayDimFetchPrinter
     public function convert(Expr\ArrayDimFetch $node, $returnAsArray = false)
     {
         $collected = $this->arrayManipulator->arrayNeedToBeSplit($node);
-
+        
         if ($collected !== false) {
             return $this->splitArray($collected, $returnAsArray);
         } else {
