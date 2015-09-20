@@ -6,7 +6,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use PhpParser\Node;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Helper\ProgressHelper;
 
 class Logger
 {
@@ -26,6 +25,14 @@ class Logger
      * @var bool
      */
     private $progresseBar = null;
+    /**
+     * @var array
+     */
+    private $incompatibility = array();
+    /**
+     * @var array
+     */
+    private $logs = array();
 
     /**
      * @param OutputInterface $output
@@ -41,18 +48,27 @@ class Logger
 
     private function cleanProgressbar()
     {
-        if ($this->progress !== null && $this->progress->getStartTime() !== null && $this->progresseBar === true) {
+        if ($this->progress !== null 
+         && $this->progress->getStartTime() !== null 
+         && $this->progress->getProgress() !== $this->progress->getMaxSteps()
+         && $this->progresseBar === true
+        ) {
             $this->progress->clear();
-            $this->output->writeln('');
+            $this->output->write("\r");
         }
     }
 
     public function reDrawProgressBar()
     {
-        if ($this->progress !== null && $this->progress->getStartTime() !== null && $this->progresseBar === true) {
+        if ($this->progress !== null 
+         && $this->progress->getStartTime() !== null 
+         && $this->progress->getProgress() !== $this->progress->getMaxSteps()
+         && $this->progresseBar === true
+        ) {
             $this->progress->display();
         }
     }
+
     /**
      * @param string $message
      * @param Node   $node
@@ -60,11 +76,28 @@ class Logger
      */
     public function logNode($message, Node $node, $class = null)
     {
-        $this->cleanProgressbar();
-        $this->output->writeln(
-            '<comment>'.$message.' on line '.$node->getLine().' in class "'.$class.'"</comment>'
-        );
-        $this->reDrawProgressBar();
+        $this->logs[] = array('message' => $message, 'node' => $node->getLine(), 'class' => $class);
+    }
+
+    /**
+     * @param string $type
+     * @param string $message
+     * @param Node $node
+     * @param string $class
+     */
+    public function logIncompatibility($type, $message, Node $node, $class = null)
+    {
+        $this->incompatibility[] = array('type' => $type, 'message' => $message, 'node' => $node->getLine(), 'class' => $class);
+    }
+
+    public function getIncompatibility()
+    {
+        return $this->incompatibility;
+    }
+    
+    public function getLogs()
+    {
+        return $this->logs;
     }
 
     /**
@@ -109,7 +142,7 @@ class Logger
     public function progress($number)
     {
         $progress = new ProgressBar((($this->progresseBar === true) ? $this->output : new NullOutput()), $number);
-        $progress->setFormat(ProgressHelper::FORMAT_VERBOSE);
+        $progress->setFormat('very_verbose');
         $progress->start();
 
         $this->progress = $progress;

@@ -84,7 +84,7 @@ class AssignPrinter
             return (($extract === true) ? $collect->getCollected() : '') .
                 'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
                 .$operatorString.' '.$collect->getExpr();
-        } elseif ($rightNode instanceof Expr\MethodCall || $rightNode instanceof Expr\FuncCall) {
+        } elseif (($rightNode instanceof Expr\MethodCall || $rightNode instanceof Expr\FuncCall) && ($leftNode instanceof Expr\List_) === false) {
             $collected = $this->convertCall($node, new ArrayDto());
 
             return $collected['extracted']->getCollected().
@@ -102,7 +102,7 @@ class AssignPrinter
             return $collect->getCollected().
                    'let '.$this->dispatcher->pPrec($leftNode, $precedence, $associativity, -1)
             .$operatorString.' '.$collect->getExpr();
-        } elseif ($node->var instanceof Expr\List_) {
+        } elseif ($leftNode instanceof Expr\List_) {
             return $this->convertListStmtToAssign($node);
         } elseif ($leftNode instanceof Expr\ArrayDimFetch || $rightNode instanceof Expr\ArrayDimFetch) {
             return $this->arrayDimFetchCase($node, $leftNode, $rightNode, $operatorString, $precedence, $associativity, $extract);
@@ -244,8 +244,8 @@ class AssignPrinter
     {
         $type = 'Expr_Assign';
         $rightNode = $node->expr;
-        $vars = array();
         $pList = array();
+        $listVarName = 'tmpList';
 
         list($precedence, $associativity) = $this->dispatcher->getPrecedenceMap($type);
 
@@ -253,12 +253,23 @@ class AssignPrinter
             if (null === $var) {
                 $pList[] = '';
             } else {
-                $vars[] = $this->dispatcher->p($var);
-                $pList[] = 'let '.$this->dispatcher->p($var).' = '.$this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1).'['.$count.'];';
+                $listVarName .= $this->dispatcher->p($var);
             }
         }
 
-        return 'var '.implode(', ', $vars).";\n".implode("\n", $pList);
+        $listVarName = str_replace(array('[', ']', '"'), '', $listVarName);
+
+        $pList[] = 'let ' . $listVarName . ' = ' . $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1) . '';
+        
+        foreach ($node->var->vars as $count => $var) {
+            if (null === $var) {
+                $pList[] = '';
+            } else {
+                $pList[] = 'let '.$this->dispatcher->p($var) . ' = ' . $listVarName.'['.$count.']';
+            }
+        }
+
+        return implode(";\n", $pList);
     }
 
     /**
@@ -307,7 +318,7 @@ class AssignPrinter
             if (false === $splitedArray = $this->arrayManipulator->arrayNeedToBeSplit($rightNode)) {
                 $rightString = $this->dispatcher->pPrec($rightNode, $precedence, $associativity, 1);
             } else {
-                $result = $this->dispatcher->pExpr_ArrayDimFetch($rightNode, true);
+                $result = $this->dispatcher->pExpr_ArrayDimFetch($rightNode, true, true);
                 if ($extract === true) {
                     $head .= $result['head'];
                 }

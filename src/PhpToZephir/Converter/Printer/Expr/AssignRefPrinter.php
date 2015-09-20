@@ -22,7 +22,12 @@ class AssignRefPrinter extends SimplePrinter
      */
     public function convert(Expr\AssignRef $node)
     {
-        $this->logger->logNode('(=&) AssignRef does not exist in zephir, assign', $node, $this->dispatcher->getMetadata()->getClass());
+        $this->logger->logIncompatibility(
+            '(=&) AssignRef',
+            '(=&) AssignRef does not exist in zephir, assign',
+            $node,
+            $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+        );
 
         return 'let '.$this->dispatcher->pInfixOp('Expr_AssignRef', $node->var, ' = ', $node->expr);
     }

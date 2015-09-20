@@ -38,7 +38,9 @@ class ReservedWordReplacer
             'callable' => 'callablee',
             'string' => 'stringg',
             'float' => 'floatt',
-            'int' => 'intt'
+            'int' => 'intt',
+            'internal' => 'internall',
+            'deprecated' => 'deprecatedd'
         );
 
         foreach ($reservedWord as $word => $replacement) {

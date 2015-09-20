@@ -14,7 +14,8 @@ class ErrorSuppressPrinter extends SimplePrinter
 
     public function convert(Expr\ErrorSuppress $node)
     {
-        $this->logger->logNode(
+        $this->logger->logIncompatibility(
+            '(@=) ErrorSuppress',
             'ErrorSuppress is not supported in Zephir (see #906)',
             $node,
             $this->dispatcher->getMetadata()->getFullQualifiedNameClass()

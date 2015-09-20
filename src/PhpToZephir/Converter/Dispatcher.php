@@ -76,15 +76,20 @@ class Dispatcher
      *
      * @return string Pretty printed node
      */
-    public function p($node)
+    public function p()
     {
+        $args = func_get_args();
+        $node = $args[0];
+
         if (null === $node) {
             return;
         }
 
         $this->logger->trace('p'.$node->getType(), $node, $this->getMetadata()->getFullQualifiedNameClass());
 
-        return $this->getClass('p'.$node->getType())->convert($node);
+        $class = $this->getClass('p'.$node->getType());
+
+        return call_user_func_array(array($class, "convert"), $args);
     }
 
     /**

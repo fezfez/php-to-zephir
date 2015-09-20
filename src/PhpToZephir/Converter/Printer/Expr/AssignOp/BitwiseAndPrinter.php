@@ -15,7 +15,8 @@ class BitwiseAndPrinter extends SimplePrinter
 
     public function convert(AssignOp\BitwiseAnd $node)
     {
-        $this->logger->logNode(
+        $this->logger->logIncompatibility(
+            '(&=) BitwiseAnd',
             '(&=) BitwiseAnd does not exist in zephir, assign',
             $node,
             $this->dispatcher->getMetadata()->getClass()

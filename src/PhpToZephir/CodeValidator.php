@@ -5,7 +5,6 @@ namespace PhpToZephir;
 use Zephir\Commands\CommandGenerate;
 use Zephir\Config;
 use Zephir\Logger as ZephirLogger;
-use Zephir\CompilerException;
 use Zephir\Commands\CommandFullClean;
 
 class CodeValidator
@@ -17,10 +16,13 @@ class CodeValidator
      */
     public function isValid($namespace)
     {
+        $currentDir = getcwd();
+
+        chdir(FileWriter::BASE_DESTINATION . $namespace);
+
         if (!defined('ZEPHIRPATH'))
             define('ZEPHIRPATH', realpath(__DIR__.'/../../vendor/phalcon/zephir').'/');
 
-        
         $generateCommand = new CommandGenerate();
         $cleanCommand = new CommandFullClean();
 
@@ -28,11 +30,15 @@ class CodeValidator
             $config = new Config();
             $config->set('namespace', $namespace);
             $config->set('silent', true);
+
             $cleanCommand->execute($config, new ZephirLogger($config));
             $generateCommand->execute($config, new ZephirLogger($config));
-        } catch (CompilerException $e) {
+        } catch (Exception $e) {
+            chdir($currentDir);
             throw new \Exception(sprintf('Error on %s', $e->getMessage()));
         }
+
+        chdir($currentDir);
 
         return true;
     }

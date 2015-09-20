@@ -29,16 +29,18 @@ class ArrayDim
 {
     public function testAssignLeftWithArrayDimLeftRight() -> void
     {
-        var number, myArray, test;
+        var number, myArray, test, tmpNumber1, tmpNumber2;
     
         let number = 0;
         let myArray =  [1 : [2 : 10]];
-        var tmpArray;
+
         let number++;
+        let tmpNumber1 = number;
         let number++;
-        let tmpArray = myArray["fezfez"];
+        let tmpNumber2 = number;
         let number++;
-        let test = myArray[number];
+
+        let test = myArray[tmpNumber1][tmpNumber2]["fezfez"][number];
     }
 
 }

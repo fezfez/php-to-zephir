@@ -29,14 +29,16 @@ class ArrayDim
 {
     public function testArrayDimLeftAssignArrayDimLet() -> void
     {
-        var number, myArray, tmpVar1;
+        var number, myArray, tmpnumber;
     
         let number = 0;
         let myArray =  [1 : 10, 2 : 11];
+        
         let number++;
-        let tmpVar1 = number;
+        let tmpnumber = number;
         let number++;
-        let myArray[tmpVar1] = myArray[number];
+        
+        let myArray[tmpnumber] = myArray[number];
     }
 
 }

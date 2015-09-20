@@ -4,7 +4,7 @@ namespace Converter\Variable;
 
 class StaticVarTest extends \ConverterBaseTest
 {
-    public function testSimpleTmpArray()
+    public function testAssign()
     {
         $php = <<<'EOT'
 <?php
@@ -30,6 +30,38 @@ class SimpleTmpArray
     
         
             let container = "test";
+    }
+
+}
+EOT;
+        $this->assertConvertToZephir($php, $zephir);
+    }
+
+    public function testSimple()
+    {
+        $php = <<<'EOT'
+<?php
+    
+namespace Code\Variable;
+    
+class SimpleTmpArray
+{
+    public function test()
+    {
+        static $container;
+    }
+}
+EOT;
+        $zephir = <<<'EOT'
+namespace Code\Variable;
+
+class SimpleTmpArray
+{
+    public function test() -> void
+    {
+        var container;
+    
+    
     }
 
 }

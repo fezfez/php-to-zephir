@@ -12,8 +12,8 @@ class PostIncPrinter extends SimplePrinter
         return 'pExpr_PostInc';
     }
 
-    public function convert(Expr\PostInc $node)
+    public function convert(Expr\PostInc $node, $autolet = true)
     {
-        return 'let '.$this->dispatcher->pPostfixOp('Expr_PostInc', $node->var, '++');
+        return ($autolet === true ? 'let ' : '').$this->dispatcher->pPostfixOp('Expr_PostInc', $node->var, '++');
     }
 }

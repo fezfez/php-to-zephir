@@ -18,9 +18,16 @@ class StaticPrinter extends SimplePrinter
         $vars = array();
 
         foreach ($node->vars as $var) {
-            $this->logger->logNode('Static var does not exist in Zepihr', $var);
+            $this->logger->logIncompatibility(
+                'Static var',
+                'Static var does not exist in Zephir see #941',
+                $var,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
             /* @var $var \PhpParser\Node\Stmt\StaticVar */
-            $vars[] = new Expr\Assign(new Expr\Variable($var->name), $var->default);
+            if (!empty($var->default)) {
+                $vars[] = new Expr\Assign(new Expr\Variable($var->name), $var->default);
+            }
         }
 
         return $this->dispatcher->pStmts($vars);

@@ -56,7 +56,12 @@ class IfPrinter
 
         if (empty($node->stmts)) {
             $node->stmts = array(new Stmt\Echo_(array(new Scalar\String_('not allowed'))));
-            $this->logger->logNode('Empty if not allowed, add "echo not allowed"', $node, $this->dispatcher->getMetadata()->getClass());
+            $this->logger->logIncompatibility(
+                'Empty if',
+                'Empty if not allowed, add "echo not allowed"',
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
         }
 
         return $collected->getCollected() .

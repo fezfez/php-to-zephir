@@ -11,7 +11,7 @@ class ArrayDimLetWithAssignScalarTest extends \ConverterBaseTest
 
 namespace Code\Simple;
 
-class ArrayDim
+class ArrayDimLetWithAssignScalarTest
 {
     public function testArrayDimLetWithAssignScalar()
     {
@@ -25,17 +25,19 @@ EOT;
         $zephir = <<<'EOT'
 namespace Code\Simple;
 
-class ArrayDim
+class ArrayDimLetWithAssignScalarTest
 {
     public function testArrayDimLetWithAssignScalar() -> void
     {
-        var number, myArray;
+        var number, myArray, tmpnumber;
     
         let number = 0;
         let myArray =  [1 : 10];
-        var tmpArray;
+        
         let number++;
-        let myArray[number] = 11;
+        let tmpnumber = number;
+        
+        let myArray[tmpnumber] = 11;
     }
 
 }

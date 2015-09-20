@@ -11,6 +11,7 @@ use phpDocumentor\Reflection\DocBlock\Tag\ReturnTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ThrowsTag;
 use phpDocumentor\Reflection\DocBlock\Tag\SeeTag;
 use PhpToZephir\Converter\ClassMetadata;
+use PhpParser\Node;
 
 class TypeFinder
 {
@@ -143,7 +144,9 @@ class TypeFinder
         foreach ($phpdoc->getTags() as $tag) {
             if ($tag instanceof \phpDocumentor\Reflection\DocBlock\Tag\ParamTag) {
                 if ($param->name === substr($tag->getVariableName(), 1)) {
-                    return $this->findType($tag);
+                    if (!empty($tag->getType())) {
+                        return $this->findType($tag, $param, $classMetadata);
+                    }
                 }
             }
         }
@@ -188,7 +191,7 @@ class TypeFinder
             foreach ($phpdoc->getTags() as $tag) {
                 if ($this->isReturnTag($tag) === true) {
                     $definition['return'] = array(
-                        'type' => $this->findType($tag),
+                        'type' => $this->findType($tag, $node, $classMetadata),
                     );
                     break;
                 }
@@ -225,7 +228,10 @@ class TypeFinder
      */
     private function isReturnTag(Tag $tag)
     {
-        if ($tag instanceof ReturnTag && ($tag instanceof ThrowsTag) === false && ($tag instanceof ParamTag) === false) {
+        if ($tag instanceof ReturnTag 
+        && ($tag instanceof ThrowsTag) === false 
+        && ($tag instanceof ParamTag) === false
+        ) {
             return true;
         } else {
             return false;
@@ -238,7 +244,7 @@ class TypeFinder
      *
      * @return string
      */
-    private function findType(Tag $tag)
+    private function findType(Tag $tag, Node $node, ClassMetadata $classMetadata)
     {
         $rawType = $tag->getType();
 
@@ -270,8 +276,20 @@ class TypeFinder
 
         $arrayOfPrimitiveTypes = array_map(function ($val) { return $val.'[]'; }, $primitiveTypes);
 
-        if (preg_match("/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/", $rawType) === 0) { // this is a typo
-            $this->logger->log(sprintf('Type "%s" does not exist in docblock', $rawType));
+        if (class_exists($rawType)) {
+            $type = array('value' => $rawType, 'isClass' => true);
+        } elseif ($name = $this->isInUse($rawType, $classMetadata)) {
+            $type = array('value' => $name, 'isClass' => true);
+        } elseif ($name = $this->isInActualNamespaceOrInBase($rawType)) {
+            $type = array('value' => $name, 'isClass' => true);
+        } elseif (strpos($rawType, '[]')) {
+            $type = array('value' => 'array', 'isClass' => false);
+        } elseif (preg_match("/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/", $rawType) === 0) { // this is a typo
+            $this->logger->logNode(
+                sprintf('Type "%s" does not exist in docblock', $rawType),
+                $node,
+                $classMetadata->getFullQualifiedNameClass()
+            );
             $type = array('value' => '', 'isClass' => false);
         } elseif (in_array(strtolower($rawType), $primitiveTypes)) {
             $type = array('value' => strtolower($rawType), 'isClass' => false);
@@ -282,5 +300,37 @@ class TypeFinder
         }
 
         return $type;
+    }
+    
+    /**
+     * @param string $rawType
+     * @param ClassMetadata $classMetadata
+     * @return string|boolean
+     */
+    private function isInUse($rawType, ClassMetadata $classMetadata)
+    {
+        $rawType = substr($rawType, 1);
+
+        foreach ($classMetadata->getClasses() as $use) {
+            if (strpos($use, $rawType) && substr($use, strlen($rawType))) {
+                return $rawType;
+            }
+        }
+
+        return false;
+    }
+
+    private function isInActualNamespaceOrInBase($rawType)
+    {
+        $type = substr($rawType, 1);
+
+        foreach (array_keys($this->classCollector->getCollected()) as $class) {
+            // is in actual namespace ?
+            if (strpos($class, $type) && substr($class, strlen($type))) {
+                return $type;
+            } elseif ($class === $type) {
+                return $rawType;
+            }
+        }
     }
 }

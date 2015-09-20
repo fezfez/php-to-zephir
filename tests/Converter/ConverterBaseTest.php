@@ -65,6 +65,8 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
      */
     public function assertConvertToZephir($php, $zephir)
     {
+        self::delTree(FileWriter::BASE_DESTINATION);
+
         if (is_array($php) === false) {
             $php = array($php);
         }
@@ -75,8 +77,6 @@ abstract class ConverterBaseTest extends \PHPUnit_Framework_TestCase
         $generated = array_values($this->getEngine()->convert(new StringCodeCollector($php), $logger));
 
         $this->assertCount(count($zephir), $generated, $bufferOutput->fetch());
-
-        self::delTree('Code');
 
         foreach ($generated as $index => $file) {
             $zephirGenerated = $this->getRender()->render($file);

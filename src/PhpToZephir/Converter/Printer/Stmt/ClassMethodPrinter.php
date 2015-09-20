@@ -177,10 +177,23 @@ class ClassMethodPrinter
             if ($stmt['node'] instanceof Expr\Assign) {
                 if (($stmt['node']->var instanceof Expr\PropertyFetch) === false 
                  && ($stmt['node']->var instanceof Expr\StaticPropertyFetch) === false
-                 && ($stmt['node']->var instanceof Expr\ArrayDimFetch) === false) {
-                	if (is_object($stmt['node']->var->name) === false) { // if true it is a dynamic var
+                 && ($stmt['node']->var instanceof Expr\ArrayDimFetch) === false
+                 && ($stmt['node']->var instanceof Expr\List_) === false) {
+                    if (is_object($stmt['node']->var->name) === false) { // if true it is a dynamic var
                         $vars[] = $stmt['node']->var->name;
                     }
+                } elseif (($stmt['node']->var instanceof Expr\List_) === true) {
+                    $varInList = array();
+                    foreach ($stmt['node']->var->vars as $var) {
+                        if (null !== $var) { 
+                            $varInList[] = $this->dispatcher->p($var);
+                            if (($var instanceof Expr\ArrayDimFetch) === false) {
+                                $vars[] = $this->dispatcher->p($var);
+                            }
+                        }
+                    }
+
+                    $vars[] = 'tmpList' . str_replace(array('[', ']', '"'), '', implode('', $varInList));
                 }
             } elseif ($stmt['node'] instanceof Stmt\Foreach_) {
                 if (null !== $stmt['node']->keyVar) {

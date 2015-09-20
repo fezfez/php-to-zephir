@@ -52,27 +52,42 @@ class Converter
             'additionalClass' => $this->findAdditionalClasses($stmts, $logger),
         );
     }
-    
+
+    /**
+     * @param ClassMetadata $metadata
+     * @param ClassCollector $classCollector
+     */
     private function implementsExist(ClassMetadata $metadata, ClassCollector $classCollector)
     {
         foreach ($metadata->getImplements() as $implements) {
             $this->implementExist($metadata, $classCollector, $implements);
         }
     }
-    
+
+    /**
+     * @param ClassMetadata $metadata
+     * @param ClassCollector $classCollector
+     * @param string $implements
+     * @throws \Exception
+     * @return boolean
+     */
     private function implementExist(ClassMetadata $metadata, ClassCollector $classCollector, $implements)
     {
         // Class is in actual namespace
         if (array_key_exists($metadata->getNamespace() . '\\' . $implements, $classCollector->getCollected())) {
             return true;
         }
-    
+
         foreach ($metadata->getClasses() as $use) {
             if (substr(strrchr($use, "\\"), 1) === $implements) {
                 return true;
             }
         }
-    
+
+        if (interface_exists($implements)) {
+            return true;
+        }
+
         throw new \Exception(sprintf('interface %s does not exist', $implements));
     }
 

@@ -29,17 +29,20 @@ class ArrayDim
 {
     public function testArrayDimLeftWithScalarAssignScalar() -> void
     {
-        var number, myArray;
+        var number, myArray, test, tmpNumber1, tmpNumber2, tmpNumber3;
     
         let number = 0;
         let myArray =  [1 : [2 : 10]];
-        var tmpArray;
+
         let number++;
+        let tmpNumber1 = number;
         let number++;
-        let tmpArray = myArray["fezfez"];
+        let tmpNumber2 = number;
         let number++;
+        let tmpNumber3 = number;
         let number++;
-        let myArray[number] = number;
+
+        let myArray[tmpNumber1][tmpNumber2]["fezfez"][tmpNumber3] = number;
     }
 
 }

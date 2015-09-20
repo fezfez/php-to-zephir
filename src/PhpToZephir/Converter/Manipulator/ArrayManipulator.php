@@ -72,7 +72,9 @@ class ArrayManipulator
      */
     private function isInvalidInArrayDimFetch($node)
     {
-        if ($node->dim instanceof BinaryOp\Concat) {
+        if (property_exists($node, 'dim') === false) {
+            return $this->isInvalidIn($node);
+        } elseif ($node->dim instanceof BinaryOp\Concat) {
             return $this->isInvalidInArrayDimFetch($node->dim->left)
             && $this->isInvalidInArrayDimFetch($node->dim->right);
         } else {

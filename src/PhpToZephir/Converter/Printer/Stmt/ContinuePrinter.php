@@ -15,7 +15,12 @@ class ContinuePrinter extends SimplePrinter
     public function convert(Stmt\Continue_ $node)
     {
         if ($node->num !== null) {
-            $this->logger->logNode('"continue $number;" no supported in zephir', $node, $this->dispatcher->getMetadata()->getClass());
+            $this->logger->logIncompatibility(
+                'continue $number;',
+                '"continue $number;" no supported in zephir',
+                $node,
+                $this->dispatcher->getMetadata()->getFullQualifiedNameClass()
+            );
         }
 
         return 'continue;';

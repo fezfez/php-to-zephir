@@ -14,7 +14,12 @@ class YieldPrinter extends SimplePrinter
 
     public function convert(Expr\Yield_ $node)
     {
-        $this->logger->logNode('Yield does not exist in zephir', $node, $this->dispatcher->getMetadata()->getClass());
+        $this->logger->logIncompatibility(
+            'Yield',
+            'Yield does not exist in zephir',
+            $node,
+            $this->dispatcher->getMetadata()->getClass()
+        );
 
         if ($node->value === null) {
             return 'yield';

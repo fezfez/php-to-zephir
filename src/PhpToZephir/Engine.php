@@ -25,9 +25,13 @@ class Engine
      * @param Parser              $parser
      * @param Converter\Converter $converter
      * @param ClassCollector      $classCollector
+     * @param ConfigWriter        $configWriter
      */
-    public function __construct(Parser $parser, Converter $converter, ClassCollector $classCollector)
-    {
+    public function __construct(
+        Parser $parser,
+        Converter $converter,
+        ClassCollector $classCollector
+    ) {
         $this->parser = $parser;
         $this->converter = $converter;
         $this->classCollector = $classCollector;
@@ -122,6 +126,7 @@ class Engine
                     )
                 );
             }
+
             $progress->advance();
         }
 
