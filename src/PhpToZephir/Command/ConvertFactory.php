@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the Code Generator package.
+ * This file is part of the PHP to Zephir package.
  *
  * (c) St�ｿｽphane Demonchaux <demonchaux.stephane@gmail.com>
  *
@@ -16,19 +16,19 @@ use PhpToZephir\Render\FileRender;
 use PhpToZephir\FileWriter;
 
 /**
- * Generator command.
+ * Convert command.
  *
  * @author Stéphane Demonchaux
  */
-class ConvertDirectoryFactory
+class ConvertFactory
 {
     /**
      * @param OutputInterface $output
      *
-     * @return \PhpToZephir\Command\ConvertDirectory
+     * @return \PhpToZephir\Command\Convert
      */
     public static function getInstance(OutputInterface $output)
     {
-        return new ConvertDirectory(EngineFactory::getInstance(), new FileRender(new FileWriter()), $output);
+        return new Convert(EngineFactory::getInstance(), new FileRender(new FileWriter()), $output);
     }
 }

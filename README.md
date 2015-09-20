@@ -22,7 +22,7 @@ How to use
 ====
 
 ```bash
-vendor/bin/php-to-zephir phpToZephir:convertDir myDirToConvert 
+vendor/bin/php-to-zephir phpToZephir:convert myDirToConvert 
 ```
     
 It converts all files recursivly to [Zephir](https://github.com/phalcon/zephir) language.

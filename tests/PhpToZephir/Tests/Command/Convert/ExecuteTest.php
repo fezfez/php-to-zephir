@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpToZephir\Tests\Command\ConvertDirectory;
+namespace PhpToZephir\Tests\Command\Convert;
 
 use PhpToZephir\EngineFactory;
 use PhpToZephir\Render\FileRender;
 use PhpToZephir\FileWriter;
 use PhpToZephir\Logger;
-use PhpToZephir\Command\ConvertDirectory;
+use PhpToZephir\Command\Convert;
 use PhpToZephir\CodeCollector\DirectoryCodeCollector;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -15,15 +15,15 @@ class ExecuteTest extends \PHPUnit_Framework_TestCase
 {
     public function testFailOnDirectory()
     {
-        $sUT = new ConvertDirectory(
+        $sUT = new Convert(
             EngineFactory::getInstance(),
             new FileRender(new FileWriter()),
             new NullOutput()
         );
 
-        $this->setExpectedException('\InvalidArgumentException', 'Directory "not" does not exist');
+        $this->setExpectedException('\InvalidArgumentException', '"not" is not a file or a directory');
 
-        $sUT->execute(new ArrayInput(array('dir' => 'not'), $sUT->getDefinition()), new NullOutput());
+        $sUT->execute(new ArrayInput(array('source' => 'not'), $sUT->getDefinition()), new NullOutput());
     }
 
     public function testOk()
@@ -36,7 +36,7 @@ class ExecuteTest extends \PHPUnit_Framework_TestCase
         ->disableOriginalConstructor()
         ->getMock();
 
-        $sUT = new ConvertDirectory(
+        $sUT = new Convert(
             $engine,
             $fileRender,
             new NullOutput()
@@ -55,6 +55,6 @@ class ExecuteTest extends \PHPUnit_Framework_TestCase
         ->method('render')
         ->with(array('myReturn'));
 
-        $sUT->execute(new ArrayInput(array('dir' => __DIR__), $sUT->getDefinition()), new NullOutput());
+        $sUT->execute(new ArrayInput(array('source' => __DIR__), $sUT->getDefinition()), new NullOutput());
     }
 }
