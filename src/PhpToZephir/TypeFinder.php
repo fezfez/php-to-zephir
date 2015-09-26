@@ -328,7 +328,7 @@ class TypeFinder
 
         foreach (array_keys($this->classCollector->getCollected()) as $class) {
             // is in actual namespace ?
-            if (strpos($class, $type) && substr($class, strlen($type)) && substr(substr($class, -(strlen($type) + 1)), 0, 1) === "\\") {
+            if (substr($class, -strlen($type)) == $type && substr(substr($class, -(strlen($type) + 1)), 0, 1) === "\\") {
                 return $type;
             } elseif ($class === $type) {
                 return $rawType;
