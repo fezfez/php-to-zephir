@@ -31,12 +31,15 @@ class IncrementInArrayDim
 {
     public function testIncrementInArrayDim() -> void
     {
-        var i, toto, averylongvariable;
+        var i, toto, averylongvariable, tmpI1;
     
         let i = 0;
         let toto =  [1 : true];
+        
         let i++;
-        let averylongvariable = toto[i];
+        let tmpI1 = i;
+        
+        let averylongvariable = toto[tmpI1];
         if averylongvariable {
             echo "tata";
         }

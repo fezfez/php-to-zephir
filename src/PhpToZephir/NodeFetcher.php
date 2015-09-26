@@ -13,20 +13,21 @@ class NodeFetcher
      *
      * @return array
      */
-    public function foreachNodes($nodesCollection, array $nodes = array(), $parentClass = '')
+    public function foreachNodes($nodesCollection, array $nodes = array(), array $parentClass = array())
     {
         if (is_object($nodesCollection) === true && $nodesCollection instanceof NodeAbstract) {
             foreach ($nodesCollection->getSubNodeNames() as $subNodeName) {
-                $nodes = $this->fetch($nodesCollection->$subNodeName, $nodes, $this->getParentClass($nodesCollection));
+                $parentClass[] = $this->getParentClass($nodesCollection);
+                $nodes = $this->fetch($nodesCollection->$subNodeName, $nodes, $parentClass);
             }
         } elseif (is_array($nodesCollection) === true) {
-            $nodes = $this->fetch($nodesCollection, $nodes, $parentClass);
+            $nodes = $this->fetch($nodesCollection, $nodes, $parentClass, false);
         }
 
         return $nodes;
     }
 
-    private function fetch($nodeToFetch, $nodes, $parentClass)
+    private function fetch($nodeToFetch, $nodes, $parentClass, $addSelf = false)
     {
         if (is_array($nodeToFetch) === false) {
             $nodeToFetch = array($nodeToFetch);
@@ -34,7 +35,10 @@ class NodeFetcher
         
         foreach ($nodeToFetch as &$node) {
             $nodes[] = array('node' => $node, 'parentClass' => $parentClass);
-            $nodes = $this->foreachNodes($node, $nodes, $this->getParentClass($node));
+            if ($addSelf === true) {
+                $parentClass[] = $this->getParentClass($node);
+            }
+            $nodes = $this->foreachNodes($node, $nodes, $parentClass);
         }
 
         return $nodes;

@@ -14,7 +14,7 @@ class ForWithoutStmt
 {
     public function testSampleFromPhpDoc3()
     {
-        i = 0;
+        $i = 0;
         $tokens = array();
         for (reset($tokens); false !== $token = current($tokens); next($tokens)) {
             $i++;

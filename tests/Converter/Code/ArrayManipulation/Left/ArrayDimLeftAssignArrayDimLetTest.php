@@ -1,6 +1,6 @@
 <?php
 
-namespace Converter\Code\ArrayManipulation;
+namespace Converter\Code\ArrayManipulation\Left;
 
 class ArrayDimLeftAssignArrayDimLetTest extends \ConverterBaseTest
 {
@@ -29,16 +29,19 @@ class ArrayDim
 {
     public function testArrayDimLeftAssignArrayDimLet() -> void
     {
-        var number, myArray, tmpnumber;
+        var number, myArray, tmpNumber1, tmpNumber2;
     
         let number = 0;
         let myArray =  [1 : 10, 2 : 11];
         
         let number++;
-        let tmpnumber = number;
-        let number++;
+        let tmpNumber1 = number;
         
-        let myArray[tmpnumber] = myArray[number];
+        
+        let number++;
+        let tmpNumber2 = number;
+        
+        let myArray[tmpNumber1] = myArray[tmpNumber2];
     }
 
 }

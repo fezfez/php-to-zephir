@@ -96,6 +96,7 @@ class ArrayManipulator
         && ($node instanceof Expr\StaticCall) === false
         && ($node instanceof Expr\PropertyFetch) === false
         && ($node instanceof Expr\ArrayDimFetch) === false
+        && ($node instanceof Expr\Assign) === false
         && ($node instanceof BinaryOp\Minus) === false
         && ($node instanceof BinaryOp\Plus) === false
         && ($node instanceof BinaryOp\Mod) === false

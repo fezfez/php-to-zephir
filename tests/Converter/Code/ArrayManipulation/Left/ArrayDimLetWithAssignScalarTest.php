@@ -1,6 +1,6 @@
 <?php
 
-namespace Converter\Code\ArrayManipulation;
+namespace Converter\Code\ArrayManipulation\Left;
 
 class ArrayDimLetWithAssignScalarTest extends \ConverterBaseTest
 {
@@ -29,15 +29,15 @@ class ArrayDimLetWithAssignScalarTest
 {
     public function testArrayDimLetWithAssignScalar() -> void
     {
-        var number, myArray, tmpnumber;
+        var number, myArray, tmpNumber1;
     
         let number = 0;
         let myArray =  [1 : 10];
         
         let number++;
-        let tmpnumber = number;
+        let tmpNumber1 = number;
         
-        let myArray[tmpnumber] = 11;
+        let myArray[tmpNumber1] = 11;
     }
 
 }

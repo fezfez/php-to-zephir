@@ -10,6 +10,7 @@ use PhpParser\Node\Arg;
 use PhpToZephir\ReservedWordReplacer;
 use PhpToZephir\TypeFinder;
 use PhpToZephir\NodeFetcher;
+use PhpToZephir\Converter\Printer;
 
 class ClassMethodPrinter
 {
@@ -124,6 +125,9 @@ class ClassMethodPrinter
         if (!empty($vars)) {
             $var .= "\n    var ".implode(', ', $vars).";\n";
         }
+        
+        // dirty...
+        Printer\Expr\ArrayDimFetchPrinter::resetCreatedVars();
 
         return $var;
     }
@@ -223,6 +227,13 @@ class ClassMethodPrinter
             	}
             } elseif ($stmt['node'] instanceof Arg && $stmt['node']->value instanceof Expr\Array_) {
             	 $vars[] = 'tmpArray'.md5(serialize($stmt['node']->value->items));
+            }
+            
+            if ($stmt['node'] instanceof Expr\ArrayDimFetch && !in_array("PhpParser\Node\Expr\ArrayDimFetch", $stmt['parentClass'])) {
+                $varCreatedInArray = $this->dispatcher->pExpr_ArrayDimFetch($stmt['node'], true);
+                foreach ($varCreatedInArray['vars'] as $var) {
+                    $vars[] = $var;
+                }
             }
         }
 
