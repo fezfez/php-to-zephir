@@ -31,7 +31,9 @@ class CodeValidator
             $config->set('namespace', $namespace);
             $config->set('silent', true);
 
-            $cleanCommand->execute($config, new ZephirLogger($config));
+            if (is_dir('ext')) {
+                $cleanCommand->execute($config, new ZephirLogger($config));
+            }
             $generateCommand->execute($config, new ZephirLogger($config));
         } catch (Exception $e) {
             chdir($currentDir);
