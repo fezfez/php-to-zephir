@@ -48,6 +48,8 @@ EOT;
     
     public function testInInterface()
     {
+        $this->markTestIncomplete("Support in version 0.3");
+
     	$php = array(<<<'EOT'
 <?php
     

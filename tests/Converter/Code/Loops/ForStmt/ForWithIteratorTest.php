@@ -6,6 +6,8 @@ class ForWithIteratorTest extends \ConverterBaseTest
 {
     public function testConverting()
     {
+        $this->markTestIncomplete("Support in version 0.3");
+
         $php = <<<'EOT'
 <?php
 namespace Code\Loops\ForStmt;
