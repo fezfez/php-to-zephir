@@ -17,9 +17,11 @@ class SimpleForeach
         $myArray = array('test', '2');
 
         foreach ($myArray as $myValue) {
+            echo "my stmt";
         }
 
         foreach ($myArray as $myKey => $myValue) {
+            echo "my stmt";
         }
     }
 }
@@ -35,8 +37,10 @@ class SimpleForeach
     
         let myArray =  ["test", "2"];
         for myValue in myArray {
+            echo "my stmt";
         }
         for myKey, myValue in myArray {
+            echo "my stmt";
         }
     }
 
