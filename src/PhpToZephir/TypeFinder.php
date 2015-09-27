@@ -314,7 +314,7 @@ class TypeFinder
         $rawType = substr($rawType, 1);
 
         foreach ($classMetadata->getClasses() as $use) {
-            if (strpos($use, $rawType) && substr($use, strlen($rawType))) {
+            if (substr($use, -strlen($rawType)) == $rawType && substr(substr($use, -(strlen($rawType) + 1)), 0, 1) === "\\") {
                 return $rawType;
             }
         }
