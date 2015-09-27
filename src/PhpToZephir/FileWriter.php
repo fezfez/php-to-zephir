@@ -59,14 +59,14 @@ class FileWriter
     {
         $namespace = strstr($file['destination'], '/', true) . '/';
 
-        if (is_dir(self::BASE_DESTINATION . $namespace . $file['destination']) === false) {
-            mkdir(self::BASE_DESTINATION . $namespace . $file['destination'], 0777, true);
+        if (is_dir(self::BASE_DESTINATION . $namespace . strtolower($file['destination'])) === false) {
+            mkdir(self::BASE_DESTINATION . $namespace . strtolower($file['destination']), 0777, true);
         }
 
         $this->createConfig($namespace);
 
         file_put_contents(
-            self::BASE_DESTINATION . $namespace . $file['fileDestination'],
+            self::BASE_DESTINATION . $namespace . strtolower($file['fileDestination']),
             $file['zephir']
         );
     }
@@ -79,8 +79,8 @@ class FileWriter
     public function createConfig($namespace)
     {
         file_put_contents(
-            FileWriter::BASE_DESTINATION . $namespace . $namespace . '/config.json',
-            sprintf($this->configTemplate, $namespace, $namespace)
+            FileWriter::BASE_DESTINATION . $namespace . strtolower($namespace) . '/config.json',
+            sprintf($this->configTemplate, $namespace, strtolower($namespace))
         );
     }
 }

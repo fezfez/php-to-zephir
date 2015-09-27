@@ -28,7 +28,7 @@ class CodeValidator
 
         try {
             $config = new Config();
-            $config->set('namespace', $namespace);
+            $config->set('namespace', strtolower($namespace));
             $config->set('silent', true);
 
             if (is_dir('ext')) {
