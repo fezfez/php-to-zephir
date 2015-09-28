@@ -190,7 +190,7 @@ class ClassMethodPrinter
                     $varInList = array();
                     foreach ($stmt['node']->var->vars as $var) {
                         if (null !== $var) { 
-                            $varInList[] = $this->dispatcher->p($var);
+                            $varInList[] = ucfirst($this->dispatcher->p($var));
                             if (($var instanceof Expr\ArrayDimFetch) === false) {
                                 $vars[] = $this->dispatcher->p($var);
                             }

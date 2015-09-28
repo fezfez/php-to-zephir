@@ -31,11 +31,11 @@ class TestList
 {
     public function simpleTest() -> void
     {
-        var test, test2, tmpListtesttest2;
+        var test, test2, tmpListTestTest2;
     
-        let tmpListtesttest2 = this->returnArray();
-        let test = tmpListtesttest2[0];
-        let test2 = tmpListtesttest2[1];
+        let tmpListTestTest2 = this->returnArray();
+        let test = tmpListTestTest2[0];
+        let test2 = tmpListTestTest2[1];
     }
     
     protected function returnArray()
@@ -79,12 +79,12 @@ class TestList
 {
     public function simpleTest() -> void
     {
-        var test, tmpListtesttmp1testtmp2;
+        var test, tmpListTesttmp1Testtmp2;
     
         let test =  [];
-        let tmpListtesttmp1testtmp2 = this->returnArray();
-        let test["tmp1"] = tmpListtesttmp1testtmp2[0];
-        let test["tmp2"] = tmpListtesttmp1testtmp2[1];
+        let tmpListTesttmp1Testtmp2 = this->returnArray();
+        let test["tmp1"] = tmpListTesttmp1Testtmp2[0];
+        let test["tmp2"] = tmpListTesttmp1Testtmp2[1];
     }
     
     protected function returnArray()

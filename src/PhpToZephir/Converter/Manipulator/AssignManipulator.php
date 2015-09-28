@@ -94,7 +94,15 @@ class AssignManipulator
         }
 
         if ($primaryNode instanceof Expr\Assign) {
-            $primaryNode = $primaryNode->var;
+            if ($primaryNode->var instanceof Expr\List_) {
+                $varName = '';
+                foreach ($primaryNode->var->vars as $listVar) {
+                    $varName .= ucfirst($listVar->name);
+                }
+                $primaryNode = new Expr\Variable("tmpList" . $varName);
+            } else {
+                $primaryNode = $primaryNode->var;
+            }
         } elseif ($this->isVarModification($primaryNode)) {
             $primaryNode = $primaryNode->var;
         } elseif ($this->isVarCreation($primaryNode) && !in_array("PhpParser\Node\Expr\ArrayItem", $parentClass) ) {

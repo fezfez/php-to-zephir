@@ -253,7 +253,7 @@ class AssignPrinter
             if (null === $var) {
                 $pList[] = '';
             } else {
-                $listVarName .= $this->dispatcher->p($var);
+                $listVarName .= ucfirst($this->dispatcher->p($var));
             }
         }
 
