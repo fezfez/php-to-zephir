@@ -61,9 +61,9 @@ class Convert extends Command
             ->setName('phpToZephir:convert')
             ->setDescription('Convert a php file or directory to Zephir')
             ->addArgument('source', InputArgument::REQUIRED, 'Directory/File to convert')
-            ->addOption('debug')
-            ->addOption('v')
-            ->addArgument('file', InputArgument::OPTIONAL, 'file');
+            ->addOption('debug', null, null, "Debug output")
+            ->addOption('v', null, null, "Verbose mode")
+            ->addArgument('file', InputArgument::OPTIONAL, 'Ignore a file');
     }
 
     /* (non-PHPdoc)

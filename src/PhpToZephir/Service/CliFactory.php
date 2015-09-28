@@ -31,7 +31,7 @@ class CliFactory
     public static function getInstance(OutputInterface $output)
     {
         $questionHelper = new QuestionHelper();
-        $application = new Application('PHP to Zephir Command Line Interface', 'Beta 0.2.0');
+        $application = new Application('PHP to Zephir Command Line Interface', 'Beta 0.2.1');
         $application->getHelperSet()->set(new FormatterHelper(), 'formatter');
         $application->getHelperSet()->set($questionHelper, 'question');
 
