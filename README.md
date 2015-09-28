@@ -31,3 +31,9 @@ Issue
 =====
 
 If you find a bug, please report it by new issue (with tested php code to see error).
+
+Fatal error :'(
+====
+
+If you find a fatal error during converting, add --debug and identify where the fatal error happen. 
+Then open issue !
