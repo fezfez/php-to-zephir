@@ -89,14 +89,18 @@ class Convert extends Command
             $this->fileRender->render($file);
         }
 
-        $table = new Table($this->output);
-        
-        $table->setHeaders(array(
-            array(new TableCell('Incompatibility', array('colspan' => 4))),
-            array('Type', 'Message', 'Line', 'Class')
-        ));
-        $table->setRows($logger->getIncompatibility());
-        $table->render();
+        if (!empty($logger->getIncompatibility())) {
+            $table = new Table($this->output);
+
+            $table->setHeaders(array(
+                array(new TableCell('Incompatibility', array('colspan' => 4))),
+                array('Type', 'Message', 'Line', 'Class')
+            ));
+            $table->setRows($logger->getIncompatibility());
+            $table->render();
+        } else {
+            $logger->log('No incompatibily found !');
+        }
 
         if ($input->getOption('v') === true) {
             $table = new Table($this->output);
