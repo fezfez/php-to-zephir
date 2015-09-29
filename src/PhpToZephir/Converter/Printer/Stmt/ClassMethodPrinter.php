@@ -87,9 +87,29 @@ class ClassMethodPrinter
             $node,
             $this->dispatcher->getMetadata()
         );
+        foreach ($node->params as $param) {
+            if ($param->byRef === true) {
+                $this->logger->logIncompatibility(
+                    'reference',
+                    sprintf('Reference not supported in parametter (var "%s")', $param->name),
+                    $param,
+                    $this->dispatcher->getMetadata()->getClass()
+                );
+            }
+        }
+
+        if ($node->byRef) {
+            $this->logger->logIncompatibility(
+                'reference',
+                'Reference not supported',
+                $node,
+                $this->dispatcher->getMetadata()->getClass()
+            );
+        }
+
         $this->dispatcher->setLastMethod($node->name);
 
-        $stmt = $this->dispatcher->pModifiers($node->type).'function '.($node->byRef ? '&' : '').$node->name.'(';
+        $stmt = $this->dispatcher->pModifiers($node->type).'function '.$node->name.'(';
         $varsInMethodSign = array();
 
         if (isset($types['params']) === true) {

@@ -14,7 +14,16 @@ class FunctionPrinter extends SimplePrinter
 
     public function convert(Stmt\Function_ $node)
     {
-        return 'function '.($node->byRef ? '&' : '').$node->name
+        if ($node->byRef) {
+            $this->logger->logIncompatibility(
+                'reference',
+                'Reference not supported',
+                $node,
+                $this->dispatcher->getMetadata()->getClass()
+            );
+        }
+        
+        return 'function '.$node->name
              .'('.$this->dispatcher->pCommaSeparated($node->params).')'
              ."\n".'{'.$this->dispatcher->pStmts($node->stmts)."\n".'}';
     }

@@ -22,7 +22,16 @@ class ArrayItemPrinter extends SimplePrinter
      */
     public function convert(Expr\ArrayItem $node)
     {
+        if ($node->byRef) {
+            $this->logger->logIncompatibility(
+                'reference',
+                'Reference not supported',
+                $node,
+                $this->dispatcher->getMetadata()->getClass()
+            );
+        }
+
         return (null !== $node->key ? $this->dispatcher->p($node->key).' : ' : '')
-             .($node->byRef ? '&' : '').$this->dispatcher->p($node->value);
+             .$this->dispatcher->p($node->value);
     }
 }

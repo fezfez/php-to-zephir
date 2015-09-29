@@ -22,6 +22,15 @@ class ArgPrinter extends SimplePrinter
      */
     public function convert(Node\Arg $node)
     {
-        return ($node->byRef ? '&' : '').($node->unpack ? '...' : '').$this->dispatcher->p($node->value);
+        if ($node->byRef) {
+            $this->logger->logIncompatibility(
+                'reference',
+                'Reference not supported',
+                $node,
+                $this->dispatcher->getMetadata()->getClass()
+            );
+        }
+
+        return ($node->unpack ? '...' : '').$this->dispatcher->p($node->value);
     }
 }
