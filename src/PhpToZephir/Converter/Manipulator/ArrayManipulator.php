@@ -36,8 +36,9 @@ class ArrayManipulator
     {
         if ($this->isInvalidInArrayDimFetch($node) === true) {
             if ($node->dim instanceof Expr\FuncCall) {
-                $this->logger->trace(
-                    __METHOD__.' '.__LINE__.' Non supported funccall in array',
+                $this->logger->logIncompatibility(
+                    'ArrayFetchDim',
+                    'supported funccall in array',
                     $node,
                     $this->dispatcher->getMetadata()->getClass()
                 );
