@@ -5,27 +5,17 @@ namespace PhpToZephir\Converter;
 class DispatcherFactory
 {
     /**
-     * @var \PhpToZephir\Converter\Dispatcher
+     * @var \PhpToZephir\Converter\Dispatcher $dispatcher
      */
-    private static $instance = null;
+    private static $dispatcher;
 
-    /**
-     * @return \PhpToZephir\Converter\Dispatcher
-     */
+    private function __construct() {}
+    
     public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = self::createInstance();
+        if(static::$dispatcher !== null) {
+            return static::$dispatcher;   
         }
-
-        return self::$instance;
-    }
-
-    /**
-     * @return \PhpToZephir\Converter\Dispatcher
-     */
-    private static function createInstance()
-    {
         $dirName = __DIR__.'/Printer/';
         $directory = new \RecursiveDirectoryIterator($dirName);
         $iterator = new \RecursiveIteratorIterator($directory);
@@ -42,7 +32,7 @@ class DispatcherFactory
             $classes->offsetSet($className::getType(), $className);
         }
 
-        return new Dispatcher(
+        return static::$dispatcher = new Dispatcher(
             $classes,
             include __DIR__.'/PrecedenceMap.php'
         );
