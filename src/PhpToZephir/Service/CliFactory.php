@@ -24,12 +24,22 @@ use PhpToZephir\Command\ConvertFactory;
 class CliFactory
 {
     /**
+    * @var Application $app
+    */
+    private static $app;
+    
+    private function __construct() {}
+    
+    /**
      * Create CLI instance.
      *
      * @return Application
      */
     public static function getInstance(OutputInterface $output)
     {
+        if(static::$app !== null) {
+            return static::$app;   
+        }
         $questionHelper = new QuestionHelper();
         $application = new Application('PHP to Zephir Command Line Interface', 'Beta 0.2.1');
         $application->getHelperSet()->set(new FormatterHelper(), 'formatter');
@@ -37,6 +47,6 @@ class CliFactory
 
         $application->add(ConvertFactory::getInstance($output));
 
-        return $application;
+        return static::$app = $application;
     }
 }
