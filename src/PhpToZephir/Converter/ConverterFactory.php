@@ -6,7 +6,12 @@ use PhpToZephir\NodeFetcher;
 
 class ConverterFactory
 {
-    static $converter;
+    /**
+    * @var Converter $converter
+    */
+    private static $converter;
+    
+    private function __construct() {}
     
     /**
      * @return \PhpToZephir\Converter\Converter
